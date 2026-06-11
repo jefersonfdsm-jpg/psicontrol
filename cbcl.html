@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080f0e">
+<title>CBCL 6-18 — PsiControl</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080f0e;--surface:#0d1a18;--surface2:#122420;--border:#1e3d38;--accent:#2ab89a;--accent2:#56d4c8;--accent3:#f0b429;--danger:#ef4444;--success:#3fd4a0;--text:#e2f0ee;--text2:#7ab5ae;--text3:#3d7a72;--radius:12px;--sidebar:260px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;}
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
+#login-screen.hidden{display:none;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.login-psi{font-family:'DM Serif Display',serif;font-size:3.5rem;color:var(--accent);margin-bottom:6px;}
+.login-box h1{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:4px;}
+.login-box .sub{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;}
+.login-field{text-align:left;margin-bottom:14px;}
+.login-field label{display:block;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:.2s;}
+.login-field input:focus{border-color:var(--accent);}
+.login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px;}
+.login-btn:hover{background:#1fa085;}
+.login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
+.back-link{font-size:.78rem;color:var(--text3);margin-top:16px;cursor:pointer;text-decoration:underline;}
+#sidebar{width:var(--sidebar);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;z-index:100;}
+.logo{padding:22px 20px 14px;border-bottom:1px solid var(--border);}
+.logo h1{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--accent);}
+.logo span{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
+.logo .user-name{font-size:.8rem;color:var(--text2);margin-top:4px;}
+.nav-section{padding:12px 12px 4px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:.87rem;color:var(--text2);transition:.2s;border:1px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.nav-item .icon{width:20px;text-align:center;flex-shrink:0;}
+.sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.sb-btn{width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid;}
+.sb-btn-back{background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);}
+.sb-btn-sair{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--danger);}
+#main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;padding:28px 32px;}
+.page{display:none;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-header h2{font-family:'DM Serif Display',serif;font-size:1.8rem;}
+.page-header p{color:var(--text2);font-size:.88rem;margin-top:2px;}
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#1fa085;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+.cards-row{display:grid;gap:16px;margin-bottom:24px;}
+.cards-row.cols-3{grid-template-columns:repeat(3,1fr);}
+.cards-row.cols-2{grid-template-columns:repeat(2,1fr);}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.stat-card .label{font-size:.73rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.stat-card .value{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--text);}
+.stat-card .sub{font-size:.78rem;color:var(--text2);margin-top:4px;}
+.aplicacao-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.aplicacao-info h3{font-family:'DM Serif Display',serif;font-size:1.2rem;}
+.aplicacao-info p{font-size:.82rem;color:var(--text2);margin-top:3px;}
+.progress-wrap{margin-bottom:20px;}
+.progress-bar-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text2);margin-bottom:6px;}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:.4s;}
+.secao-titulo{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent2);margin:24px 0 14px;padding:10px 14px;background:rgba(86,212,200,.07);border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;}
+.cbcl-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:8px;transition:.2s;}
+.cbcl-item.respondido{border-color:rgba(42,184,154,.3);}
+.cbcl-item-header{display:flex;align-items:flex-start;gap:12px;}
+.cbcl-num{font-size:.72rem;color:var(--text3);font-weight:700;min-width:28px;padding-top:2px;}
+.cbcl-texto{font-size:.88rem;color:var(--text);line-height:1.5;flex:1;}
+.cbcl-opcoes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.cbcl-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit;font-size:.85rem;transition:.2s;font-weight:500;min-width:44px;text-align:center;}
+.cbcl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.cbcl-btn.sel-0{border-color:var(--success);background:rgba(63,212,160,.15);color:var(--success);font-weight:700;}
+.cbcl-btn.sel-1{border-color:var(--accent3);background:rgba(240,180,41,.13);color:var(--accent3);font-weight:700;}
+.cbcl-btn.sel-2{border-color:var(--danger);background:rgba(239,68,68,.13);color:var(--danger);font-weight:700;}
+.cbcl-desc{display:none;margin-top:10px;}
+.cbcl-desc textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:.83rem;resize:vertical;outline:none;}
+.cbcl-desc textarea:focus{border-color:var(--accent);}
+.field-row{display:grid;gap:14px;margin-bottom:14px;}
+.field-row.cols-2{grid-template-columns:1fr 1fr;}
+.field label{display:block;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:.88rem;transition:.2s;outline:none;}
+.field input:focus,.field select:focus{border-color:var(--accent);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:fadeUp .25s ease;}
+.modal h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.resultado-box{border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+.resultado-box.normal{background:rgba(63,212,160,.08);border:2px solid rgba(63,212,160,.4);}
+.resultado-box.limítrofe{background:rgba(240,180,41,.08);border:2px solid rgba(240,180,41,.4);}
+.resultado-box.clinico{background:rgba(239,68,68,.08);border:2px solid rgba(239,68,68,.4);}
+.resultado-titulo{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px;}
+.resultado-pontuacao{font-family:'DM Serif Display',serif;font-size:2.8rem;margin:6px 0;}
+.subescala-bar{margin-bottom:12px;}
+.subescala-bar-label{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:4px;}
+.subescala-bar-track{height:14px;background:var(--border);border-radius:7px;overflow:hidden;}
+.subescala-bar-fill{height:100%;border-radius:7px;transition:.5s;}
+.historico-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.2s;}
+.historico-item:hover{border-color:var(--accent);}
+.historico-info h4{font-size:.9rem;color:var(--text);margin-bottom:3px;}
+.historico-info p{font-size:.78rem;color:var(--text2);}
+.historico-data{margin-left:auto;text-align:right;flex-shrink:0;}
+.historico-data .data{font-size:.78rem;color:var(--text2);}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500;}
+.badge-normal{background:rgba(63,212,160,.15);color:var(--success);}
+.badge-limitrofe{background:rgba(240,180,41,.15);color:var(--accent3);}
+.badge-clinico{background:rgba(239,68,68,.15);color:var(--danger);}
+.empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text3);margin-bottom:14px;flex-wrap:wrap;}
+.breadcrumb .crumb{cursor:pointer;}
+.breadcrumb .crumb:hover{color:var(--accent);}
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:11px 14px;text-align:left;font-size:.71rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--surface2);}
+tbody td{padding:10px 14px;font-size:.86rem;color:var(--text2);border-bottom:1px solid rgba(255,255,255,.04);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(255,255,255,.02);}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+#mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:calc(52px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding-left:16px;padding-right:16px;gap:12px;}
+#hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;padding:8px;min-width:44px;min-height:44px;}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
+#sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  body{overflow:auto;}
+  #mobile-topbar{display:flex;}
+  #sidebar{transform:translateX(-100%);transition:transform .3s;width:280px;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0!important;padding-top:calc(70px + env(safe-area-inset-top));padding-bottom:24px;padding-left:16px;padding-right:16px;height:100vh;overflow-y:auto;}
+  .cards-row.cols-3{grid-template-columns:1fr 1fr;}
+  .field-row.cols-2{grid-template-columns:1fr;}
+  .aplicacao-header{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-psi">Ψ</div>
+    <h1>PsiControl</h1>
+    <div class="sub">CBCL 6-18</div>
+    <div class="login-field"><label>Email / Usuário</label><input type="text" id="login-email" placeholder="Seu login" onkeydown="if(event.key==='Enter')document.getElementById('login-senha').focus()"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="login-senha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-error" id="login-erro"></div>
+    <div class="back-link" onclick="window.location.href='escalas.html'">← Voltar às Escalas</div>
+  </div>
+</div>
+
+<div id="mobile-topbar">
+  <button id="hamburger" onclick="toggleSidebar()">☰</button>
+  <span style="font-family:'DM Serif Display',serif;color:var(--accent);font-size:1rem;">CBCL 6-18</span>
+</div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div id="sidebar">
+  <div class="logo">
+    <h1>CBCL 6-18</h1>
+    <span>Comportamento Infantil</span>
+    <div class="user-name" id="sidebar-username"></div>
+  </div>
+  <div style="overflow-y:auto;flex:1;padding-bottom:8px;">
+    <div class="nav-section">Menu</div>
+    <div class="nav-item active" id="nav-home" onclick="showPage('home')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span> Início
+    </div>
+    <div class="nav-item" id="nav-nova" onclick="iniciarAplicacao()">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span> Nova Aplicação
+    </div>
+    <div class="nav-section">Histórico</div>
+    <div class="nav-item" id="nav-hist" onclick="showPage('historico')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Aplicações Salvas
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <button class="sb-btn sb-btn-back" onclick="window.location.href='escalas.html'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Escalas de Rastreio
+    </button>
+    <button class="sb-btn sb-btn-sair" onclick="fazerLogout()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sair
+    </button>
+  </div>
+</div>
+
+<div id="main">
+
+  <!-- HOME -->
+  <div id="page-home" class="page active">
+    <div class="page-header"><div><h2>CBCL 6-18</h2><p>Inventário de Comportamentos para Crianças e Adolescentes · 6 a 18 anos</p></div><button class="btn btn-primary" onclick="iniciarAplicacao()">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="home-stats"></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px;">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:10px;">Sobre o instrumento</h3>
+      <p style="font-size:.85rem;color:var(--text2);line-height:1.7;">O CBCL/6-18 (Child Behavior Checklist) avalia problemas de comportamento e competências sociais em crianças e adolescentes de 6 a 18 anos, respondido pelos pais ou responsáveis. Desenvolvido por Achenbach &amp; Rescorla (2001). Versão brasileira: Bordin, Paula &amp; Duarte — UNIFESP.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;"><div style="font-size:.72rem;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Parte I</div><div style="font-size:.85rem;color:var(--text2);">Competências: esportes, atividades, grupos, escola e relacionamentos</div></div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;"><div style="font-size:.72rem;color:var(--text3);text-transform:uppercase;margin-bottom:4px;">Parte II</div><div style="font-size:.85rem;color:var(--text2);">112 itens de comportamento — 8 subescalas + escores de internalização, externalização e total</div></div>
+      </div>
+    </div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:14px;">Últimas Aplicações</h3>
+    <div id="home-ultimas"></div>
+  </div>
+
+  <!-- APLICAÇÃO PARTE I -->
+  <div id="page-parte1" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('home')">CBCL</span><span>›</span><span style="color:var(--text2)">Parte I — Identificação e Competências</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>CBCL — Parte I: Identificação e Competências</h3><p>Preencha os dados da criança e responda às questões de competência.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('home')">Cancelar</button>
+        <button class="btn btn-primary" onclick="irParaParte2()">Continuar para Parte II →</button>
+      </div>
+    </div>
+
+    <!-- Identificação -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">Identificação</div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Nome da Criança/Adolescente</label><input type="text" id="p1-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Data de Nascimento</label><input type="date" id="p1-nasc"></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Sexo</label><select id="p1-sexo"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+        <div class="field"><label>Idade</label><input type="number" id="p1-idade" placeholder="Ex: 10" min="6" max="18"></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Escolaridade (série atual)</label><input type="text" id="p1-serie" placeholder="Ex: 5º ano"></div>
+        <div class="field"><label>Grupo Étnico ou Raça</label><input type="text" id="p1-raca" placeholder="Opcional"></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Nome do Informante</label><input type="text" id="p1-inform-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Grau de Parentesco</label><select id="p1-inform-grau">
+          <option value="Pai/Mãe biológico(a)">Pai/Mãe biológico(a)</option>
+          <option value="Pai/Mãe adotivo(a)">Pai/Mãe adotivo(a)</option>
+          <option value="Padrasto/Madrasta">Padrasto/Madrasta</option>
+          <option value="Avô/Avó">Avô/Avó</option>
+          <option value="Outro">Outro</option>
+        </select></div>
+      </div>
+    </div>
+
+    <!-- I - Esportes -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">I. Esportes</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Cite os esportes que seu filho mais gosta de participar (natação, futebol, etc.).</p>
+      <div id="esportes-campos"></div>
+    </div>
+
+    <!-- II - Atividades -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">II. Atividades e Passatempos</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Cite atividades, brincadeiras, passatempos e jogos preferidos (excluir esportes e TV/rádio).</p>
+      <div id="atividades-campos"></div>
+    </div>
+
+    <!-- III - Grupos -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">III. Organizações e Grupos</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Cite organizações, clubes, times ou grupos aos quais seu filho pertence.</p>
+      <div id="grupos-campos"></div>
+    </div>
+
+    <!-- IV - Tarefas -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">IV. Tarefas e Trabalhos</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px;">Cite os trabalhos ou tarefas do seu filho (pagos ou não).</p>
+      <div id="tarefas-campos"></div>
+    </div>
+
+    <!-- V - Amigos e relacionamentos -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">V. Amigos e Relacionamentos</div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Quantos amigos íntimos seu filho tem?</label>
+          <select id="p1-amigos"><option value="0">Nenhum</option><option value="1">1</option><option value="2">2 ou 3</option><option value="3">4 ou mais</option></select>
+        </div>
+        <div class="field"><label>Quantas vezes por semana encontra amigos fora da escola?</label>
+          <select id="p1-encontros"><option value="0">Menos que 1</option><option value="1">1 ou 2</option><option value="2">3 ou mais</option></select>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:14px 0 10px;">Comparando com outros da mesma idade:</div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Relacionamento com irmãos</label><select id="p1-irmaos"><option value="NA">Não tem irmãos</option><option value="pior">Pior</option><option value="igual">Igual</option><option value="melhor">Melhor</option></select></div>
+        <div class="field"><label>Relacionamento com outras crianças</label><select id="p1-criancas"><option value="pior">Pior</option><option value="igual">Igual</option><option value="melhor">Melhor</option></select></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Comportamento com os pais</label><select id="p1-pais"><option value="pior">Pior</option><option value="igual">Igual</option><option value="melhor">Melhor</option></select></div>
+        <div class="field"><label>Brinca ou trabalha sozinho</label><select id="p1-sozinho"><option value="pior">Pior</option><option value="igual">Igual</option><option value="melhor">Melhor</option></select></div>
+      </div>
+    </div>
+
+    <!-- VI - Escola -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <div class="secao-titulo" style="margin-top:0;">VI. Desempenho Escolar</div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Desempenho em Português/Literatura</label><select id="p1-port"><option value="3">Melhor</option><option value="2" selected>Igual</option><option value="1">Pior</option><option value="0">Insuficiente</option></select></div>
+        <div class="field"><label>Desempenho em Matemática</label><select id="p1-mat"><option value="3">Melhor</option><option value="2" selected>Igual</option><option value="1">Pior</option><option value="0">Insuficiente</option></select></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Desempenho em História/Sociais</label><select id="p1-hist"><option value="3">Melhor</option><option value="2" selected>Igual</option><option value="1">Pior</option><option value="0">Insuficiente</option></select></div>
+        <div class="field"><label>Desempenho em Ciências</label><select id="p1-cien"><option value="3">Melhor</option><option value="2" selected>Igual</option><option value="1">Pior</option><option value="0">Insuficiente</option></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Está em classe especial?</label><select id="p1-especial"><option value="nao">Não</option><option value="sim">Sim</option></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Maiores preocupações em relação ao filho</label><textarea id="p1-preocupacoes" rows="2" placeholder="Descreva..."></textarea></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Qualidades e pontos positivos do filho</label><textarea id="p1-qualidades" rows="2" placeholder="Descreva..."></textarea></div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-bottom:32px;">
+      <button class="btn btn-primary" onclick="irParaParte2()">Continuar para Parte II — Comportamentos →</button>
+    </div>
+  </div>
+
+  <!-- APLICAÇÃO PARTE II -->
+  <div id="page-parte2" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('home')">CBCL</span><span>›</span><span class="crumb" onclick="showPage('parte1')">Parte I</span><span>›</span><span style="color:var(--text2)">Parte II — Comportamentos</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>CBCL — Parte II: Comportamentos</h3><p id="p2-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('parte1')">← Voltar</button>
+        <button class="btn btn-primary" onclick="finalizarCbcl()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="p2-progress-txt">0 de 112 respondidos</span><span id="p2-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="p2-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(42,184,154,.07);border:1px solid rgba(42,184,154,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent2);line-height:1.6;">
+      ℹ️ Considere seu filho <strong>atualmente e nos últimos 6 meses</strong>. Marque <strong>0</strong> = Falso/ausente · <strong>1</strong> = Às vezes presente · <strong>2</strong> = Frequentemente presente
+    </div>
+    <div id="cbcl-itens"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:20px;margin-bottom:32px;gap:10px;">
+      <button class="btn btn-outline" onclick="showPage('parte1')">← Voltar</button>
+      <button class="btn btn-primary" onclick="finalizarCbcl()">Finalizar e Ver Resultado</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div id="page-resultado" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('home')">CBCL</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="cbcl-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfCbcl()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('historico')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao()">Nova Aplicação</button>
+    </div>
+    <div id="cbcl-resultado-detalhe"></div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div id="page-historico" class="page">
+    <div class="page-header"><div><h2>Aplicações Salvas</h2><p>Histórico completo do CBCL 6-18</p></div><button class="btn btn-primary" onclick="iniciarAplicacao()">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="hist-stats"></div>
+    <div id="hist-lista"></div>
+  </div>
+
+</div>
+
+<!-- MODAL PACIENTE -->
+<div class="modal-overlay" id="modal-pac">
+  <div class="modal">
+    <h3>Nova Aplicação — CBCL 6-18</h3>
+    <div class="field-row">
+      <div class="field"><label>Paciente</label>
+        <select id="modal-pac-sel" onchange="onPacSelect()">
+          <option value="">Selecione o paciente</option>
+          <option value="__novo__">➕ Cadastrar novo paciente</option>
+        </select>
+      </div>
+    </div>
+    <div id="novo-pac-fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:4px;">
+      <div style="font-size:.75rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Novo Paciente</div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Nome</label><input type="text" id="novo-pac-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Data de Nasc.</label><input type="date" id="novo-pac-nasc"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarPaciente()">Iniciar →</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://nntvdmunpudovuiwrccz.supabase.co';
+const SB_KEY='sb_publishable_Z5XoCu4LUyMZjnMPCUZ1wg_IgphMzcf';
+async function sbFetch(path,opts={}){
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{...opts,headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
+  const t=await r.text();return t?JSON.parse(t):null;
+}
+async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+
+let usuarioLogado=null,psiState={pacientes:[]},cbclState={aplicacoes:[]};
+let apAtual={pacienteId:null,pacienteNome:'',parte1:{},respostas:{},descricoes:{}};
+let perfilProfissional={nome:'',registro:'',profissao:''};
+
+// LOGIN
+async function fazerLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const senha=document.getElementById('login-senha').value.trim();
+  if(!email||!senha){setErro('Preencha email e senha.');return;}
+  setErro('');document.getElementById('login-btn').textContent='Entrando...';
+  try{
+    const rows=await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}&ativo=eq.true&select=id,nome,email,senha_hash`);
+    if(!rows||!rows.length){setErro('Usuário não encontrado.');return;}
+    const user=rows[0];
+    if(await sha256(senha)!==user.senha_hash){setErro('Senha incorreta.');return;}
+    usuarioLogado={id:user.id,nome:user.nome,email:user.email};
+    localStorage.setItem('psi_sessao_cbcl',JSON.stringify(usuarioLogado));
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('sidebar-username').textContent=user.nome;
+    await carregarDados();
+    carregarPerfil();
+    renderHome();
+    showToast(`Bem-vindo, ${user.nome}!`);
+  }catch(e){setErro('Erro de conexão.');}
+  document.getElementById('login-btn').textContent='Entrar';
+}
+function setErro(m){document.getElementById('login-erro').textContent=m;document.getElementById('login-btn').textContent='Entrar';}
+function fazerLogout(){if(!confirm('Sair?'))return;usuarioLogado=null;localStorage.removeItem('psi_sessao_cbcl');document.getElementById('login-screen').classList.remove('hidden');}
+function verificarSessao(){
+  const s=localStorage.getItem('psi_sessao_cbcl');
+  if(s){try{usuarioLogado=JSON.parse(s);document.getElementById('login-screen').classList.add('hidden');document.getElementById('sidebar-username').textContent=usuarioLogado.nome;carregarDados().then(()=>{carregarPerfil();renderHome();});return;}catch(e){}}
+  setTimeout(()=>document.getElementById('login-email').focus(),300);
+}
+
+// DADOS
+async function carregarDados(){
+  if(!usuarioLogado)return;
+  try{
+    const rows=await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
+    if(rows&&rows.length>0&&rows[0].dados){
+      const d=rows[0].dados;
+      psiState.pacientes=d.pacientes||[];
+      if(d.cbcl)cbclState=d.cbcl;
+    }
+    const local=localStorage.getItem(`cbcl_${usuarioLogado.id}`);
+    if(local&&cbclState.aplicacoes.length===0)cbclState=JSON.parse(local);
+  }catch(e){console.error(e);}
+}
+async function salvarCbcl(){
+  if(!usuarioLogado)return;
+  localStorage.setItem(`cbcl_${usuarioLogado.id}`,JSON.stringify(cbclState));
+  try{
+    const rows=await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
+    let dados=(rows&&rows.length>0&&rows[0].dados)?rows[0].dados:{};
+    dados.cbcl=cbclState;
+    if(rows&&rows.length>0)await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({dados})});
+    else await sbFetch('dados_usuario',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({usuario_id:usuarioLogado.id,dados})});
+  }catch(e){console.error(e);}
+}
+
+// PERFIL
+function carregarPerfil(){
+  if(!usuarioLogado)return;
+  const raw=localStorage.getItem(`perfil_prof_${usuarioLogado.id}`);
+  if(raw)try{perfilProfissional=JSON.parse(raw);}catch(e){}
+}
+function rodapeAssinatura(){
+  return`${perfilProfissional.nome||''}${perfilProfissional.registro?' · '+perfilProfissional.registro:''}${perfilProfissional.profissao?' · '+perfilProfissional.profissao:''}`;
+}
+
+// NAV
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  closeSidebar();
+  const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+  const nav=document.getElementById('nav-'+p);if(nav)nav.classList.add('active');
+  if(p==='home'){document.getElementById('nav-home').classList.add('active');renderHome();}
+  if(p==='historico'){document.getElementById('nav-hist').classList.add('active');renderHistorico();}
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
+function closeModal(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal();}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function formatDate(d){if(!d)return'-';return new Date(d+'T12:00:00').toLocaleDateString('pt-BR');}
+
+// HOME
+function renderHome(){
+  const total=cbclState.aplicacoes.length;
+  const clinico=cbclState.aplicacoes.filter(a=>a.classificacaoTotal==='clínico').length;
+  const limitrofe=cbclState.aplicacoes.filter(a=>a.classificacaoTotal==='limítrofe').length;
+  document.getElementById('home-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total Aplicações</div><div class="value">${total}</div></div>
+    <div class="stat-card"><div class="label">Faixa Clínica</div><div class="value" style="color:var(--danger)">${clinico}</div><div class="sub">Escore total acima do ponto de corte</div></div>
+    <div class="stat-card"><div class="label">Faixa Limítrofe</div><div class="value" style="color:var(--accent3)">${limitrofe}</div></div>`;
+  const ult=[...cbclState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
+  document.getElementById('home-ultimas').innerHTML=ult.length===0
+    ?'<div class="empty-state"><div style="font-size:3rem;opacity:.4;margin-bottom:12px;">📋</div><p>Nenhuma aplicação realizada ainda</p></div>'
+    :ult.map(a=>renderHistItem(a)).join('');
+}
+
+// INICIAR
+function iniciarAplicacao(){
+  const sel=document.getElementById('modal-pac-sel');
+  sel.innerHTML='<option value="">Selecione o paciente</option>'+
+    psiState.pacientes.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('')+
+    '<option value="__novo__">➕ Cadastrar novo paciente</option>';
+  document.getElementById('novo-pac-fields').style.display='none';
+  document.getElementById('modal-pac').classList.add('open');
+}
+function onPacSelect(){
+  const v=document.getElementById('modal-pac-sel').value;
+  document.getElementById('novo-pac-fields').style.display=v==='__novo__'?'block':'none';
+}
+async function confirmarPaciente(){
+  const pacId=document.getElementById('modal-pac-sel').value;
+  if(!pacId){showToast('⚠️ Selecione o paciente');return;}
+  let pacNome='',pacNasc='',pacIdFinal=pacId;
+  if(pacId==='__novo__'){
+    const nome=document.getElementById('novo-pac-nome').value.trim();
+    const nasc=document.getElementById('novo-pac-nasc').value;
+    if(!nome){showToast('⚠️ Informe o nome');return;}
+    try{
+      const rows=await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
+      let dados=(rows&&rows.length>0&&rows[0].dados)?rows[0].dados:{};
+      if(!dados.pacientes)dados.pacientes=[];
+      const np={id:uid(),nome,nasc,status:'ativo',clinicaId:''};
+      dados.pacientes.push(np);psiState.pacientes.push(np);
+      if(rows&&rows.length>0)await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({dados})});
+      else await sbFetch('dados_usuario',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({usuario_id:usuarioLogado.id,dados})});
+      pacNome=nome;pacNasc=nasc;pacIdFinal=np.id;
+    }catch(e){showToast('❌ Erro ao cadastrar');return;}
+  } else {
+    const pac=psiState.pacientes.find(p=>p.id===pacId);
+    pacNome=pac?pac.nome:'';pacNasc=pac?.nasc||'';
+  }
+  apAtual={pacienteId:pacIdFinal,pacienteNome:pacNome,nascimento:pacNasc,parte1:{},respostas:{},descricoes:{}};
+  closeModal();
+  // Pre-preenche nome na Parte I
+  document.getElementById('p1-nome').value=pacNome;
+  if(pacNasc)document.getElementById('p1-nasc').value=pacNasc;
+  renderParte1();
+  showPage('parte1');
+  window.scrollTo(0,0);
+}
+
+// PARTE I
+function renderParte1(){
+  // Esportes
+  document.getElementById('esportes-campos').innerHTML=renderListaCampos('esp',3,'Ex: futebol, natação','Dedicação','Desempenho');
+  document.getElementById('atividades-campos').innerHTML=renderListaCampos('atv',3,'Ex: desenhar, videogame','Dedicação','Desempenho');
+  document.getElementById('grupos-campos').innerHTML=renderListaCampos('grp',3,'Ex: grupo de igreja, teatro','Participação','');
+  document.getElementById('tarefas-campos').innerHTML=renderListaCampos('trf',3,'Ex: arrumar a cama, lavar louça','Desempenho','');
+}
+function renderListaCampos(prefix,n,placeholder,comp1,comp2){
+  let html='';
+  for(let i=1;i<=n;i++){
+    html+=`<div style="display:grid;grid-template-columns:1fr ${comp1?'120px':''}${comp2?' 120px':''};gap:10px;margin-bottom:10px;align-items:center;">
+      <input type="text" id="${prefix}-${i}" placeholder="${placeholder} ${i}" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;width:100%;">
+      ${comp1?`<select id="${prefix}-comp1-${i}" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:.82rem;outline:none;"><option value="">--</option><option>Menos</option><option>Igual</option><option>Mais</option><option>Não sei</option></select>`:''}
+      ${comp2?`<select id="${prefix}-comp2-${i}" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 8px;color:var(--text);font-family:inherit;font-size:.82rem;outline:none;"><option value="">--</option><option>Menos</option><option>Igual</option><option>Mais</option><option>Não sei</option></select>`:''}
+    </div>`;
+  }
+  return html;
+}
+
+function irParaParte2(){
+  // Salva parte1
+  apAtual.parte1={
+    nome:document.getElementById('p1-nome').value.trim(),
+    nasc:document.getElementById('p1-nasc').value,
+    sexo:document.getElementById('p1-sexo').value,
+    idade:document.getElementById('p1-idade').value,
+    serie:document.getElementById('p1-serie').value,
+    raca:document.getElementById('p1-raca').value,
+    informNome:document.getElementById('p1-inform-nome').value,
+    informGrau:document.getElementById('p1-inform-grau').value,
+    amigos:document.getElementById('p1-amigos').value,
+    encontros:document.getElementById('p1-encontros').value,
+    irmaos:document.getElementById('p1-irmaos').value,
+    criancas:document.getElementById('p1-criancas').value,
+    pais:document.getElementById('p1-pais').value,
+    sozinho:document.getElementById('p1-sozinho').value,
+    escPort:document.getElementById('p1-port').value,
+    escMat:document.getElementById('p1-mat').value,
+    escHist:document.getElementById('p1-hist').value,
+    escCien:document.getElementById('p1-cien').value,
+    especial:document.getElementById('p1-especial').value,
+    preocupacoes:document.getElementById('p1-preocupacoes').value,
+    qualidades:document.getElementById('p1-qualidades').value,
+  };
+  if(!apAtual.parte1.nome){showToast('⚠️ Informe o nome da criança');return;}
+  document.getElementById('p2-pac-info').textContent=`${apAtual.parte1.nome} · ${apAtual.parte1.sexo==='M'?'Masculino':'Feminino'} · ${apAtual.parte1.idade||'?'} anos`;
+  renderParte2();
+  showPage('parte2');
+  window.scrollTo(0,0);
+}
+
+// PARTE II — 112 ITENS
+const CBCL_ITENS = [
+  {n:1,texto:'Comporta-se de modo infantil, como se tivesse menos idade'},
+  {n:2,texto:'Toma bebida alcoólica sem a permissão dos pais',desc:true},
+  {n:3,texto:'Argumenta muito (apresenta argumentos para não fazer o que se espera que ele faça)'},
+  {n:4,texto:'Não consegue terminar as coisas que começa'},
+  {n:5,texto:'Há poucas coisas que lhe dão prazer'},
+  {n:6,texto:'Faz cocô na calça ou fora do vaso sanitário/penico'},
+  {n:7,texto:'É convencido, conta vantagem'},
+  {n:8,texto:'Não se concentra, não consegue prestar atenção por muito tempo'},
+  {n:9,texto:'Não consegue tirar certos pensamentos da cabeça (obsessões)',desc:true},
+  {n:10,texto:'É agitado, não para quieto'},
+  {n:11,texto:'Fica grudado nos adultos, é muito dependente'},
+  {n:12,texto:'Queixa-se de solidão'},
+  {n:13,texto:'Parece estar confuso, atordoado'},
+  {n:14,texto:'Chora muito'},
+  {n:15,texto:'É cruel com os animais'},
+  {n:16,texto:'É cruel, maltrata as pessoas'},
+  {n:17,texto:'Fica no "mundo da lua", perdido nos próprios pensamentos (devaneios)'},
+  {n:18,texto:'Machuca-se de propósito ou já tentou suicidar-se'},
+  {n:19,texto:'Exige que prestem atenção nele'},
+  {n:20,texto:'Destrói as próprias coisas'},
+  {n:21,texto:'Destrói as coisas de sua família ou de outras pessoas'},
+  {n:22,texto:'É desobediente em casa'},
+  {n:23,texto:'É desobediente na escola'},
+  {n:24,texto:'É difícil para comer (não quer se alimentar direito)'},
+  {n:25,texto:'Não se dá bem com outras crianças ou adolescentes'},
+  {n:26,texto:'Falta de arrependimento, não se sente culpado após ter se comportado mal',desc:true},
+  {n:27,texto:'Fica com ciúmes facilmente'},
+  {n:28,texto:'Desrespeita regras em casa, na escola ou em outros lugares'},
+  {n:29,texto:'Tem medo de certos animais, situações ou lugares (não incluir a escola)',desc:true},
+  {n:30,texto:'Tem medo da escola',desc:true},
+  {n:31,texto:'Tem medo de pensar ou de fazer algo destrutivo (contra si ou contra outros)'},
+  {n:32,texto:'Tem "mania de perfeição", acha que tem que fazer tudo certinho'},
+  {n:33,texto:'Acha que ninguém gosta dele'},
+  {n:34,texto:'Acha que os outros o perseguem'},
+  {n:35,texto:'Sente-se desvalorizado, inferior'},
+  {n:36,texto:'Machuca-se com frequência, tem tendência a sofrer acidentes'},
+  {n:37,texto:'Entra em muitas brigas'},
+  {n:38,texto:'É alvo de gozações frequentemente'},
+  {n:39,texto:'Anda em más companhias'},
+  {n:40,texto:'Escuta sons ou vozes que não existem',desc:true},
+  {n:41,texto:'É impulsivo, age sem pensar'},
+  {n:42,texto:'Prefere ficar sozinho que na companhia de outros'},
+  {n:43,texto:'Mente ou engana os outros'},
+  {n:44,texto:'Rói unhas'},
+  {n:45,texto:'É nervoso ou tenso'},
+  {n:46,texto:'Tem "tique nervoso", cacoete',desc:true},
+  {n:47,texto:'Tem pesadelos'},
+  {n:48,texto:'As outras crianças (ou adolescentes) não gostam dele'},
+  {n:49,texto:'Tem prisão de ventre, intestino preso'},
+  {n:50,texto:'É apreensivo, aflito ou ansioso demais'},
+  {n:51,texto:'Tem tonturas'},
+  {n:52,texto:'Sente-se excessivamente culpado'},
+  {n:53,texto:'Come exageradamente'},
+  {n:54,texto:'Sente-se cansado demais sem motivo'},
+  {n:55,texto:'Está gordo demais'},
+  {n:'56a',texto:'Queixas físicas: Dores (diferentes das abaixo)'},
+  {n:'56b',texto:'Queixas físicas: Dores de cabeça'},
+  {n:'56c',texto:'Queixas físicas: Náuseas, enjôos'},
+  {n:'56d',texto:'Queixas físicas: Problemas com os olhos (sem causa oftalmológica)',desc:true},
+  {n:'56e',texto:'Queixas físicas: Problemas de pele'},
+  {n:'56f',texto:'Queixas físicas: Dores de estômago ou de barriga'},
+  {n:'56g',texto:'Queixas físicas: Vômitos'},
+  {n:'56h',texto:'Queixas físicas: Outras queixas físicas',desc:true},
+  {n:57,texto:'Ataca fisicamente as pessoas'},
+  {n:58,texto:'Fica cutucando o nariz, a pele ou outras partes do corpo',desc:true},
+  {n:59,texto:'Mexe nas partes íntimas em público'},
+  {n:60,texto:'Mexe demais nas partes íntimas'},
+  {n:61,texto:'Não vai bem na escola'},
+  {n:62,texto:'É desastrado, desajeitado (tem má coordenação motora)'},
+  {n:63,texto:'Prefere conviver com crianças (ou adolescentes) mais velhas'},
+  {n:64,texto:'Prefere conviver com crianças (ou adolescentes) mais novas'},
+  {n:65,texto:'Recusa-se a falar'},
+  {n:66,texto:'Repete certos atos várias vezes seguidas (compulsões)',desc:true},
+  {n:67,texto:'Foge de casa'},
+  {n:68,texto:'Grita muito'},
+  {n:69,texto:'É reservado, fechado, não conta suas coisas para ninguém'},
+  {n:70,texto:'Vê coisas que não existem',desc:true},
+  {n:71,texto:'Fica sem jeito na frente dos outros, preocupado com o que as pessoas possam achar dele'},
+  {n:72,texto:'Põe fogo nas coisas'},
+  {n:73,texto:'Tem problemas sexuais',desc:true},
+  {n:74,texto:'Fica se mostrando ou fazendo palhaçadas'},
+  {n:75,texto:'É muito tímido'},
+  {n:76,texto:'Dorme menos que a maioria das crianças (ou adolescentes)'},
+  {n:77,texto:'Dorme mais que a maioria das crianças (ou adolescentes) durante o dia e/ou à noite',desc:true},
+  {n:78,texto:'É desatento, distrai-se com facilidade'},
+  {n:79,texto:'Tem problemas de fala',desc:true},
+  {n:80,texto:'Fica com o olhar parado, "olhando o vazio"'},
+  {n:81,texto:'Rouba em casa'},
+  {n:82,texto:'Rouba fora de casa'},
+  {n:83,texto:'Junta coisas das quais não precisa e que não servem para nada',desc:true},
+  {n:84,texto:'Tem comportamento estranho',desc:true},
+  {n:85,texto:'Tem ideias estranhas',desc:true},
+  {n:86,texto:'É mal humorado, irrita-se com facilidade'},
+  {n:87,texto:'Tem mudanças repentinas de humor ou de sentimentos'},
+  {n:88,texto:'Fica emburrado facilmente'},
+  {n:89,texto:'É desconfiado'},
+  {n:90,texto:'Xinga ou fala palavrões'},
+  {n:91,texto:'Fala que vai se matar'},
+  {n:92,texto:'Fala ou anda dormindo',desc:true},
+  {n:93,texto:'Fala demais'},
+  {n:94,texto:'Gosta de "gozar da cara" dos outros'},
+  {n:95,texto:'É esquentado, tem acessos de raiva'},
+  {n:96,texto:'Pensa demais em sexo'},
+  {n:97,texto:'Ameaça as pessoas'},
+  {n:98,texto:'Chupa dedo'},
+  {n:99,texto:'Fuma cigarro, masca fumo ou cheira tabaco'},
+  {n:100,texto:'Tem problemas com o sono',desc:true},
+  {n:101,texto:'Mata aula (cabula aula, gazea)'},
+  {n:102,texto:'É pouco ativo, movimenta-se vagarosamente ou falta-lhe energia'},
+  {n:103,texto:'É infeliz, triste ou deprimido'},
+  {n:104,texto:'É barulhento demais'},
+  {n:105,texto:'Usa drogas (excluir álcool e tabaco)',desc:true},
+  {n:106,texto:'Estraga ou destrói coisas públicas (vandalismo)'},
+  {n:107,texto:'Faz xixi na roupa durante o dia'},
+  {n:108,texto:'Faz xixi na cama'},
+  {n:109,texto:'Fica choramingando, fazendo manha'},
+  {n:110,texto:'Gostaria de ser do sexo oposto'},
+  {n:111,texto:'É retraído, não se relaciona com os outros'},
+  {n:112,texto:'É muito preocupado'},
+];
+
+// Subescalas CBCL 6-18 (itens por síndrome)
+const CBCL_SUBESCALAS = {
+  'Ansiedade/Depressão': [14,29,30,31,32,33,35,45,50,52,71,91,112],
+  'Isolamento/Depressão': [5,42,65,69,75,102,103,111],
+  'Queixas Somáticas': [47,51,54,'56a','56b','56c','56d','56e','56f','56g'],
+  'Problemas Sociais': [11,12,25,27,34,36,38,48,62,64],
+  'Problemas de Pensamento': [9,18,40,46,58,66,70,76,83,84,85],
+  'Problemas de Atenção': [1,4,8,10,13,17,41,61,78,80],
+  'Comportamento Transgressor': [2,26,28,39,43,63,67,72,81,82,90,96,99,101,105,106],
+  'Comportamento Agressivo': [3,7,16,19,20,21,22,23,37,57,68,74,86,87,88,89,93,94,95,97,104],
+};
+// Bandas: Internalização = Ansiedade+Isolamento+Queixas; Externalização = Transgressor+Agressivo
+const INTERNALIZ=['Ansiedade/Depressão','Isolamento/Depressão','Queixas Somáticas'];
+const EXTERNALIZ=['Comportamento Transgressor','Comportamento Agressivo'];
+
+// Pontos de corte CBCL (T-scores aproximados — limítrofe ≥60, clínico ≥63 para subescalas; internaliz/externaliz/total: limítrofe ≥60, clínico ≥63)
+function classificar(escore,max){
+  const pct=escore/max*100;
+  if(pct>=85)return'clínico';
+  if(pct>=70)return'limítrofe';
+  return'normal';
+}
+
+function renderParte2(){
+  const resp=Object.keys(apAtual.respostas).length;
+  const pct=Math.round(resp/112*100);
+  document.getElementById('p2-progress-txt').textContent=`${resp} de 112 respondidos`;
+  document.getElementById('p2-pct').textContent=pct+'%';
+  document.getElementById('p2-bar').style.width=pct+'%';
+
+  let html='';
+  let subAtual='';
+  CBCL_ITENS.forEach(item=>{
+    // Título de subescala
+    const sub=Object.entries(CBCL_SUBESCALAS).find(([,itens])=>itens.includes(item.n));
+    if(sub&&sub[0]!==subAtual){
+      subAtual=sub[0];
+      html+=`<div class="secao-titulo">${subAtual}</div>`;
+    }
+    const r=apAtual.respostas[item.n];
+    const respondido=r!==undefined;
+    html+=`<div class="cbcl-item ${respondido?'respondido':''}" id="ci-${item.n}">
+      <div class="cbcl-item-header">
+        <div class="cbcl-num">${item.n}.</div>
+        <div style="flex:1;">
+          <div class="cbcl-texto">${item.texto}</div>
+          <div class="cbcl-opcoes">
+            <button class="cbcl-btn ${r===0?'sel-0':''}" onclick="respCbcl('${item.n}',0)">0<br><span style="font-size:.65rem">Falso</span></button>
+            <button class="cbcl-btn ${r===1?'sel-1':''}" onclick="respCbcl('${item.n}',1)">1<br><span style="font-size:.65rem">Às vezes</span></button>
+            <button class="cbcl-btn ${r===2?'sel-2':''}" onclick="respCbcl('${item.n}',2)">2<br><span style="font-size:.65rem">Frequente</span></button>
+          </div>
+          ${item.desc?`<div class="cbcl-desc" id="desc-${item.n}" style="${respondido&&r>0?'display:block':''}">
+            <textarea placeholder="Descreva..." rows="2" id="dtxt-${item.n}" onchange="apAtual.descricoes['${item.n}']=this.value">${apAtual.descricoes[item.n]||''}</textarea>
+          </div>`:''}
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('cbcl-itens').innerHTML=html;
+}
+
+function respCbcl(n,v){
+  const key=isNaN(n)?n:parseInt(n);
+  apAtual.respostas[key]=v;
+  // Mostra/oculta campo descrição
+  const desc=document.getElementById('desc-'+n);
+  if(desc)desc.style.display=v>0?'block':'none';
+  // Atualiza progresso
+  const resp=Object.keys(apAtual.respostas).length;
+  const pct=Math.round(resp/112*100);
+  document.getElementById('p2-progress-txt').textContent=`${resp} de 112 respondidos`;
+  document.getElementById('p2-pct').textContent=pct+'%';
+  document.getElementById('p2-bar').style.width=pct+'%';
+  // Marca item como respondido
+  const el=document.getElementById('ci-'+n);
+  if(el)el.classList.add('respondido');
+  // Atualiza botões
+  ['0','1','2'].forEach(val=>{
+    const btn=el?.querySelectorAll('.cbcl-btn')[parseInt(val)];
+    if(btn){btn.className=`cbcl-btn${v===parseInt(val)?' sel-'+val:''}`;}
+  });
+  // Auto scroll para próximo
+  const proxItem=CBCL_ITENS.find(i=>apAtual.respostas[i.n]===undefined);
+  if(proxItem){
+    const proxEl=document.getElementById('ci-'+proxItem.n);
+    if(proxEl){
+      const rect=proxEl.getBoundingClientRect();
+      if(rect.top>window.innerHeight-80)setTimeout(()=>proxEl.scrollIntoView({behavior:'smooth',block:'center'}),80);
+    }
+  }
+}
+
+function finalizarCbcl(){
+  const resp=Object.keys(apAtual.respostas).length;
+  if(resp<100){if(!confirm(`Ainda faltam ${112-resp} itens sem resposta. Deseja finalizar mesmo assim?`))return;}
+
+  // Calcula escores por subescala
+  const escores={};
+  Object.entries(CBCL_SUBESCALAS).forEach(([sub,itens])=>{
+    let score=0,max=itens.length*2;
+    itens.forEach(n=>{score+=(apAtual.respostas[n]||0);});
+    escores[sub]={score,max,pct:Math.round(score/max*100),classif:classificar(score,max)};
+  });
+
+  // Internalização
+  let intScore=0,intMax=0;
+  INTERNALIZ.forEach(s=>{intScore+=escores[s].score;intMax+=escores[s].max;});
+
+  // Externalização
+  let extScore=0,extMax=0;
+  EXTERNALIZ.forEach(s=>{extScore+=escores[s].score;extMax+=escores[s].max;});
+
+  // Total
+  let totalScore=Object.values(apAtual.respostas).reduce((a,v)=>a+(v||0),0);
+  let totalMax=112*2;
+
+  const ap={
+    id:uid(),
+    pacienteId:apAtual.pacienteId,
+    pacienteNome:apAtual.parte1.nome||apAtual.pacienteNome,
+    nascimento:apAtual.parte1.nasc||apAtual.nascimento,
+    sexo:apAtual.parte1.sexo,
+    idade:apAtual.parte1.idade,
+    informante:apAtual.parte1.informNome||'',
+    informGrau:apAtual.parte1.informGrau||'',
+    data:new Date().toISOString().slice(0,10),
+    parte1:{...apAtual.parte1},
+    respostas:{...apAtual.respostas},
+    descricoes:{...apAtual.descricoes},
+    escores,
+    internaliz:{score:intScore,max:intMax,classif:classificar(intScore,intMax)},
+    externaliz:{score:extScore,max:extMax,classif:classificar(extScore,extMax)},
+    total:{score:totalScore,max:totalMax,classif:classificar(totalScore,totalMax)},
+    classificacaoTotal:classificar(totalScore,totalMax),
+  };
+  cbclState.aplicacoes.push(ap);
+  salvarCbcl();
+  mostrarResultado(ap);
+}
+
+function mostrarResultado(ap){
+  const clMap={normal:'normal',limítrofe:'limítrofe',clínico:'clinico'};
+  const icMap={normal:'🟢',limítrofe:'🟡',clínico:'🔴'};
+  const corMap={normal:'var(--success)',limítrofe:'var(--accent3)',clínico:'var(--danger)'};
+
+  // Box principal
+  document.getElementById('cbcl-resultado-box').innerHTML=`
+    <div class="resultado-box ${clMap[ap.total.classif]||'normal'}">
+      <div style="font-size:2.5rem;margin-bottom:8px;">${icMap[ap.total.classif]||'🟢'}</div>
+      <div class="resultado-titulo">Escore Total — Faixa ${ap.total.classif.charAt(0).toUpperCase()+ap.total.classif.slice(1)}</div>
+      <div class="resultado-pontuacao">${ap.total.score}<span style="font-size:1.5rem;opacity:.5">/${ap.total.max}</span></div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:12px;">
+        Paciente: <strong>${ap.pacienteNome}</strong> · ${ap.sexo==='M'?'Masculino':'Feminino'} · ${ap.idade||'?'} anos · ${formatDate(ap.data)}<br>
+        Informante: ${ap.informante||'-'} (${ap.informGrau||'-'})
+      </div>
+    </div>
+    <div class="cards-row cols-2" style="margin-bottom:20px;">
+      <div class="stat-card" style="border-color:${corMap[ap.internaliz.classif]}33;">
+        <div class="label">Internalização</div>
+        <div class="value" style="color:${corMap[ap.internaliz.classif]}">${ap.internaliz.score}<span style="font-size:1rem;opacity:.5">/${ap.internaliz.max}</span></div>
+        <div class="sub">Ansiedade · Isolamento · Queixas somáticas</div>
+        <div style="margin-top:8px;"><span class="badge badge-${clMap[ap.internaliz.classif]}">${ap.internaliz.classif}</span></div>
+      </div>
+      <div class="stat-card" style="border-color:${corMap[ap.externaliz.classif]}33;">
+        <div class="label">Externalização</div>
+        <div class="value" style="color:${corMap[ap.externaliz.classif]}">${ap.externaliz.score}<span style="font-size:1rem;opacity:.5">/${ap.externaliz.max}</span></div>
+        <div class="sub">Transgressor · Agressivo</div>
+        <div style="margin-top:8px;"><span class="badge badge-${clMap[ap.externaliz.classif]}">${ap.externaliz.classif}</span></div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">📊 Perfil por Subescala</h3>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:20px;">
+      ${Object.entries(ap.escores).map(([sub,e])=>`
+        <div class="subescala-bar">
+          <div class="subescala-bar-label">
+            <span style="font-size:.85rem;color:var(--text);">${sub}</span>
+            <span style="font-size:.82rem;font-weight:600;color:${corMap[e.classif]}">${e.score}/${e.max} — ${e.classif}</span>
+          </div>
+          <div class="subescala-bar-track">
+            <div class="subescala-bar-fill" style="width:${e.pct}%;background:${e.classif==='clínico'?'var(--danger)':e.classif==='limítrofe'?'var(--accent3)':'var(--success)'}"></div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:10px;">📋 Interpretação Clínica</h3>
+    <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:.87rem;color:var(--text2);line-height:1.7;">
+      ${gerarInterpretacao(ap)}
+    </div>
+    <div style="background:rgba(42,184,154,.07);border:1px solid rgba(42,184,154,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--text3);line-height:1.6;">
+      ⚠️ O CBCL é um instrumento de <strong>rastreio</strong>, não de diagnóstico. Resultados na faixa clínica ou limítrofe indicam necessidade de avaliação mais detalhada. Achenbach &amp; Rescorla (2001) · Versão brasileira: Bordin, Paula &amp; Duarte — UNIFESP.
+    </div>`;
+
+  // Detalhe: itens com escore 1 ou 2
+  const itensAlterados=CBCL_ITENS.filter(i=>(ap.respostas[i.n]||0)>0).sort((a,b)=>(ap.respostas[b.n]||0)-(ap.respostas[a.n]||0));
+  document.getElementById('cbcl-resultado-detalhe').innerHTML=itensAlterados.length===0?'':`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Itens Pontuados (1 ou 2)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Nº</th><th>Subescala</th><th>Item</th><th style="text-align:center">Pontuação</th></tr></thead>
+      <tbody>${itensAlterados.map(item=>{
+        const r=ap.respostas[item.n];
+        const sub=Object.entries(CBCL_SUBESCALAS).find(([,itens])=>itens.includes(item.n));
+        return`<tr>
+          <td>${item.n}</td>
+          <td style="font-size:.78rem;">${sub?sub[0]:'-'}</td>
+          <td style="font-size:.82rem;">${item.texto}</td>
+          <td style="text-align:center;"><span class="badge ${r===2?'badge-clinico':'badge-limitrofe'}">${r===2?'2 — Frequente':'1 — Às vezes'}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+
+  window._cbclApAtual=ap;
+  showPage('resultado');
+}
+
+function gerarInterpretacao(ap){
+  const corMap={normal:'var(--success)',limítrofe:'var(--accent3)',clínico:'var(--danger)'};
+  let texto='';
+
+  // Total
+  if(ap.total.classif==='normal'){
+    texto+=`O escore total está na <strong>faixa normal</strong>, indicando que o número e intensidade de problemas de comportamento relatados pelo informante está dentro do esperado para a faixa etária. `;
+  } else if(ap.total.classif==='limítrofe'){
+    texto+=`O escore total está na <strong>faixa limítrofe</strong>, sugerindo presença de problemas de comportamento em número ou intensidade levemente acima do esperado. Recomenda-se monitoramento e reavaliação. `;
+  } else {
+    texto+=`O escore total está na <strong>faixa clínica</strong>, indicando presença significativa de problemas de comportamento. Recomenda-se avaliação clínica mais aprofundada. `;
+  }
+
+  // Internalização
+  if(ap.internaliz.classif!=='normal'){
+    texto+=`A <strong>Internalização</strong> encontra-se na faixa ${ap.internaliz.classif}, com destaque para problemas emocionais como ansiedade, retraimento social e queixas somáticas. `;
+  }
+
+  // Externalização
+  if(ap.externaliz.classif!=='normal'){
+    texto+=`A <strong>Externalização</strong> encontra-se na faixa ${ap.externaliz.classif}, sugerindo presença de comportamentos direcionados ao ambiente externo como agressividade e transgressão de regras. `;
+  }
+
+  // Subescalas clínicas
+  const subClinicas=Object.entries(ap.escores).filter(([,e])=>e.classif==='clínico').map(([s])=>s);
+  const subLimitrofes=Object.entries(ap.escores).filter(([,e])=>e.classif==='limítrofe').map(([s])=>s);
+  if(subClinicas.length>0) texto+=`Subescalas na <strong>faixa clínica</strong>: ${subClinicas.join(', ')}. `;
+  if(subLimitrofes.length>0) texto+=`Subescalas na <strong>faixa limítrofe</strong>: ${subLimitrofes.join(', ')}. `;
+
+  if(subClinicas.length===0&&subLimitrofes.length===0&&ap.total.classif==='normal'){
+    texto+=`Nenhuma subescala apresentou pontuação na faixa limítrofe ou clínica.`;
+  }
+
+  return texto;
+}
+
+// HISTÓRICO
+function renderHistItem(a){
+  const clMap={normal:'badge-normal',limítrofe:'badge-limitrofe',clínico:'badge-clinico'};
+  return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+    <div style="flex-shrink:0;"><div style="font-size:.68rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">CBCL</div></div>
+    <div class="historico-info"><h4>${a.pacienteNome}</h4><p>${a.sexo==='M'?'M':'F'} · ${a.idade||'?'} anos · Informante: ${a.informante||'-'}</p></div>
+    <div class="historico-data">
+      <div class="data">${formatDate(a.data)}</div>
+      <span class="badge ${clMap[a.classificacaoTotal]||'badge-normal'}">${a.classificacaoTotal}</span>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--accent);">${a.total?.score||0}</div>
+    </div>
+    <button class="btn btn-danger btn-sm" style="margin-left:8px;flex-shrink:0;" onclick="event.stopPropagation();deletarAp('${a.id}')">🗑</button>
+  </div>`;
+}
+function renderHistorico(){
+  const aps=[...cbclState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const clinico=aps.filter(a=>a.classificacaoTotal==='clínico').length;
+  const limitrofe=aps.filter(a=>a.classificacaoTotal==='limítrofe').length;
+  document.getElementById('hist-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">Faixa Clínica</div><div class="value" style="color:var(--danger)">${clinico}</div></div>
+    <div class="stat-card"><div class="label">Faixa Limítrofe</div><div class="value" style="color:var(--accent3)">${limitrofe}</div></div>`;
+  document.getElementById('hist-lista').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div style="font-size:3rem;opacity:.4;margin-bottom:12px;">📋</div><p>Nenhuma aplicação do CBCL ainda</p></div>'
+    :aps.map(a=>renderHistItem(a)).join('');
+}
+function verAplicacao(id){
+  const a=cbclState.aplicacoes.find(x=>x.id===id);
+  if(a)mostrarResultado(a);
+}
+function deletarAp(id){
+  if(!confirm('Remover esta aplicação?'))return;
+  cbclState.aplicacoes=cbclState.aplicacoes.filter(x=>x.id!==id);
+  salvarCbcl();renderHistorico();showToast('🗑 Removido');
+}
+
+// PDF
+function gerarPdfCbcl(){
+  const ap=window._cbclApAtual;if(!ap)return;
+  const corMap={normal:'#2a7a5a',limítrofe:'#a06000',clínico:'#c00'};
+  const bgMap={normal:'#f0fff4',limítrofe:'#fffbe6',clínico:'#fff0f0'};
+  const bdMap={normal:'#b7ebc7',limítrofe:'#ffe58f',clínico:'#ffcccc'};
+
+  // SVG barras subescalas
+  const barW=300,barH=16,gap=30;
+  const svgH=Object.keys(ap.escores).length*(barH+gap)+20;
+  let svgBars='';
+  Object.entries(ap.escores).forEach(([sub,e],i)=>{
+    const y=i*(barH+gap)+10;
+    const w=Math.round(barW*e.pct/100);
+    const cor=e.classif==='clínico'?'#ef4444':e.classif==='limítrofe'?'#f0b429':'#3fd4a0';
+    svgBars+=`<text x="0" y="${y+12}" font-size="10" font-family="Georgia" fill="#111">${sub}</text>
+    <rect x="0" y="${y+16}" width="${barW}" height="${barH}" rx="3" fill="#eee"/>
+    <rect x="0" y="${y+16}" width="${w}" height="${barH}" rx="3" fill="${cor}"/>
+    <text x="${barW+6}" y="${y+28}" font-size="9" font-family="Georgia" fill="${corMap[e.classif]||'#333'}" font-weight="bold">${e.score}/${e.max} — ${e.classif}</text>`;
+  });
+
+  // Itens pontuados
+  const itensAlterados=CBCL_ITENS.filter(i=>(ap.respostas[i.n]||0)>0).sort((a,b)=>(ap.respostas[b.n]||0)-(ap.respostas[a.n]||0));
+
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CBCL — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:28px 32px;color:#111;font-size:11px;}h1{font-size:18px;text-align:center;}h2{font-size:13px;margin-top:16px;background:#f5f5f5;padding:6px 10px;border-left:4px solid #2ab89a;}table{width:100%;border-collapse:collapse;margin-top:6px;}th{background:#f0f0f0;padding:5px 7px;font-size:10px;text-align:left;border:1px solid #ddd;}td{padding:4px 7px;font-size:10px;border:1px solid #eee;}@media print{button{display:none!important;}@page{margin:12mm;}}</style></head>
+  <body>
+  <h1>CBCL/6-18 — Child Behavior Checklist</h1>
+  <p style="text-align:center;font-size:10px;color:#666;margin-bottom:12px;">Achenbach &amp; Rescorla (2001) · Versão brasileira: Bordin, Paula &amp; Duarte — UNIFESP/EPM</p>
+
+  <table style="margin-bottom:12px;border:1px solid #ddd;background:#fafafa;">
+    <tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td><td><b>Sexo:</b> ${ap.sexo==='M'?'Masculino':'Feminino'}</td><td><b>Idade:</b> ${ap.idade||'?'} anos</td></tr>
+    <tr><td><b>Série:</b> ${ap.parte1?.serie||'-'}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante||'-'}</td><td><b>Parentesco:</b> ${ap.informGrau||'-'}</td></tr>
+    <tr><td colspan="4"><b>Profissional:</b> ${rodapeAssinatura()}</td></tr>
+  </table>
+
+  <h2>1. Resultado Geral</h2>
+  <table>
+    <thead><tr><th>Escala</th><th style="text-align:center">Escore</th><th style="text-align:center">Máximo</th><th style="text-align:center">%</th><th style="text-align:center">Classificação</th></tr></thead>
+    <tbody>
+    <tr style="background:#f9f9f9;font-weight:bold;"><td>ESCORE TOTAL</td><td style="text-align:center">${ap.total.score}</td><td style="text-align:center">${ap.total.max}</td><td style="text-align:center">${Math.round(ap.total.score/ap.total.max*100)}%</td><td style="text-align:center;color:${corMap[ap.total.classif]};font-weight:bold;">${ap.total.classif.toUpperCase()}</td></tr>
+    <tr><td>Internalização</td><td style="text-align:center">${ap.internaliz.score}</td><td style="text-align:center">${ap.internaliz.max}</td><td style="text-align:center">${Math.round(ap.internaliz.score/ap.internaliz.max*100)}%</td><td style="text-align:center;color:${corMap[ap.internaliz.classif]}">${ap.internaliz.classif}</td></tr>
+    <tr><td>Externalização</td><td style="text-align:center">${ap.externaliz.score}</td><td style="text-align:center">${ap.externaliz.max}</td><td style="text-align:center">${Math.round(ap.externaliz.score/ap.externaliz.max*100)}%</td><td style="text-align:center;color:${corMap[ap.externaliz.classif]}">${ap.externaliz.classif}</td></tr>
+    ${Object.entries(ap.escores).map(([sub,e])=>`<tr><td style="padding-left:16px;">${sub}</td><td style="text-align:center">${e.score}</td><td style="text-align:center">${e.max}</td><td style="text-align:center">${e.pct}%</td><td style="text-align:center;color:${corMap[e.classif]}">${e.classif}</td></tr>`).join('')}
+    </tbody>
+  </table>
+
+  <h2>2. Perfil Gráfico por Subescala</h2>
+  <svg width="550" height="${svgH}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;">${svgBars}</svg>
+  <div style="display:flex;gap:16px;font-size:9px;margin-top:6px;justify-content:center;">
+    <span>■ <span style="color:#3fd4a0">Normal</span></span>
+    <span>■ <span style="color:#f0b429">Limítrofe</span></span>
+    <span>■ <span style="color:#ef4444">Clínico</span></span>
+  </div>
+
+  <h2>3. Interpretação Clínica</h2>
+  <div style="background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px 12px;font-size:11px;line-height:1.7;">${gerarInterpretacao(ap).replace(/<strong>/g,'<b>').replace(/<\/strong>/g,'</b>')}</div>
+
+  ${itensAlterados.length>0?`<h2>4. Itens Pontuados</h2>
+  <table><thead><tr><th>Nº</th><th>Subescala</th><th>Item</th><th style="text-align:center">Pont.</th></tr></thead><tbody>
+  ${itensAlterados.map(item=>{
+    const r=ap.respostas[item.n];
+    const sub=Object.entries(CBCL_SUBESCALAS).find(([,itens])=>itens.includes(item.n));
+    return`<tr><td>${item.n}</td><td style="font-size:9px;">${sub?sub[0]:'-'}</td><td>${item.texto}${ap.descricoes[item.n]?` <i>(${ap.descricoes[item.n]})</i>`:''}</td><td style="text-align:center;font-weight:bold;color:${r===2?'#c00':'#a06000'}">${r}</td></tr>`;
+  }).join('')}</tbody></table>`:''}
+
+  <h2>5. Informações Complementares (Parte I)</h2>
+  <table><tbody>
+    <tr><td><b>Amigos íntimos:</b> ${['Nenhum','1','2 ou 3','4 ou mais'][ap.parte1?.amigos||0]}</td><td><b>Encontros semanais:</b> ${['< 1x','1-2x','3x ou mais'][ap.parte1?.encontros||0]}</td></tr>
+    <tr><td><b>Rel. com irmãos:</b> ${ap.parte1?.irmaos||'-'}</td><td><b>Rel. com crianças:</b> ${ap.parte1?.criancas||'-'}</td></tr>
+    <tr><td><b>Comportamento c/ pais:</b> ${ap.parte1?.pais||'-'}</td><td><b>Classe especial:</b> ${ap.parte1?.especial==='sim'?'Sim':'Não'}</td></tr>
+    ${ap.parte1?.preocupacoes?`<tr><td colspan="2"><b>Preocupações:</b> ${ap.parte1.preocupacoes}</td></tr>`:''}
+    ${ap.parte1?.qualidades?`<tr><td colspan="2"><b>Qualidades:</b> ${ap.parte1.qualidades}</td></tr>`:''}
+  </tbody></table>
+
+  <p style="margin-top:18px;font-size:9px;color:#999;text-align:center;border-top:1px solid #eee;padding-top:8px;">
+    CBCL/6-18 · ${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}
+  </p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);
+  win.document.close();
+}
+
+verificarSessao();
+</script>
+</body>
+</html>
