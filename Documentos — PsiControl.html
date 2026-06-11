@@ -473,6 +473,121 @@ const LOGOS = {
   }
 };
 
+// ===================== GERAR DECLARAÇÃO =====================
+function gerarDeclaracao() {
+  const pacSel = document.getElementById('dec-paciente');
+  const pacNome = pacSel.options[pacSel.selectedIndex]?.text || '';
+  const responsavel = document.getElementById('dec-responsavel').value.trim();
+  const data = document.getElementById('dec-data').value;
+  const horario = document.getElementById('dec-horario').value;
+  const duracao = document.getElementById('dec-duracao').value;
+  const tipo = document.getElementById('dec-tipo').value;
+  const clinicaId = document.getElementById('dec-clinica').value;
+  const obs = document.getElementById('dec-obs').value.trim();
+  const profNome = document.getElementById('dec-prof-nome').value.trim();
+  const profCrp = document.getElementById('dec-prof-crp').value.trim();
+  const cidade = document.getElementById('dec-cidade').value.trim();
+
+  if (!pacNome || pacNome === 'Selecione o paciente') { showToast('⚠️ Selecione um paciente.'); return; }
+  if (!data) { showToast('⚠️ Informe a data do atendimento.'); return; }
+  if (!profNome) { showToast('⚠️ Informe o nome do profissional.'); return; }
+
+  const clinicaInfo = getClinicaInfo(clinicaId);
+  const cab = cabecalhoHTML(clinicaInfo, profNome, profCrp, perfilProfissional.profissao || '');
+  const dataFmt = getMes(data);
+  const horFmt = horario ? ` às ${horario}h` : '';
+  const cidadeFmt = cidade || 'Maceió';
+
+  let corpo = `
+    <h2 style="text-align:center;font-size:15px;font-weight:bold;letter-spacing:1px;margin:28px 0 18px;text-transform:uppercase;">DECLARAÇÃO DE COMPARECIMENTO</h2>
+    <p style="font-size:12px;line-height:1.9;text-align:justify;">
+      Declaro para os devidos fins que o(a) paciente <strong>${pacNome}</strong>${responsavel ? ', representado(a) por <strong>' + responsavel + '</strong>,' : ''}
+      compareceu${horFmt ? ` no dia <strong>${dataFmt}</strong>${horFmt}` : ` no dia <strong>${dataFmt}</strong>`}
+      para <strong>${tipo}</strong>${clinicaInfo ? ' na ' + clinicaInfo.nome : ''},
+      com duração de <strong>${duracao}</strong>.
+    </p>
+    ${obs ? `<p style="font-size:12px;line-height:1.9;text-align:justify;margin-top:10px;"><strong>Obs:</strong> ${obs}</p>` : ''}
+    <p style="font-size:12px;line-height:1.9;margin-top:28px;">${cidadeFmt}, ${dataFmt}.</p>
+    <div style="margin-top:60px;text-align:center;">
+      <div style="width:260px;border-top:1.5px solid #333;margin:0 auto;padding-top:8px;">
+        <div style="font-size:12px;font-weight:bold;">${profNome}</div>
+        ${profCrp ? `<div style="font-size:11px;color:#555;">${profCrp}${perfilProfissional.profissao ? ' · ' + perfilProfissional.profissao : ''}</div>` : ''}
+      </div>
+    </div>
+  `;
+
+  abrirJanelaPDF(cab, corpo);
+}
+
+// ===================== GERAR ENCAMINHAMENTO =====================
+function gerarEncaminhamento() {
+  const pacSel = document.getElementById('enc-paciente');
+  const pacNome = pacSel.options[pacSel.selectedIndex]?.text || '';
+  const nascimento = document.getElementById('enc-nasc').value;
+  const responsavel = document.getElementById('enc-responsavel').value.trim();
+  const cid = document.getElementById('enc-cid').value.trim();
+  const encPara = document.getElementById('enc-para').value;
+  const especialidade = document.getElementById('enc-especialidade').value.trim();
+  const justificativa = document.getElementById('enc-justificativa').value.trim();
+  const clinicaId = document.getElementById('enc-clinica').value;
+  const data = document.getElementById('enc-data').value;
+  const profNome = document.getElementById('enc-prof-nome').value.trim();
+  const profCrp = document.getElementById('enc-prof-crp').value.trim();
+  const cidade = document.getElementById('enc-cidade').value.trim();
+
+  if (!pacNome || pacNome === 'Selecione o paciente') { showToast('⚠️ Selecione um paciente.'); return; }
+  if (!justificativa) { showToast('⚠️ Informe a justificativa clínica.'); return; }
+  if (!profNome) { showToast('⚠️ Informe o nome do profissional.'); return; }
+
+  const clinicaInfo = getClinicaInfo(clinicaId);
+  const cab = cabecalhoHTML(clinicaInfo, profNome, profCrp, perfilProfissional.profissao || '');
+  const dataFmt = data ? getMes(data) : getMes(new Date().toISOString().slice(0,10));
+  const cidadeFmt = cidade || 'Maceió';
+  const idadeTxt = nascimento ? `, ${calcIdade(nascimento)} anos` : '';
+
+  let corpo = `
+    <h2 style="text-align:center;font-size:15px;font-weight:bold;letter-spacing:1px;margin:28px 0 18px;text-transform:uppercase;">ENCAMINHAMENTO</h2>
+    <p style="font-size:12px;line-height:1.9;text-align:justify;">
+      Encaminho para avaliação e acompanhamento por <strong>${encPara}</strong>${especialidade ? ' — ' + especialidade : ''}, o(a) paciente
+      <strong>${pacNome}</strong>${idadeTxt}${responsavel ? ', responsável: <strong>' + responsavel + '</strong>' : ''}${cid ? ', diagnóstico/CID: <strong>' + cid + '</strong>' : ''}.
+    </p>
+    <p style="font-size:12px;line-height:1.9;text-align:justify;margin-top:14px;"><strong>Justificativa Clínica:</strong></p>
+    <p style="font-size:12px;line-height:1.9;text-align:justify;white-space:pre-wrap;">${justificativa}</p>
+    <p style="font-size:12px;line-height:1.9;margin-top:28px;">${cidadeFmt}, ${dataFmt}.</p>
+    <div style="margin-top:60px;text-align:center;">
+      <div style="width:260px;border-top:1.5px solid #333;margin:0 auto;padding-top:8px;">
+        <div style="font-size:12px;font-weight:bold;">${profNome}</div>
+        ${profCrp ? `<div style="font-size:11px;color:#555;">${profCrp}${perfilProfissional.profissao ? ' · ' + perfilProfissional.profissao : ''}</div>` : ''}
+      </div>
+    </div>
+  `;
+
+  abrirJanelaPDF(cab, corpo);
+}
+
+// ===================== ABRIR JANELA PDF =====================
+function abrirJanelaPDF(cabecalho, corpo) {
+  const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Documento</title>
+<style>
+  @media print { @page { margin: 20mm 15mm; } body { margin: 0; } }
+  body { font-family: 'Georgia', serif; margin: 30px 40px; color: #222; }
+</style>
+</head>
+<body>
+  ${cabecalho}
+  ${corpo}
+  <script>window.onload=function(){window.print();}<\/script>
+</body>
+</html>`;
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+  else { showToast('⚠️ Pop-up bloqueado. Permita pop-ups para este site.'); }
+}
+
 verificarSessao();
 </script>
 </body>
