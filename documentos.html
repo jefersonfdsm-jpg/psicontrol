@@ -243,9 +243,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <div class="form-section">
       <h4>Dados do Encaminhamento</h4>
       <div class="field-row cols-2">
-        <div class="field"><label>Encaminhar Para</label><select id="enc-para">
+        <div class="field"><label>Encaminhar Para</label><select id="enc-para" onchange="onEncParaChange()">
           <option>Neuropediatra</option>
+          <option>Psiquiatra</option>
           <option>Psiquiatra Infantil</option>
+          <option>Clínico Geral</option>
           <option>Fonoaudiólogo(a)</option>
           <option>Terapeuta Ocupacional</option>
           <option>Neurologista</option>
@@ -254,9 +256,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
           <option>Fisioterapeuta</option>
           <option>Oftalmologista</option>
           <option>Otorrinolaringologista</option>
-          <option>Outro profissional</option>
+          <option value="__outro__">Outro (especificar)</option>
         </select></div>
         <div class="field"><label>Especialidade / Serviço (detalhar)</label><input type="text" id="enc-especialidade" placeholder="Ex: Avaliação neurológica infantil"></div>
+      </div>
+      <div class="field-row" id="enc-outro-row" style="display:none;">
+        <div class="field"><label>Especifique o profissional</label><input type="text" id="enc-outro-texto" placeholder="Ex: Endocrinologista"></div>
       </div>
       <div class="field-row">
         <div class="field"><label>Justificativa Clínica</label>
@@ -271,9 +276,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 
     <div class="form-section">
       <h4>Dados do Profissional</h4>
-      <div class="field-row cols-3">
+      <div class="field-row cols-2">
         <div class="field"><label>Nome Completo</label><input type="text" id="enc-prof-nome" placeholder="Ex: Jeferson Fernandes da Silva Melo"></div>
         <div class="field"><label>Registro (CRP)</label><input type="text" id="enc-prof-crp" placeholder="Ex: CRP 19/12345"></div>
+      </div>
+      <div class="field-row cols-2">
+        <div class="field"><label>Profissão / Especialidade</label><input type="text" id="enc-prof-profissao" placeholder="Ex: Psicólogo Clínico, Neuropsicólogo"></div>
         <div class="field"><label>Cidade</label><input type="text" id="enc-cidade" placeholder="Ex: Maceió"></div>
       </div>
     </div>
@@ -515,24 +523,33 @@ function gerarDeclaracao() {
       </div>
     </div>
   `;
-
   abrirJanelaPDF(cab, corpo);
 }
 
 // ===================== GERAR ENCAMINHAMENTO =====================
+function onEncParaChange(){
+  const sel = document.getElementById('enc-para');
+  const row = document.getElementById('enc-outro-row');
+  if(row) row.style.display = sel.value === '__outro__' ? '' : 'none';
+}
+
 function gerarEncaminhamento() {
   const pacSel = document.getElementById('enc-paciente');
   const pacNome = pacSel.options[pacSel.selectedIndex]?.text || '';
   const nascimento = document.getElementById('enc-nasc').value;
   const responsavel = document.getElementById('enc-responsavel').value.trim();
   const cid = document.getElementById('enc-cid').value.trim();
-  const encPara = document.getElementById('enc-para').value;
+  const encParaSel = document.getElementById('enc-para');
+  const encPara = encParaSel.value === '__outro__'
+    ? (document.getElementById('enc-outro-texto').value.trim() || 'Profissional a especificar')
+    : encParaSel.value;
   const especialidade = document.getElementById('enc-especialidade').value.trim();
   const justificativa = document.getElementById('enc-justificativa').value.trim();
   const clinicaId = document.getElementById('enc-clinica').value;
   const data = document.getElementById('enc-data').value;
   const profNome = document.getElementById('enc-prof-nome').value.trim();
   const profCrp = document.getElementById('enc-prof-crp').value.trim();
+  const profProfissao = document.getElementById('enc-prof-profissao').value.trim();
   const cidade = document.getElementById('enc-cidade').value.trim();
 
   if (!pacNome || pacNome === 'Selecione o paciente') { showToast('⚠️ Selecione um paciente.'); return; }
@@ -540,7 +557,8 @@ function gerarEncaminhamento() {
   if (!profNome) { showToast('⚠️ Informe o nome do profissional.'); return; }
 
   const clinicaInfo = getClinicaInfo(clinicaId);
-  const cab = cabecalhoHTML(clinicaInfo, profNome, profCrp, perfilProfissional.profissao || '');
+  const profissaoFinal = profProfissao || perfilProfissional.profissao || '';
+  const cab = cabecalhoHTML(clinicaInfo, profNome, profCrp, profissaoFinal);
   const dataFmt = data ? getMes(data) : getMes(new Date().toISOString().slice(0,10));
   const cidadeFmt = cidade || 'Maceió';
   const idadeTxt = nascimento ? `, ${calcIdade(nascimento)} anos` : '';
@@ -557,11 +575,10 @@ function gerarEncaminhamento() {
     <div style="margin-top:60px;text-align:center;">
       <div style="width:260px;border-top:1.5px solid #333;margin:0 auto;padding-top:8px;">
         <div style="font-size:12px;font-weight:bold;">${profNome}</div>
-        ${profCrp ? `<div style="font-size:11px;color:#555;">${profCrp}${perfilProfissional.profissao ? ' · ' + perfilProfissional.profissao : ''}</div>` : ''}
+        ${profCrp ? `<div style="font-size:11px;color:#555;">${profCrp}${profissaoFinal ? ' · ' + profissaoFinal : ''}</div>` : ''}
       </div>
     </div>
   `;
-
   abrirJanelaPDF(cab, corpo);
 }
 
