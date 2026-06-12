@@ -517,7 +517,7 @@ const LOGOS = {
 
 // ===================== GERAR DECLARAÇÃO =====================
 function gerarDeclaracao() {
-  const pacSel = document.getElementById('dec-paciente');
+  try {
   const pacNome = pacSel.options[pacSel.selectedIndex]?.text || '';
   const responsavel = document.getElementById('dec-responsavel').value.trim();
   const data = document.getElementById('dec-data').value;
@@ -558,6 +558,7 @@ function gerarDeclaracao() {
     </div>
   `;
   abrirJanelaPDF(cab, corpo, 'declaracao', pacNome, data);
+  } catch(e) { alert('ERRO gerarDeclaracao: ' + e.message); }
 }
 
 function onEncParaChange(){
