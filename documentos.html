@@ -68,7 +68,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text3);margin-bottom:14px;}
 .breadcrumb .crumb{cursor:pointer;}
 .breadcrumb .crumb:hover{color:var(--accent);}
-#toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hist-item:hover{border-color:var(--accent);}
+.hist-badge{font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
+.hist-badge.declaracao{background:rgba(42,184,154,.15);color:var(--accent);}
+.hist-badge.encaminhamento{background:rgba(86,212,200,.15);color:var(--accent2);}
+.hist-actions{display:flex;gap:6px;flex-shrink:0;}
+bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;}
 #toast.show{opacity:1;transform:translateY(0);}
 #mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:calc(52px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding-left:16px;padding-right:16px;gap:12px;}
 #hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;padding:8px;min-width:44px;min-height:44px;}
@@ -122,6 +128,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     </div>
     <div class="nav-item" onclick="showPage('encaminhamento')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Encaminhamento
+    </div>
+    <div class="nav-item" onclick="showPage('historico')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Histórico
     </div>
   </div>
   <div class="sidebar-bottom">
@@ -295,6 +304,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     </div>
   </div>
 
+  <!-- HISTÓRICO -->
+  <div id="page-historico" class="page">
+    <div class="page-header"><div><h2>Histórico de Documentos</h2><p>Documentos gerados anteriormente</p></div></div>
+    <div id="historico-lista"><p style="color:var(--text3);font-size:.88rem;">Carregando...</p></div>
+  </div>
+
 </div>
 
 <div id="toast"></div>
@@ -452,6 +467,7 @@ function showPage(p){
   document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
   closeSidebar();
   const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+  if(p==='historico') carregarHistorico();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
@@ -523,10 +539,7 @@ function gerarDeclaracao() {
       </div>
     </div>
   `;
-  abrirJanelaPDF(cab, corpo);
-}
-
-// ===================== GERAR ENCAMINHAMENTO =====================
+  abrirJanelaPDF(cab, corpo, 'declaracao', pacNome, data);
 function onEncParaChange(){
   const sel = document.getElementById('enc-para');
   const row = document.getElementById('enc-outro-row');
@@ -579,11 +592,11 @@ function gerarEncaminhamento() {
       </div>
     </div>
   `;
-  abrirJanelaPDF(cab, corpo);
+  abrirJanelaPDF(cab, corpo, 'encaminhamento', pacNome, data);
 }
 
 // ===================== ABRIR JANELA PDF =====================
-function abrirJanelaPDF(cabecalho, corpo) {
+function abrirJanelaPDF(cabecalho, corpo, tipo, pacienteNome, dataDoc) {
   const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -607,6 +620,9 @@ function abrirJanelaPDF(cabecalho, corpo) {
 </body>
 </html>`;
 
+  // Salvar no histórico
+  salvarDocumento(tipo, pacienteNome, dataDoc, html);
+
   // Tenta abrir nova aba
   const w = window.open('', '_blank');
   if (w && !w.closed) {
@@ -626,6 +642,75 @@ function abrirJanelaPDF(cabecalho, corpo) {
   a.click();
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+// ===================== HISTÓRICO DE DOCUMENTOS =====================
+async function salvarDocumento(tipo, pacienteNome, dataDoc, htmlConteudo) {
+  if (!usuarioLogado) return;
+  try {
+    await sbFetch('documentos_gerados', {
+      method: 'POST',
+      body: JSON.stringify({
+        usuario_id: usuarioLogado.id,
+        tipo,
+        paciente_nome: pacienteNome,
+        data_documento: dataDoc || new Date().toISOString().slice(0,10),
+        html_conteudo: htmlConteudo
+      })
+    });
+  } catch(e) { console.error('Erro ao salvar documento:', e); }
+}
+
+async function carregarHistorico() {
+  const lista = document.getElementById('historico-lista');
+  lista.innerHTML = '<p style="color:var(--text3);font-size:.88rem;">Carregando...</p>';
+  try {
+    const docs = await sbFetch(`documentos_gerados?usuario_id=eq.${usuarioLogado.id}&order=created_at.desc`);
+    if (!docs || docs.length === 0) {
+      lista.innerHTML = '<p style="color:var(--text3);font-size:.88rem;">Nenhum documento gerado ainda.</p>';
+      return;
+    }
+    lista.innerHTML = docs.map(d => `
+      <div class="hist-item">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span class="hist-badge ${d.tipo}">${d.tipo === 'declaracao' ? 'Declaração' : 'Encaminhamento'}</span>
+            <span style="font-size:.82rem;color:var(--text2);">${d.paciente_nome}</span>
+          </div>
+          <div style="font-size:.75rem;color:var(--text3);">${d.data_documento ? new Date(d.data_documento+'T12:00:00').toLocaleDateString('pt-BR') : ''} · Gerado em ${new Date(d.created_at).toLocaleDateString('pt-BR')}</div>
+        </div>
+        <div class="hist-actions">
+          <button class="btn btn-outline btn-sm" onclick="reabrirDocumento('${d.id}')">📄 Abrir</button>
+          <button class="btn btn-sm" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);" onclick="excluirDocumento('${d.id}')">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    lista.innerHTML = '<p style="color:var(--danger);font-size:.88rem;">Erro ao carregar histórico.</p>';
+  }
+}
+
+async function reabrirDocumento(id) {
+  try {
+    const docs = await sbFetch(`documentos_gerados?id=eq.${id}`);
+    if (docs && docs[0]) {
+      const blob = new Blob([docs[0].html_conteudo], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }
+  } catch(e) { showToast('Erro ao abrir documento.'); }
+}
+
+async function excluirDocumento(id) {
+  if (!confirm('Excluir este documento?')) return;
+  try {
+    await sbFetch(`documentos_gerados?id=eq.${id}`, { method: 'DELETE' });
+    showToast('Documento excluído.');
+    carregarHistorico();
+  } catch(e) { showToast('Erro ao excluir.'); }
 }
 
 verificarSessao();
