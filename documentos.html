@@ -590,19 +590,42 @@ function abrirJanelaPDF(cabecalho, corpo) {
 <meta charset="UTF-8">
 <title>Documento</title>
 <style>
-  @media print { @page { margin: 20mm 15mm; } body { margin: 0; } }
+  @media print { @page { margin: 20mm 15mm; } body { margin: 0; } .no-print { display:none; } }
   body { font-family: 'Georgia', serif; margin: 30px 40px; color: #222; }
+  .no-print { position:fixed; top:16px; right:16px; z-index:999; display:flex; gap:8px; }
+  .btn-print { background:#2563eb; color:#fff; border:none; padding:10px 22px; border-radius:8px; font-size:14px; cursor:pointer; }
+  .btn-close { background:#e5e7eb; color:#333; border:none; padding:10px 22px; border-radius:8px; font-size:14px; cursor:pointer; }
 </style>
 </head>
 <body>
+  <div class="no-print">
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+    <button class="btn-close" onclick="window.close()">✕ Fechar</button>
+  </div>
   ${cabecalho}
   ${corpo}
-  <script>window.onload=function(){window.print();}<\/script>
 </body>
 </html>`;
+
+  // Tenta abrir nova aba
   const w = window.open('', '_blank');
-  if (w) { w.document.write(html); w.document.close(); }
-  else { showToast('⚠️ Pop-up bloqueado. Permita pop-ups para este site.'); }
+  if (w && !w.closed) {
+    w.document.write(html);
+    w.document.close();
+    return;
+  }
+
+  // Fallback: abre via blob URL (funciona no PWA)
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
 verificarSessao();
