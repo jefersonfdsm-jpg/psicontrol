@@ -893,6 +893,9 @@
       <div class="field"><label>Cor</label><input id="clinica-cor" type="color" value="#7c6af7" style="height:38px;padding:4px;"></div>
     </div>
     <div class="form-row"><div class="field"><label>Observações</label><textarea id="clinica-obs" placeholder="Informações adicionais..."></textarea></div></div>
+    <div class="form-row cols-2">
+      <div class="field"><label>% Repasse à Clínica</label><input id="clinica-repasse" type="number" min="0" max="100" step="0.1" placeholder="Ex: 30"></div>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModals()">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarClinica()">Salvar</button>
@@ -913,6 +916,7 @@
     </div>
     <div class="form-row"><div class="field"><label>Diagnóstico / Demanda</label><input id="pac-diag" type="text" placeholder="CID ou descrição"></div></div>
     <div class="form-row cols-2">
+      <div class="field"><label>Valor da Anamnese (R$)</label><input id="pac-valor-anam" type="number" min="0" step="0.01" placeholder="Ex: 250.00"></div>
       <div class="field"><label>Valor da Sessão (R$)</label><input id="pac-valor" type="number" min="0" step="0.01" placeholder="Ex: 150.00"></div>
       <div class="field"><label>Status</label>
         <select id="pac-status">
@@ -936,6 +940,12 @@
     <div class="form-row cols-2">
       <div class="field"><label>Data</label><input id="ses-data" type="date"></div>
       <div class="field"><label>Duração (min)</label><input id="ses-dur" type="number" value="50"></div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="field"><label>Tipo de Sessão</label><select id="ses-tipo">
+        <option value="sessao">Sessão Regular</option>
+        <option value="anamnese">Anamnese</option>
+      </select></div>
     </div>
     <div class="form-row cols-2">
       <div class="field"><label>Status</label>
@@ -1487,6 +1497,7 @@ function openModal(id){
   if(id==='modal-sessao'){
     document.getElementById('ses-data').value=today;
     document.getElementById('ses-dur').value=50;
+    document.getElementById('ses-tipo').value='sessao';
     document.getElementById('ses-status').value='realizada';
     document.getElementById('ses-cobr').value='pago';
     document.getElementById('ses-resumo').value='';
@@ -1514,8 +1525,9 @@ document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click
 // CLÍNICAS
 function salvarClinica(){
   const nome=document.getElementById('clinica-nome').value.trim();if(!nome){showToast('⚠️ Informe o nome');return;}
-  if(editingClinicaId){const c=state.clinicas.find(c=>c.id===editingClinicaId);if(c){c.nome=nome;c.end=document.getElementById('clinica-end').value;c.cor=document.getElementById('clinica-cor').value;c.obs=document.getElementById('clinica-obs').value;}}
-  else state.clinicas.push({id:uid(),nome,end:document.getElementById('clinica-end').value,cor:document.getElementById('clinica-cor').value,obs:document.getElementById('clinica-obs').value});
+  const repasse=parseFloat(document.getElementById('clinica-repasse').value)||0;
+  if(editingClinicaId){const c=state.clinicas.find(c=>c.id===editingClinicaId);if(c){c.nome=nome;c.end=document.getElementById('clinica-end').value;c.cor=document.getElementById('clinica-cor').value;c.obs=document.getElementById('clinica-obs').value;c.repasse=repasse;}}
+  else state.clinicas.push({id:uid(),nome,end:document.getElementById('clinica-end').value,cor:document.getElementById('clinica-cor').value,obs:document.getElementById('clinica-obs').value,repasse});
   closeModals();renderSidebarClinics();saveAll();if(editingClinicaId)renderClinicaPage();showToast('✅ Clínica salva!');
 }
 function editClinica(){
@@ -1523,6 +1535,7 @@ function editClinica(){
   document.getElementById('modal-clinica-title').textContent='Editar Clínica';
   document.getElementById('clinica-nome').value=c.nome;document.getElementById('clinica-end').value=c.end||'';
   document.getElementById('clinica-cor').value=c.cor||'#7c6af7';document.getElementById('clinica-obs').value=c.obs||'';
+  document.getElementById('clinica-repasse').value=c.repasse||'';
   openModal('modal-clinica');
 }
 function deleteClinica(){
@@ -1564,7 +1577,7 @@ function salvarPaciente(){
   const nome=document.getElementById('pac-nome').value.trim();if(!nome){showToast('⚠️ Informe o nome');return;}
   const modal=document.getElementById('modal-paciente');
   const editingId=modal.dataset.editing;
-  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
+  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,valorAnam:parseFloat(String(document.getElementById('pac-valor-anam').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
   if(editingId){
     const p=state.pacientes.find(x=>x.id===editingId);
     if(p) Object.assign(p,dados);
@@ -1573,7 +1586,7 @@ function salvarPaciente(){
     closeModals();renderPacientePage();renderSidebarClinics();saveAll();showToast('✅ Paciente atualizado!');
   } else {
     state.pacientes.push({id:uid(),clinicaId:currentClinicaId,...dados});
-    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-obs'].forEach(id=>document.getElementById(id).value='');
+    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-valor-anam','pac-obs'].forEach(id=>document.getElementById(id).value='');
     closeModals();renderPacientes();renderSidebarClinics();saveAll();showToast('✅ Paciente adicionado!');
   }
 }
@@ -1590,6 +1603,7 @@ function editPaciente(){
   document.getElementById('pac-email').value=p.email||'';
   document.getElementById('pac-diag').value=p.diag||'';
   document.getElementById('pac-valor').value=p.valor||'';
+  document.getElementById('pac-valor-anam').value=p.valorAnam||'';
   document.getElementById('pac-status').value=p.status||'ativo';
   document.getElementById('pac-obs').value=p.obs||'';
   // mark as editing
@@ -1686,6 +1700,7 @@ function editSessao(id){
   editingSessaoId=id;
   document.getElementById('ses-data').value=s.data||'';
   document.getElementById('ses-dur').value=s.dur||50;
+  document.getElementById('ses-tipo').value=s.tipo||'sessao';
   document.getElementById('ses-status').value=s.status||'realizada';
   document.getElementById('ses-cobr').value=s.cobr||'pago';
   document.getElementById('ses-resumo').value=s.resumo||'';
@@ -1696,19 +1711,29 @@ function editSessao(id){
 }
 function salvarSessao(){
   const data=document.getElementById('ses-data').value;if(!data){showToast('⚠️ Informe a data');return;}
-  const dados={data,dur:document.getElementById('ses-dur').value,status:document.getElementById('ses-status').value,cobr:document.getElementById('ses-cobr').value,resumo:document.getElementById('ses-resumo').value,prox:document.getElementById('ses-prox').value};
+  const tipo=document.getElementById('ses-tipo').value||'sessao';
+  const dados={data,dur:document.getElementById('ses-dur').value,tipo,status:document.getElementById('ses-status').value,cobr:document.getElementById('ses-cobr').value,resumo:document.getElementById('ses-resumo').value,prox:document.getElementById('ses-prox').value};
   const p=getPaciente(currentPacienteId);
-  // Converte valor corretamente — aceita "150", "150.00", "150,00"
-  const valorRaw=String(p?.valor||'0').replace(',','.');
-  const valorSessao=parseFloat(valorRaw)||0;
+  const c=p?getClinica(p.clinicaId):null;
+
+  // Determina valor conforme tipo
+  const valorSessao = tipo==='anamnese'
+    ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
+    : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
+
+  // Porcentagem de repasse da clínica
+  const repasse=parseFloat(c?.repasse)||0;
+  const valorRepasse=repasse>0 ? parseFloat((valorSessao * repasse / 100).toFixed(2)) : 0;
+  const valorLiquido=parseFloat((valorSessao - valorRepasse).toFixed(2));
 
   if(editingSessaoId){
     const s=state.sessoes.find(x=>x.id===editingSessaoId);
     const statusAnterior=s?.status; const cobrAnterior=s?.cobr;
     if(s) Object.assign(s,dados);
     if(dados.status==='realizada' && dados.cobr==='pago' && (statusAnterior!=='realizada'||cobrAnterior!=='pago') && valorSessao>0){
-      if(!state.financeiro.find(f=>f.sessaoId===editingSessaoId)){
-        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`Sessão – ${p?.nome||'Paciente'}`,valor:valorSessao,data,cat:'Sessão',auto:true});
+      if(!state.financeiro.find(f=>f.sessaoId===editingSessaoId&&f.auto&&f.tipo==='receita')){
+        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+        if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       }
     }
     if((dados.status!=='realizada'||dados.cobr!=='pago') && statusAnterior==='realizada' && cobrAnterior==='pago'){
@@ -1719,8 +1744,9 @@ function salvarSessao(){
     const novaId=uid();
     state.sessoes.push({id:novaId,pacienteId:currentPacienteId,...dados});
     if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao>0){
-      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`Sessão – ${p?.nome||'Paciente'}`,valor:valorSessao,data,cat:'Sessão',auto:true});
-      showToast(`✅ Sessão registrada! Receita de ${formatMoney(valorSessao)} lançada.`);
+      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+      if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
+      showToast(`✅ Sessão registrada! Receita líquida: ${formatMoney(valorLiquido)}${valorRepasse>0?' · Repasse '+formatMoney(valorRepasse):''}`);
     } else if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao===0){
       showToast('✅ Sessão registrada! (Defina o valor no cadastro do paciente para lançar receita automática)');
     } else {
