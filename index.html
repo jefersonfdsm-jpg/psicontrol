@@ -918,6 +918,7 @@
     <div class="form-row cols-2">
       <div class="field"><label>Valor da Anamnese (R$)</label><input id="pac-valor-anam" type="number" min="0" step="0.01" placeholder="Ex: 250.00"></div>
       <div class="field"><label>Valor da Sessão (R$)</label><input id="pac-valor" type="number" min="0" step="0.01" placeholder="Ex: 150.00"></div>
+      <div class="field"><label>Valor da Avaliação Neuropsicológica (R$)</label><input id="pac-valor-aval" type="number" min="0" step="0.01" placeholder="Ex: 800.00"></div>
       <div class="field"><label>Status</label>
         <select id="pac-status">
           <option value="ativo">Ativo</option>
@@ -945,6 +946,7 @@
       <div class="field"><label>Tipo de Sessão</label><select id="ses-tipo">
         <option value="sessao">Sessão Regular</option>
         <option value="anamnese">Anamnese</option>
+        <option value="avaliacao">Avaliação Neuropsicológica</option>
       </select></div>
     </div>
     <div class="form-row cols-2">
@@ -1577,7 +1579,7 @@ function salvarPaciente(){
   const nome=document.getElementById('pac-nome').value.trim();if(!nome){showToast('⚠️ Informe o nome');return;}
   const modal=document.getElementById('modal-paciente');
   const editingId=modal.dataset.editing;
-  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,valorAnam:parseFloat(String(document.getElementById('pac-valor-anam').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
+  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,valorAnam:parseFloat(String(document.getElementById('pac-valor-anam').value).replace(',','.'))||0,valorAval:parseFloat(String(document.getElementById('pac-valor-aval').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
   if(editingId){
     const p=state.pacientes.find(x=>x.id===editingId);
     if(p) Object.assign(p,dados);
@@ -1586,7 +1588,7 @@ function salvarPaciente(){
     closeModals();renderPacientePage();renderSidebarClinics();saveAll();showToast('✅ Paciente atualizado!');
   } else {
     state.pacientes.push({id:uid(),clinicaId:currentClinicaId,...dados});
-    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-valor-anam','pac-obs'].forEach(id=>document.getElementById(id).value='');
+    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-valor-anam','pac-valor-aval','pac-obs'].forEach(id=>document.getElementById(id).value='');
     closeModals();renderPacientes();renderSidebarClinics();saveAll();showToast('✅ Paciente adicionado!');
   }
 }
@@ -1604,6 +1606,7 @@ function editPaciente(){
   document.getElementById('pac-diag').value=p.diag||'';
   document.getElementById('pac-valor').value=p.valor||'';
   document.getElementById('pac-valor-anam').value=p.valorAnam||'';
+  document.getElementById('pac-valor-aval').value=p.valorAval||'';
   document.getElementById('pac-status').value=p.status||'ativo';
   document.getElementById('pac-obs').value=p.obs||'';
   // mark as editing
@@ -1719,6 +1722,8 @@ function salvarSessao(){
   // Determina valor conforme tipo
   const valorSessao = tipo==='anamnese'
     ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
+    : tipo==='avaliacao'
+    ? (parseFloat(String(p?.valorAval||'0').replace(',','.'))||0)
     : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
 
   // Porcentagem de repasse da clínica
@@ -1732,7 +1737,7 @@ function salvarSessao(){
     if(s) Object.assign(s,dados);
     if(dados.status==='realizada' && dados.cobr==='pago' && (statusAnterior!=='realizada'||cobrAnterior!=='pago') && valorSessao>0){
       if(!state.financeiro.find(f=>f.sessaoId===editingSessaoId&&f.auto&&f.tipo==='receita')){
-        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
         if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       }
     }
@@ -1744,7 +1749,7 @@ function salvarSessao(){
     const novaId=uid();
     state.sessoes.push({id:novaId,pacienteId:currentPacienteId,...dados});
     if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao>0){
-      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
       if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       showToast(`✅ Sessão registrada! Receita líquida: ${formatMoney(valorLiquido)}${valorRepasse>0?' · Repasse '+formatMoney(valorRepasse):''}`);
     } else if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao===0){

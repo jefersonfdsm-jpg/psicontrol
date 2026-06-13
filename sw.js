@@ -1,4 +1,4 @@
-const CACHE = 'psicontrol-v1';
+const CACHE = 'psicontrol-v3';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {
@@ -18,9 +18,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Deixa requisições ao Supabase passarem normalmente
   if(e.request.url.includes('supabase.co')) return;
-  
   e.respondWith(
     fetch(e.request)
       .then(res => {
