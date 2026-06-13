@@ -895,6 +895,7 @@
     <div class="form-row"><div class="field"><label>Observações</label><textarea id="clinica-obs" placeholder="Informações adicionais..."></textarea></div></div>
     <div class="form-row cols-2">
       <div class="field"><label>% Repasse à Clínica</label><input id="clinica-repasse" type="number" min="0" max="100" step="0.1" placeholder="Ex: 30"></div>
+      <div class="field"><label style="color:var(--text3);font-size:.75rem;">Ex: 30 = a clínica fica com 30% do valor da sessão</label></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModals()">Cancelar</button>
@@ -916,9 +917,11 @@
     </div>
     <div class="form-row"><div class="field"><label>Diagnóstico / Demanda</label><input id="pac-diag" type="text" placeholder="CID ou descrição"></div></div>
     <div class="form-row cols-2">
-      <div class="field"><label>Valor da Anamnese (R$)</label><input id="pac-valor-anam" type="number" min="0" step="0.01" placeholder="Ex: 250.00"></div>
-      <div class="field"><label>Valor da Sessão (R$)</label><input id="pac-valor" type="number" min="0" step="0.01" placeholder="Ex: 150.00"></div>
-      <div class="field"><label>Valor da Avaliação Neuropsicológica (R$)</label><input id="pac-valor-aval" type="number" min="0" step="0.01" placeholder="Ex: 800.00"></div>
+      <div class="field"><label>Sessão Regular (R$)</label><input id="pac-valor" type="number" min="0" step="0.01" placeholder="Ex: 150.00"></div>
+      <div class="field"><label>Anamnese (R$)</label><input id="pac-valor-anam" type="number" min="0" step="0.01" placeholder="Ex: 250.00"></div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="field"><label>Avaliação Neuropsicológica (R$)</label><input id="pac-valor-aval" type="number" min="0" step="0.01" placeholder="Ex: 800.00"></div>
       <div class="field"><label>Status</label>
         <select id="pac-status">
           <option value="ativo">Ativo</option>
@@ -946,7 +949,6 @@
       <div class="field"><label>Tipo de Sessão</label><select id="ses-tipo">
         <option value="sessao">Sessão Regular</option>
         <option value="anamnese">Anamnese</option>
-        <option value="avaliacao">Avaliação Neuropsicológica</option>
       </select></div>
     </div>
     <div class="form-row cols-2">
