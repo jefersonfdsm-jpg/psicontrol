@@ -518,6 +518,7 @@ const LOGOS = {
 // ===================== GERAR DECLARAÇÃO =====================
 function gerarDeclaracao() {
   try {
+  const pacSel = document.getElementById('dec-paciente');
   const pacNome = pacSel.options[pacSel.selectedIndex]?.text || '';
   const responsavel = document.getElementById('dec-responsavel').value.trim();
   const data = document.getElementById('dec-data').value;
