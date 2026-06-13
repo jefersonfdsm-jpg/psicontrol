@@ -663,6 +663,9 @@
     <button class="sb-btn" style="background:rgba(247,92,92,.08);border-color:rgba(247,92,92,.2);color:var(--danger);" onclick="fazerLogout()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sair
     </button>
+    <button class="sb-btn" style="background:rgba(100,100,100,.08);border-color:rgba(100,100,100,.2);color:var(--text2);" onclick="limparCache()">
+      🔄 Limpar Cache
+    </button>
     <div class="last-save" id="last-save-txt">Nenhum salvamento</div>
   </div>
 </div>
@@ -2634,9 +2637,36 @@ setInterval(saveAll, 300000);
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
     navigator.serviceWorker.register('/sw.js')
-      .then(r=>console.log('SW registrado'))
+      .then(r=>{
+        console.log('SW registrado');
+        // Detecta atualização do SW e recarrega automaticamente
+        r.addEventListener('updatefound', ()=>{
+          const newWorker = r.installing;
+          newWorker.addEventListener('statechange', ()=>{
+            if(newWorker.state==='activated'){
+              caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k))))
+                .then(()=>window.location.reload());
+            }
+          });
+        });
+      })
       .catch(e=>console.log('SW erro:', e));
   });
+}
+
+async function limparCache(){
+  try {
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for(let r of regs) await r.unregister();
+    }
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k=>caches.delete(k)));
+    showToast('✅ Cache limpo! Recarregando...');
+    setTimeout(()=>window.location.reload(true), 1000);
+  } catch(e) {
+    showToast('⚠️ Erro ao limpar cache');
+  }
 }
 </script>
 </body>
