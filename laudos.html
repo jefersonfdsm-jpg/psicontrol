@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080f0e">
+<title>Laudos — PsiControl</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080f0e;--surface:#0d1a18;--surface2:#122420;--border:#1e3d38;--accent:#2ab89a;--accent2:#56d4c8;--accent3:#f0b429;--danger:#ef4444;--success:#3fd4a0;--text:#e2f0ee;--text2:#7ab5ae;--text3:#3d7a72;--radius:12px;--sidebar:260px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
+#login-screen.hidden{display:none;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.login-psi{font-family:'DM Serif Display',serif;font-size:3rem;color:var(--accent);margin-bottom:4px;}
+.login-box h1{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--accent);margin-bottom:2px;}
+.login-box .sub{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;}
+.login-field{text-align:left;margin-bottom:14px;}
+.login-field label{display:block;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:.2s;}
+.login-field input:focus{border-color:var(--accent);}
+.login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;margin-top:8px;}
+.login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
+.back-link{font-size:.78rem;color:var(--text3);margin-top:14px;cursor:pointer;text-decoration:underline;}
+.back-link:hover{color:var(--accent2);}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;z-index:100;overflow-y:auto;}
+.logo{padding:22px 20px 14px;border-bottom:1px solid var(--border);}
+.logo h1{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--accent);}
+.logo span{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
+.logo .user-name{font-size:.8rem;color:var(--text2);margin-top:4px;}
+.nav-section{padding:12px 12px 4px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:.87rem;color:var(--text2);transition:.2s;border:1px solid transparent;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.nav-item .icon{width:20px;text-align:center;flex-shrink:0;}
+.sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
+.sb-btn{width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid;}
+
+/* MAIN */
+#main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;padding:28px 32px;}
+.page{display:none;animation:fadeUp .3s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-header h2{font-family:'DM Serif Display',serif;font-size:1.8rem;}
+.page-header p{color:var(--text2);font-size:.88rem;margin-top:2px;}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#1fa085;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+
+/* CARDS */
+.cards-row{display:grid;gap:16px;margin-bottom:24px;}
+.cards-row.cols-3{grid-template-columns:repeat(3,1fr);}
+.cards-row.cols-2{grid-template-columns:repeat(2,1fr);}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.stat-card .label{font-size:.73rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.stat-card .value{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--text);}
+.stat-card .sub{font-size:.78rem;color:var(--text2);margin-top:4px;}
+
+/* LAUDO LIST */
+.laudo-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:.2s;}
+.laudo-item:hover{border-color:var(--accent);}
+.laudo-info h4{font-size:.95rem;font-weight:600;margin-bottom:4px;}
+.laudo-info p{font-size:.78rem;color:var(--text2);}
+.laudo-badge{font-size:.68rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;}
+.badge-rascunho{background:rgba(240,180,41,.15);color:var(--accent3);}
+.badge-finalizado{background:rgba(42,184,154,.15);color:var(--accent);}
+
+/* EDITOR */
+.editor-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.editor-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.editor-nav-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;font-size:.8rem;transition:.2s;}
+.editor-nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.editor-nav-btn.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.secao{display:none;}
+.secao.active{display:block;}
+.secao-titulo{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--accent);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+/* FORM */
+.form-row{margin-bottom:16px;}
+.form-row.cols-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-row.cols-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.field label{display:block;font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:.9rem;outline:none;transition:.2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:120px;line-height:1.6;}
+.field textarea.grande{min-height:200px;}
+.field textarea.enorme{min-height:300px;}
+
+/* PROCEDIMENTOS */
+.proc-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;}
+.proc-num{background:var(--accent);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.proc-info{flex:1;}
+.proc-sessao{font-size:.72rem;color:var(--text3);margin-bottom:3px;}
+.proc-desc{font-size:.88rem;color:var(--text);}
+
+/* ESCALAS */
+.escala-disponivel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.escala-disponivel .escala-nome{font-size:.88rem;color:var(--text);}
+.escala-disponivel .escala-data{font-size:.75rem;color:var(--text3);}
+.escala-incluida{border-color:rgba(42,184,154,.4);background:rgba(42,184,154,.05);}
+
+/* ANÁLISE */
+.dominio-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
+.dominio-titulo{font-size:.88rem;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+.tabela-resultado{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:.83rem;}
+.tabela-resultado th{background:var(--surface2);padding:8px 12px;text-align:left;font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+.tabela-resultado td{padding:8px 12px;border-bottom:1px solid rgba(30,61,56,.4);color:var(--text2);}
+.tabela-resultado tr:last-child td{border-bottom:none;}
+.add-linha-btn{font-size:.78rem;color:var(--accent);cursor:pointer;background:none;border:none;padding:4px 0;font-family:inherit;display:flex;align-items:center;gap:4px;}
+.add-linha-btn:hover{color:var(--accent2);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+
+/* BREADCRUMB */
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:.82rem;color:var(--text3);}
+.crumb{cursor:pointer;color:var(--accent);transition:.2s;}
+.crumb:hover{color:var(--accent2);}
+
+/* MOBILE */
+#mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding:0 16px;gap:12px;}
+#hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;padding:8px;}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
+#sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);transition:.3s;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0;padding:72px 16px 24px;}
+  #mobile-topbar{display:flex;}
+  .form-row.cols-2,.form-row.cols-3{grid-template-columns:1fr;}
+  .cards-row.cols-3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-psi">Ψ</div>
+    <h1>PsiControl</h1>
+    <div class="sub">Laudos Psicológicos</div>
+    <div class="login-field"><label>Email / Usuário</label><input type="text" id="login-email" placeholder="Digite seu email"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="login-senha" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="back-link" onclick="window.location.href='index.html'">← Voltar ao PsiControl</div>
+  </div>
+</div>
+
+<!-- MOBILE TOPBAR -->
+<div id="mobile-topbar">
+  <button id="hamburger" onclick="toggleSidebar()">☰</button>
+  <span style="font-family:'DM Serif Display',serif;color:var(--accent);font-size:1.1rem;">Laudos</span>
+</div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="logo">
+    <h1>Laudos</h1>
+    <span>PsiControl</span>
+    <div class="user-name" id="user-nome-sidebar"></div>
+  </div>
+  <div class="nav-section">Menu</div>
+  <div class="nav-item active" onclick="showPage('home')">
+    <span class="icon">🏠</span> Início
+  </div>
+  <div class="nav-item" onclick="showPage('laudos')">
+    <span class="icon">📋</span> Meus Laudos
+  </div>
+  <div class="nav-item" onclick="novoLaudo()">
+    <span class="icon">✏️</span> Novo Laudo
+  </div>
+  <div class="sidebar-bottom">
+    <button class="sb-btn" style="background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);" onclick="window.location.href='index.html'">
+      ← Ir ao PsiControl
+    </button>
+    <button class="sb-btn" style="background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--danger);" onclick="fazerLogout()">
+      ⎋ Sair
+    </button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- HOME -->
+  <div id="page-home" class="page active">
+    <div class="page-header">
+      <div><h2>Bem-vindo 👋</h2><p>Módulo de Laudos Psicológicos</p></div>
+      <button class="btn btn-primary" onclick="novoLaudo()">+ Novo Laudo</button>
+    </div>
+    <div class="cards-row cols-3" id="home-stats"></div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:14px;">Laudos Recentes</h3>
+    <div id="home-recentes"></div>
+  </div>
+
+  <!-- LISTA DE LAUDOS -->
+  <div id="page-laudos" class="page">
+    <div class="page-header">
+      <div><h2>Meus Laudos</h2><p>Todos os laudos elaborados</p></div>
+      <button class="btn btn-primary" onclick="novoLaudo()">+ Novo Laudo</button>
+    </div>
+    <div id="laudos-lista"></div>
+  </div>
+
+  <!-- EDITOR DE LAUDO -->
+  <div id="page-editor" class="page">
+    <div class="breadcrumb">
+      <span class="crumb" onclick="showPage('laudos')">Laudos</span>
+      <span>›</span>
+      <span id="editor-breadcrumb" style="color:var(--text2)">Novo Laudo</span>
+    </div>
+    <div class="editor-header">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;" id="editor-titulo-header">Novo Laudo</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:3px;" id="editor-sub-header">Rascunho</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="salvarLaudo()">💾 Salvar</button>
+        <button class="btn btn-primary btn-sm" onclick="gerarPdfLaudo()">📄 Gerar PDF</button>
+        <button class="btn btn-outline btn-sm" onclick="showPage('laudos')">Fechar</button>
+      </div>
+    </div>
+
+    <!-- NAVEGAÇÃO POR SEÇÕES -->
+    <div class="editor-nav">
+      <button class="editor-nav-btn active" onclick="mostrarSecao('identificacao')">1. Identificação</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('demanda')">2. Demanda</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('procedimentos')">3. Procedimentos</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('referencial')">4. Referencial</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('analise')">5. Análise</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('conclusao')">6. Conclusão</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('encaminhamentos')">7. Encaminhamentos</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('referencias')">8. Referências</button>
+      <button class="editor-nav-btn" onclick="mostrarSecao('escalas')">📊 Escalas</button>
+    </div>
+
+    <!-- SEÇÃO 1: IDENTIFICAÇÃO -->
+    <div id="secao-identificacao" class="secao active">
+      <div class="secao-titulo">1 — Identificação</div>
+      <div class="form-row cols-2">
+        <div class="field"><label>Paciente</label><select id="id-paciente" onchange="onPacienteSelect()"><option value="">Selecione o paciente</option></select></div>
+        <div class="field"><label>Data do Laudo</label><input type="date" id="id-data"></div>
+      </div>
+      <div class="form-row cols-3">
+        <div class="field"><label>Data de Nascimento</label><input type="date" id="id-nasc"></div>
+        <div class="field"><label>Idade</label><input type="text" id="id-idade" placeholder="Ex: 10 anos"></div>
+        <div class="field"><label>Sexo</label><select id="id-sexo"><option value="">Selecione</option><option>Masculino</option><option>Feminino</option></select></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="field"><label>Responsável</label><input type="text" id="id-responsavel" placeholder="Nome do responsável"></div>
+        <div class="field"><label>Escolaridade</label><input type="text" id="id-escolaridade" placeholder="Ex: Ensino Fundamental II"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="field"><label>Cidade / Estado</label><input type="text" id="id-cidade" placeholder="Ex: Piranhas — AL"></div>
+        <div class="field"><label>Período da Avaliação</label><input type="text" id="id-periodo" placeholder="Ex: De Março a Maio de 2025"></div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="field"><label>Interessado / Solicitante</label><input type="text" id="id-interessado" placeholder="Ex: Neurologista (Dr. Silva)"></div>
+        <div class="field"><label>Finalidade</label><input type="text" id="id-finalidade" placeholder="Ex: Avaliação para fins diagnósticos"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Clínica / Local</label><select id="id-clinica"><option value="">Selecione a clínica</option></select></div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 2: DEMANDA -->
+    <div id="secao-demanda" class="secao">
+      <div class="secao-titulo">2 — Descrição da Demanda</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Motivo da avaliação / História clínica</label>
+          <textarea id="dem-texto" class="enorme" placeholder="Descreva o motivo da avaliação, histórico clínico relevante, queixas principais, contexto familiar e escolar..."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Condições observadas durante as sessões</label>
+          <textarea id="dem-condicoes" class="grande" placeholder="Descreva o comportamento do paciente durante as sessões de avaliação, apresentação, cooperação, nível de consciência, orientação..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 3: PROCEDIMENTOS -->
+    <div id="secao-procedimentos" class="secao">
+      <div class="secao-titulo">3 — Procedimentos Realizados</div>
+      <div id="proc-lista"></div>
+      <button class="btn btn-outline btn-sm" onclick="adicionarProcedimento()" style="margin-top:8px;">+ Adicionar Sessão</button>
+      <div style="margin-top:20px;padding:14px;background:rgba(42,184,154,.05);border:1px solid rgba(42,184,154,.2);border-radius:8px;font-size:.82rem;color:var(--text2);">
+        ℹ️ Liste as sessões e instrumentos utilizados na avaliação. Instrumentos de uso restrito ao psicólogo devem ser identificados adequadamente conforme CFP.
+      </div>
+    </div>
+
+    <!-- SEÇÃO 4: REFERENCIAL -->
+    <div id="secao-referencial" class="secao">
+      <div class="secao-titulo">4 — Referencial Teórico Metodológico</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Referencial teórico e metodologia de interpretação</label>
+          <textarea id="ref-texto" class="enorme" placeholder="Descreva o embasamento teórico utilizado, método de interpretação dos resultados, tabela de classificação de percentis, etc."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-outline btn-sm" onclick="inserirReferencialPadrao()">↓ Inserir referencial padrão (Luria / Z-score)</button>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 5: ANÁLISE -->
+    <div id="secao-analise" class="secao">
+      <div class="secao-titulo">5 — Análise</div>
+
+      <!-- 5.1 ENTREVISTA -->
+      <div class="dominio-card">
+        <div class="dominio-titulo">5.1 Relato da Entrevista</div>
+        <div class="form-row">
+          <div class="field">
+            <label>A) História Clínica</label>
+            <textarea id="an-historia" class="grande" placeholder="Descreva a história clínica relatada na entrevista inicial..."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>B) Condições averiguadas durante as sessões</label>
+            <textarea id="an-condicoes" class="grande" placeholder="Comportamento, apresentação, cooperação, orientação, contato visual, linguagem..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOMÍNIOS DINÂMICOS -->
+      <div id="dominios-lista"></div>
+      <button class="btn btn-outline btn-sm" onclick="adicionarDominio()" style="margin-bottom:20px;">+ Adicionar Domínio de Análise</button>
+    </div>
+
+    <!-- SEÇÃO 6: CONCLUSÃO -->
+    <div id="secao-conclusao" class="secao">
+      <div class="secao-titulo">6 — Conclusão</div>
+      <div class="form-row">
+        <div class="field">
+          <textarea id="con-texto" class="enorme" placeholder="Síntese integrada dos achados, impressão diagnóstica, prognóstico e considerações finais..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 7: ENCAMINHAMENTOS -->
+    <div id="secao-encaminhamentos" class="secao">
+      <div class="secao-titulo">7 — Encaminhamentos</div>
+      <div class="form-row">
+        <div class="field">
+          <textarea id="enc-texto" class="grande" placeholder="Ex: Médico neurologista; Psicólogo; Terapia Ocupacional; Fonoaudiólogo..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 8: REFERÊNCIAS -->
+    <div id="secao-referencias" class="secao">
+      <div class="secao-titulo">8 — Referências Bibliográficas</div>
+      <div class="form-row">
+        <div class="field">
+          <textarea id="ref-bib" class="enorme" placeholder="Liste as referências em formato ABNT..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESCALAS -->
+    <div id="secao-escalas" class="secao">
+      <div class="secao-titulo">📊 Escalas Aplicadas</div>
+      <p style="font-size:.85rem;color:var(--text2);margin-bottom:18px;">Selecione as escalas já aplicadas para este paciente que devem compor o laudo.</p>
+      <div id="escalas-disponiveis"></div>
+      <div id="sem-escalas" style="display:none;padding:20px;text-align:center;color:var(--text3);font-size:.85rem;">
+        Nenhuma escala aplicada para este paciente ainda.
+      </div>
+    </div>
+
+  </div><!-- fim page-editor -->
+
+</div><!-- fim main -->
+
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://nntvdmunpudovuiwrccz.supabase.co';
+const SB_KEY='sb_publishable_Z5XoCu4LUyMZjnMPCUZ1wg_IgphMzcf';
+
+let usuarioLogado=null;
+let laudoAtual=null;
+let procedimentos=[];
+let dominios=[];
+let pacientes=[];
+let clinicas=[];
+let escalasAplicadas=[];
+
+async function sbFetch(path,opts={}){
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{...opts,headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
+  if(!r.ok)throw new Error(await r.text());
+  const txt=await r.text();
+  return txt?JSON.parse(txt):null;
+}
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+  closeSidebar();
+  if(p==='laudos')carregarLaudos();
+  if(p==='home')carregarHome();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
+function mostrarSecao(s){
+  document.querySelectorAll('.secao').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.editor-nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('secao-'+s).classList.add('active');
+  event.target.classList.add('active');
+  if(s==='escalas')carregarEscalasPaciente();
+}
+
+// ===================== AUTH =====================
+async function fazerLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const senha=document.getElementById('login-senha').value;
+  document.getElementById('login-error').textContent='';
+  try {
+    const r=await fetch(`${SB_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({email,password:senha})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error_description||'Erro ao entrar');
+    const users=await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}`);
+    const u=users?.[0];
+    if(!u){throw new Error('Usuário não encontrado');}
+    if(!u.acesso_laudos && u.email!=='admin'){throw new Error('Você não tem acesso ao módulo de laudos. Solicite ao administrador.');}
+    usuarioLogado={id:u.id,nome:u.nome,email:u.email};
+    document.getElementById('user-nome-sidebar').textContent=u.nome;
+    document.getElementById('login-screen').classList.add('hidden');
+    await carregarDados();
+    carregarHome();
+  } catch(e){document.getElementById('login-error').textContent=e.message;}
+}
+
+function fazerLogout(){usuarioLogado=null;document.getElementById('login-screen').classList.remove('hidden');}
+
+async function verificarSessao(){
+  try {
+    const email=localStorage.getItem('psi_email');
+    const senha=localStorage.getItem('psi_senha');
+    if(email&&senha){
+      document.getElementById('login-email').value=email;
+      document.getElementById('login-senha').value=senha;
+      await fazerLogin();
+    }
+  } catch(e){}
+}
+
+// ===================== DADOS =====================
+async function carregarDados(){
+  try {
+    // Carrega pacientes e clínicas do localStorage do PsiControl
+    const state=JSON.parse(localStorage.getItem('psicontrol_state')||'{}');
+    pacientes=state.pacientes||[];
+    clinicas=state.clinicas||[];
+
+    // Preenche selects
+    const selPac=document.getElementById('id-paciente');
+    selPac.innerHTML='<option value="">Selecione o paciente</option>';
+    pacientes.forEach(p=>selPac.innerHTML+=`<option value="${p.id}">${p.nome}</option>`);
+
+    const selClin=document.getElementById('id-clinica');
+    selClin.innerHTML='<option value="">Selecione a clínica</option>';
+    clinicas.forEach(c=>selClin.innerHTML+=`<option value="${c.id}">${c.nome}</option>`);
+  } catch(e){console.error(e);}
+}
+
+// ===================== HOME =====================
+async function carregarHome(){
+  try {
+    const laudos=await sbFetch(`laudos?usuario_id=eq.${usuarioLogado.id}&order=created_at.desc`)||[];
+    const total=laudos.length;
+    const finalizados=laudos.filter(l=>l.status==='finalizado').length;
+    const rascunhos=laudos.filter(l=>l.status==='rascunho').length;
+
+    document.getElementById('home-stats').innerHTML=`
+      <div class="stat-card"><div class="label">Total</div><div class="value">${total}</div><div class="sub">laudos</div></div>
+      <div class="stat-card"><div class="label">Finalizados</div><div class="value" style="color:var(--accent)">${finalizados}</div></div>
+      <div class="stat-card"><div class="label">Rascunhos</div><div class="value" style="color:var(--accent3)">${rascunhos}</div></div>
+    `;
+
+    const recentes=laudos.slice(0,5);
+    document.getElementById('home-recentes').innerHTML=recentes.length
+      ? recentes.map(l=>laudoItemHTML(l)).join('')
+      : '<p style="color:var(--text3);font-size:.85rem;">Nenhum laudo ainda. Clique em "+ Novo Laudo" para começar.</p>';
+  } catch(e){console.error(e);}
+}
+
+// ===================== LAUDOS =====================
+async function carregarLaudos(){
+  try {
+    const laudos=await sbFetch(`laudos?usuario_id=eq.${usuarioLogado.id}&order=updated_at.desc`)||[];
+    document.getElementById('laudos-lista').innerHTML=laudos.length
+      ? laudos.map(l=>laudoItemHTML(l)).join('')
+      : '<p style="color:var(--text3);font-size:.85rem;">Nenhum laudo ainda.</p>';
+  } catch(e){console.error(e);}
+}
+
+function laudoItemHTML(l){
+  const data=l.data_laudo?new Date(l.data_laudo+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+  const badge=l.status==='finalizado'?'badge-finalizado':'badge-rascunho';
+  const badgeTxt=l.status==='finalizado'?'Finalizado':'Rascunho';
+  return `<div class="laudo-item" onclick="abrirLaudo('${l.id}')">
+    <div class="laudo-info">
+      <h4>${l.paciente_nome}</h4>
+      <p>${data} · ${l.identificacao?.finalidade||'Avaliação Neuropsicológica'}</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="laudo-badge ${badge}">${badgeTxt}</span>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();excluirLaudo('${l.id}')">🗑️</button>
+    </div>
+  </div>`;
+}
+
+// ===================== EDITOR =====================
+function novoLaudo(){
+  laudoAtual=null;
+  procedimentos=[{id:uid(),sessao:'01',descricao:'Entrevista de anamnese / acolhimento.'}];
+  dominios=[];
+  limparEditor();
+  document.getElementById('id-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('editor-breadcrumb').textContent='Novo Laudo';
+  document.getElementById('editor-titulo-header').textContent='Novo Laudo';
+  document.getElementById('editor-sub-header').textContent='Rascunho';
+  renderProcedimentos();
+  renderDominios();
+  mostrarSecao('identificacao');
+  document.querySelector('.editor-nav-btn').classList.add('active');
+  showPage('editor');
+}
+
+async function abrirLaudo(id){
+  try {
+    const laudos=await sbFetch(`laudos?id=eq.${id}`);
+    const l=laudos?.[0];if(!l)return;
+    laudoAtual=l;
+    procedimentos=l.procedimentos||[];
+    dominios=l.analise?.dominios||[];
+    preencherEditor(l);
+    document.getElementById('editor-breadcrumb').textContent=l.paciente_nome;
+    document.getElementById('editor-titulo-header').textContent=l.paciente_nome;
+    document.getElementById('editor-sub-header').textContent=l.status==='finalizado'?'Finalizado':'Rascunho';
+    renderProcedimentos();
+    renderDominios();
+    showPage('editor');
+  } catch(e){showToast('Erro ao abrir laudo.');}
+}
+
+function limparEditor(){
+  ['id-nasc','id-idade','id-responsavel','id-escolaridade','id-cidade','id-periodo','id-interessado','id-finalidade','dem-texto','dem-condicoes','ref-texto','an-historia','an-condicoes','con-texto','enc-texto','ref-bib'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('id-paciente').value='';
+  document.getElementById('id-sexo').value='';
+  document.getElementById('id-clinica').value='';
+}
+
+function preencherEditor(l){
+  const id=l.identificacao||{};
+  document.getElementById('id-paciente').value=id.pacienteId||'';
+  document.getElementById('id-data').value=l.data_laudo||'';
+  document.getElementById('id-nasc').value=id.nasc||'';
+  document.getElementById('id-idade').value=id.idade||'';
+  document.getElementById('id-sexo').value=id.sexo||'';
+  document.getElementById('id-responsavel').value=id.responsavel||'';
+  document.getElementById('id-escolaridade').value=id.escolaridade||'';
+  document.getElementById('id-cidade').value=id.cidade||'';
+  document.getElementById('id-periodo').value=id.periodo||'';
+  document.getElementById('id-interessado').value=id.interessado||'';
+  document.getElementById('id-finalidade').value=id.finalidade||'';
+  document.getElementById('id-clinica').value=id.clinicaId||'';
+  document.getElementById('dem-texto').value=l.descricao_demanda||'';
+  document.getElementById('dem-condicoes').value=l.analise?.condicoes||'';
+  document.getElementById('ref-texto').value=l.referencial_teorico||'';
+  document.getElementById('an-historia').value=l.analise?.historia||'';
+  document.getElementById('an-condicoes').value=l.analise?.condicoes_sessao||'';
+  document.getElementById('con-texto').value=l.conclusao||'';
+  document.getElementById('enc-texto').value=l.encaminhamentos||'';
+  document.getElementById('ref-bib').value=l.referencias||'';
+}
+
+function coletarDados(){
+  const pacId=document.getElementById('id-paciente').value;
+  const pac=pacientes.find(p=>p.id===pacId);
+  return {
+    usuario_id:usuarioLogado.id,
+    paciente_id:pacId,
+    paciente_nome:pac?.nome||document.getElementById('editor-titulo-header').textContent,
+    data_laudo:document.getElementById('id-data').value||new Date().toISOString().slice(0,10),
+    status:laudoAtual?.status||'rascunho',
+    identificacao:{
+      pacienteId:pacId,
+      nasc:document.getElementById('id-nasc').value,
+      idade:document.getElementById('id-idade').value,
+      sexo:document.getElementById('id-sexo').value,
+      responsavel:document.getElementById('id-responsavel').value,
+      escolaridade:document.getElementById('id-escolaridade').value,
+      cidade:document.getElementById('id-cidade').value,
+      periodo:document.getElementById('id-periodo').value,
+      interessado:document.getElementById('id-interessado').value,
+      finalidade:document.getElementById('id-finalidade').value,
+      clinicaId:document.getElementById('id-clinica').value,
+    },
+    descricao_demanda:document.getElementById('dem-texto').value,
+    procedimentos,
+    referencial_teorico:document.getElementById('ref-texto').value,
+    analise:{
+      historia:document.getElementById('an-historia').value,
+      condicoes_sessao:document.getElementById('an-condicoes').value,
+      dominios,
+    },
+    conclusao:document.getElementById('con-texto').value,
+    encaminhamentos:document.getElementById('enc-texto').value,
+    referencias:document.getElementById('ref-bib').value,
+    escalas_incluidas:escalasAplicadas.filter(e=>e.incluida).map(e=>e.id),
+    updated_at:new Date().toISOString(),
+  };
+}
+
+async function salvarLaudo(finalizar=false){
+  const dados=coletarDados();
+  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Selecione o paciente.');return;}
+  if(finalizar)dados.status='finalizado';
+  try {
+    if(laudoAtual){
+      await sbFetch(`laudos?id=eq.${laudoAtual.id}`,{method:'PATCH',body:JSON.stringify(dados)});
+      laudoAtual={...laudoAtual,...dados};
+    } else {
+      const res=await sbFetch('laudos',{method:'POST',body:JSON.stringify(dados)});
+      laudoAtual=res?.[0]||{...dados,id:uid()};
+    }
+    document.getElementById('editor-titulo-header').textContent=dados.paciente_nome;
+    document.getElementById('editor-sub-header').textContent=finalizar?'Finalizado':'Rascunho · Salvo';
+    showToast(finalizar?'✅ Laudo finalizado!':'✅ Salvo com sucesso!');
+  } catch(e){showToast('Erro ao salvar: '+e.message);}
+}
+
+async function excluirLaudo(id){
+  if(!confirm('Excluir este laudo?'))return;
+  try {
+    await sbFetch(`laudos?id=eq.${id}`,{method:'DELETE'});
+    showToast('Laudo excluído.');
+    carregarLaudos();
+  } catch(e){showToast('Erro ao excluir.');}
+}
+
+// ===================== PACIENTE SELECT =====================
+function onPacienteSelect(){
+  const id=document.getElementById('id-paciente').value;
+  const p=pacientes.find(x=>x.id===id);
+  if(!p)return;
+  if(p.nasc)document.getElementById('id-nasc').value=p.nasc;
+  if(p.nasc){
+    const nasc=new Date(p.nasc);
+    const hoje=new Date();
+    let anos=hoje.getFullYear()-nasc.getFullYear();
+    if(hoje<new Date(hoje.getFullYear(),nasc.getMonth(),nasc.getDate()))anos--;
+    document.getElementById('id-idade').value=anos+' anos';
+  }
+  document.getElementById('editor-titulo-header').textContent=p.nome;
+  document.getElementById('editor-breadcrumb').textContent=p.nome;
+}
+
+// ===================== PROCEDIMENTOS =====================
+function renderProcedimentos(){
+  const c=document.getElementById('proc-lista');
+  if(!procedimentos.length){c.innerHTML='';return;}
+  c.innerHTML=procedimentos.map((p,i)=>`
+    <div class="proc-item">
+      <div class="proc-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="proc-info">
+        <div class="proc-sessao">Sessão ${p.sessao||String(i+1).padStart(2,'0')}</div>
+        <textarea style="width:100%;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:.88rem;resize:none;outline:none;min-height:60px;line-height:1.6;" 
+          onchange="procedimentos[${i}].descricao=this.value" placeholder="Descreva os instrumentos e técnicas utilizados...">${p.descricao||''}</textarea>
+      </div>
+      <button onclick="removerProcedimento(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:4px;">✕</button>
+    </div>
+  `).join('');
+}
+
+function adicionarProcedimento(){
+  procedimentos.push({id:uid(),sessao:String(procedimentos.length+1).padStart(2,'0'),descricao:''});
+  renderProcedimentos();
+}
+
+function removerProcedimento(i){
+  procedimentos.splice(i,1);
+  renderProcedimentos();
+}
+
+// ===================== DOMÍNIOS =====================
+const DOMINIOS_PADRAO=['Percepção Visual','Atenção','Função Executiva e Velocidade de Processamento','Memória','Linguagem','Afetividade e Personalidade','Comportamento Adaptativo'];
+
+function renderDominios(){
+  const c=document.getElementById('dominios-lista');
+  c.innerHTML=dominios.map((d,i)=>`
+    <div class="dominio-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <input value="${d.titulo||''}" onchange="dominios[${i}].titulo=this.value" 
+          style="background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--accent2);font-size:.88rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;outline:none;flex:1;padding:4px 0;"
+          placeholder="Nome do domínio (ex: ATENÇÃO)">
+        <button onclick="removerDominio(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;margin-left:12px;">✕</button>
+      </div>
+      
+      <div style="margin-bottom:12px;">
+        <div style="font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Tabela de Resultados</div>
+        <table class="tabela-resultado" id="tabela-${i}">
+          <thead><tr><th>Habilidade</th><th>Teste</th><th>Percentil</th><th>Classificação</th><th>Interpretação</th><th></th></tr></thead>
+          <tbody>${(d.linhas||[]).map((l,j)=>`
+            <tr>
+              <td><input value="${l.habilidade||''}" onchange="dominios[${i}].linhas[${j}].habilidade=this.value" style="background:transparent;border:none;color:var(--text2);font-size:.82rem;width:100%;outline:none;font-family:inherit;"></td>
+              <td><input value="${l.teste||''}" onchange="dominios[${i}].linhas[${j}].teste=this.value" style="background:transparent;border:none;color:var(--text2);font-size:.82rem;width:100%;outline:none;font-family:inherit;"></td>
+              <td><input value="${l.percentil||''}" onchange="dominios[${i}].linhas[${j}].percentil=this.value" style="background:transparent;border:none;color:var(--text2);font-size:.82rem;width:60px;outline:none;font-family:inherit;" type="number"></td>
+              <td><input value="${l.classificacao||''}" onchange="dominios[${i}].linhas[${j}].classificacao=this.value" style="background:transparent;border:none;color:var(--text2);font-size:.82rem;width:100%;outline:none;font-family:inherit;"></td>
+              <td><input value="${l.interpretacao||''}" onchange="dominios[${i}].linhas[${j}].interpretacao=this.value" style="background:transparent;border:none;color:var(--text2);font-size:.82rem;width:100%;outline:none;font-family:inherit;"></td>
+              <td><button onclick="removerLinha(${i},${j})" style="background:none;border:none;color:var(--text3);cursor:pointer;">✕</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <button class="add-linha-btn" onclick="adicionarLinha(${i})">+ linha</button>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <label style="font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Fundamentação Teórica</label>
+        <textarea onchange="dominios[${i}].fundamentacao=this.value" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;resize:vertical;min-height:80px;line-height:1.6;"
+          placeholder="Fundamentos teóricos dos instrumentos utilizados neste domínio...">${d.fundamentacao||''}</textarea>
+      </div>
+
+      <div>
+        <label style="font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Resultado e Interpretação Clínica</label>
+        <textarea onchange="dominios[${i}].interpretacao=this.value" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:.88rem;outline:none;resize:vertical;min-height:120px;line-height:1.6;"
+          placeholder="Redija aqui a interpretação clínica dos resultados deste domínio...">${d.interpretacao||''}</textarea>
+      </div>
+    </div>
+  `).join('');
+}
+
+function adicionarDominio(){
+  dominios.push({id:uid(),titulo:'',linhas:[],fundamentacao:'',interpretacao:''});
+  renderDominios();
+}
+
+function adicionarDominioPadrao(){
+  const nome=prompt('Nome do domínio:',DOMINIOS_PADRAO[dominios.length]||'');
+  if(!nome)return;
+  dominios.push({id:uid(),titulo:nome.toUpperCase(),linhas:[],fundamentacao:'',interpretacao:''});
+  renderDominios();
+}
+
+function removerDominio(i){
+  if(!confirm('Remover este domínio?'))return;
+  dominios.splice(i,1);
+  renderDominios();
+}
+
+function adicionarLinha(i){
+  if(!dominios[i].linhas)dominios[i].linhas=[];
+  dominios[i].linhas.push({habilidade:'',teste:'',percentil:'',classificacao:'',interpretacao:''});
+  renderDominios();
+}
+
+function removerLinha(i,j){
+  dominios[i].linhas.splice(j,1);
+  renderDominios();
+}
+
+// ===================== REFERENCIAL PADRÃO =====================
+function inserirReferencialPadrao(){
+  document.getElementById('ref-texto').value=`A Neuropsicologia constitui uma ciência aplicada que investiga a expressão comportamental das disfunções cerebrais, valendo-se da avaliação clínica e de testes específicos para avaliar diversas funções cognitivas, permitindo análises qualitativas e quantitativas dos dados (CARAMAZZA; COLTHEART, 2006; KRISTENSEN; DE ALMEIDA; GOMES, 2001). A interpretação dos resultados tem como base teórica a abordagem dinâmica e sistêmica desenvolvida por A. Luria. Os resultados quantitativos brutos foram interpretados mediante cálculo de Z-scores e posterior conversão em percentis pela tabela de Wechsler, permitindo a classificação em categorias conforme demonstrado abaixo:
+
+Pontuação do Percentil / Classificação / Interpretação:
+0 a 2 — Deficitário — Prejuízo grave
+3 a 9 — Limítrofe — Prejuízo moderado
+10 a 25 — Médio Inferior — Prejuízo leve
+26 a 74 — Médio — Habilidade preservada
+75 a 90 — Médio Superior — Facilidade
+91 a 97 — Superior — Habilidade desenvolvida
+98 a 100 — Muito Superior — Potencialidade`;
+  showToast('Referencial inserido!');
+}
+
+// ===================== ESCALAS =====================
+async function carregarEscalasPaciente(){
+  const pacId=document.getElementById('id-paciente').value;
+  const cont=document.getElementById('escalas-disponiveis');
+  const sem=document.getElementById('sem-escalas');
+
+  if(!pacId){
+    cont.innerHTML='';
+    sem.style.display='block';
+    sem.textContent='Selecione um paciente primeiro (seção 1 — Identificação).';
+    return;
+  }
+
+  // Busca escalas do localStorage do PsiControl
+  try {
+    const escalasState=JSON.parse(localStorage.getItem('psicontrol_escalas')||'{}');
+    const aps=(escalasState.aplicacoes||[]).filter(a=>a.pacienteId===pacId);
+
+    if(!aps.length){cont.innerHTML='';sem.style.display='block';sem.textContent='Nenhuma escala aplicada para este paciente ainda.';return;}
+    sem.style.display='none';
+
+    const incluidasIds=laudoAtual?.escalas_incluidas||[];
+    escalasAplicadas=aps.map(a=>({...a,incluida:incluidasIds.includes(a.id)}));
+
+    cont.innerHTML=escalasAplicadas.map((a,i)=>{
+      const tipos={mchat:'M-CHAT-R/F',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',cbcl:'CBCL 6-18'};
+      const nome=tipos[a.tipo]||a.tipo;
+      const data=a.data?new Date(a.data+'T12:00:00').toLocaleDateString('pt-BR'):'—';
+      const incl=a.incluida;
+      return `<div class="escala-disponivel ${incl?'escala-incluida':''}">
+        <div>
+          <div class="escala-nome">${nome} — ${a.pacienteNome||''}</div>
+          <div class="escala-data">${data}</div>
+        </div>
+        <button class="btn ${incl?'btn-outline':'btn-primary'} btn-sm" onclick="toggleEscala(${i})">
+          ${incl?'✓ Incluída':'+ Incluir'}
+        </button>
+      </div>`;
+    }).join('');
+  } catch(e){cont.innerHTML='';sem.style.display='block';sem.textContent='Erro ao carregar escalas.';}
+}
+
+function toggleEscala(i){
+  escalasAplicadas[i].incluida=!escalasAplicadas[i].incluida;
+  carregarEscalasPaciente();
+}
+
+// ===================== PDF =====================
+function gerarPdfLaudo(){
+  const dados=coletarDados();
+  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Selecione o paciente.');return;}
+
+  const pac=pacientes.find(p=>p.id===dados.identificacao.pacienteId)||{};
+  const clin=clinicas.find(c=>c.id===dados.identificacao.clinicaId)||{};
+  const id=dados.identificacao;
+  const dataFmt=dados.data_laudo?new Date(dados.data_laudo+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  const tabelaPercentis=`
+<table style="width:100%;border-collapse:collapse;font-size:11px;margin:12px 0;">
+  <thead><tr style="background:#f0f4f2;">
+    <th style="border:1px solid #ccc;padding:6px 10px;">Pontuação do Percentil</th>
+    <th style="border:1px solid #ccc;padding:6px 10px;">Classificação</th>
+    <th style="border:1px solid #ccc;padding:6px 10px;">Interpretação</th>
+  </tr></thead>
+  <tbody>
+    ${[['0 a 2','Deficitário','Prejuízo grave'],['3 a 9','Limítrofe','Prejuízo moderado'],['10 a 25','Médio Inferior','Prejuízo leve'],['26 a 74','Médio','Habilidade preservada'],['75 a 90','Médio Superior','Facilidade'],['91 a 97','Superior','Habilidade desenvolvida'],['98 a 100','Muito Superior','Potencialidade']].map(r=>`<tr>${r.map(c=>`<td style="border:1px solid #ccc;padding:5px 10px;">${c}</td>`).join('')}</tr>`).join('')}
+  </tbody>
+</table>`;
+
+  const dominiosHTML=dominios.map(d=>`
+    <h3 style="font-size:13px;font-weight:bold;margin:20px 0 10px;text-decoration:underline;">${d.titulo||''}</h3>
+    ${d.linhas?.length?`<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px;">
+      <thead><tr style="background:#f0f4f2;"><th style="border:1px solid #ccc;padding:6px 10px;">Habilidade</th><th style="border:1px solid #ccc;padding:6px 10px;">Teste</th><th style="border:1px solid #ccc;padding:6px 10px;">Percentil</th><th style="border:1px solid #ccc;padding:6px 10px;">Classificação</th><th style="border:1px solid #ccc;padding:6px 10px;">Interpretação</th></tr></thead>
+      <tbody>${d.linhas.map(l=>`<tr>${['habilidade','teste','percentil','classificacao','interpretacao'].map(k=>`<td style="border:1px solid #ccc;padding:5px 10px;">${l[k]||''}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>`:''}
+    ${d.fundamentacao?`<p style="font-size:12px;line-height:1.8;text-align:justify;margin-bottom:8px;"><strong>Fundamentação Teórica:</strong> ${d.fundamentacao}</p>`:''}
+    ${d.interpretacao?`<p style="font-size:12px;line-height:1.8;text-align:justify;"><strong>Resultado e Interpretação Clínica:</strong> ${d.interpretacao}</p>`:''}
+  `).join('');
+
+  const html=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Laudo — ${dados.paciente_nome}</title>
+<style>
+  @media print{@page{margin:20mm 15mm;}body{margin:0;}.no-print{display:none;}}
+  body{font-family:'Georgia',serif;margin:30px 40px;color:#222;font-size:12px;line-height:1.7;}
+  h1{font-size:16px;font-weight:bold;text-align:center;margin:20px 0 4px;}
+  h2{font-size:13px;font-weight:bold;margin:20px 0 8px;text-transform:uppercase;}
+  h3{font-size:12px;font-weight:bold;margin:14px 0 6px;}
+  p{text-align:justify;margin-bottom:8px;}
+  .centro{text-align:center;}
+  .no-print{position:fixed;top:16px;right:16px;display:flex;gap:8px;}
+  .btn-p{background:#2ab89a;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:14px;cursor:pointer;}
+  .btn-f{background:#e5e7eb;color:#333;border:none;padding:10px 22px;border-radius:8px;font-size:14px;cursor:pointer;}
+  table{page-break-inside:avoid;}
+  .assinatura{margin-top:60px;text-align:center;}
+  .linha-assinatura{width:280px;border-top:1.5px solid #333;margin:0 auto;padding-top:8px;}
+</style>
+</head>
+<body>
+<div class="no-print">
+  <button class="btn-p" onclick="window.print()">🖨️ Imprimir / PDF</button>
+  <button class="btn-f" onclick="window.close()">✕ Fechar</button>
+</div>
+
+<div class="centro" style="margin-bottom:30px;">
+  <h1>Laudo Psicológico de Avaliação Neuropsicológica</h1>
+  <p style="font-size:11px;text-align:center;">De acordo com a Resolução de Elaboração de Documentos – CFP/006/2019</p>
+</div>
+
+<div style="background:#f8f8f8;border:1px solid #ddd;border-radius:6px;padding:14px 18px;margin-bottom:24px;font-size:11px;text-align:center;font-style:italic;">
+  "Este é um documento de caráter sigiloso, resguardado à obtenção de dados clínicos aos responsáveis. Não constitui um parecer definitivo e imutável, sendo ao contrário, passível de alterações a depender das estimulações empregadas. Sugestivo de avaliação posterior".
+</div>
+
+<h2>1. Identificação</h2>
+<p><strong>Autor/Relator:</strong> Jeferson Fernandes da Silva Melo – CRP 15/8397</p>
+${id.interessado?`<p><strong>Interessado:</strong> ${id.interessado}</p>`:''}
+${id.finalidade?`<p><strong>Assunto/Finalidade:</strong> ${id.finalidade}</p>`:''}
+<p><strong>Nome:</strong> ${dados.paciente_nome} ${id.nasc?`<strong>Data de Nascimento:</strong> ${new Date(id.nasc+'T12:00:00').toLocaleDateString('pt-BR')}`:''}
+${id.idade?` <strong>Idade:</strong> ${id.idade}`:''} ${id.sexo?` <strong>Sexo:</strong> ${id.sexo}`:''}</p>
+${id.escolaridade?`<p><strong>Escolaridade:</strong> ${id.escolaridade}</p>`:''}
+${id.cidade?`<p><strong>Cidade:</strong> ${id.cidade}</p>`:''}
+${id.periodo?`<p><strong>Período da avaliação:</strong> ${id.periodo}</p>`:''}
+
+${dados.descricao_demanda?`<h2>2. Descrição da Demanda</h2><p>${dados.descricao_demanda.replace(/\n/g,'</p><p>')}</p>`:''}
+
+${procedimentos.length?`<h2>3. Procedimentos Realizados</h2>
+<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+  <thead><tr style="background:#f0f4f2;"><th style="border:1px solid #ccc;padding:6px 10px;width:80px;">Sessões</th><th style="border:1px solid #ccc;padding:6px 10px;">Técnicas utilizadas / Procedimentos</th></tr></thead>
+  <tbody>${procedimentos.map(p=>`<tr><td style="border:1px solid #ccc;padding:5px 10px;text-align:center;">${p.sessao||''}</td><td style="border:1px solid #ccc;padding:5px 10px;">${p.descricao||''}</td></tr>`).join('')}</tbody>
+</table>`:''}
+
+${dados.referencial_teorico?`<h2>4. Referencial Teórico Metodológico</h2><p>${dados.referencial_teorico.replace(/\n/g,'</p><p>')}</p>${tabelaPercentis}`:''}
+
+<h2>5. Análise</h2>
+<h3>5.1. Relato da Entrevista</h3>
+${dados.analise?.historia?`<p><strong>A) História Clínica:</strong> ${dados.analise.historia.replace(/\n/g,'</p><p>')}</p>`:''}
+${dados.analise?.condicoes_sessao?`<p><strong>B) Condições averiguadas durante as sessões de avaliação:</strong> ${dados.analise.condicoes_sessao.replace(/\n/g,'</p><p>')}</p>`:''}
+
+${dominiosHTML}
+
+${dados.conclusao?`<h2>6. Conclusão</h2><p>${dados.conclusao.replace(/\n/g,'</p><p>')}</p>`:''}
+${dados.encaminhamentos?`<h2>7. Encaminhamentos</h2><p>${dados.encaminhamentos.replace(/\n/g,'</p><p>')}</p>`:''}
+${dados.referencias?`<h2>Referências Bibliográficas</h2><p style="line-height:2;">${dados.referencias.replace(/\n/g,'<br>')}</p>`:''}
+
+<div class="assinatura">
+  <p>${id.cidade||'Piranhas — AL'}, ${dataFmt}.</p>
+  <div class="linha-assinatura">
+    <div style="font-size:12px;font-weight:bold;">Jeferson Fernandes da Silva Melo</div>
+    <div style="font-size:11px;color:#555;">Psicólogo · CRP 15/8397</div>
+    ${clin.nome?`<div style="font-size:11px;color:#555;">${clin.nome}</div>`:''}
+  </div>
+</div>
+<p style="font-size:10px;color:#777;margin-top:30px;text-align:center;border-top:1px solid #eee;padding-top:12px;">
+  OBS: Os resultados aqui descritos são de caráter dinâmico, não definitivos ou cristalizados. Nenhum teste é responsável por diagnosticar um transtorno isoladamente. Sempre se faz necessária avaliação com equipe multidisciplinar.
+</p>
+</body></html>`;
+
+  salvarLaudo();
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+verificarSessao();
+</script>
+</body>
+</html>
