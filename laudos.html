@@ -454,15 +454,18 @@ async function fazerLogin(){
     const u=users?.[0];
     if(!u)throw new Error('Usuário não encontrado.');
     if(u.senha!==senha)throw new Error('Senha incorreta.');
-    usuarioLogado={id:u.id,nome:u.nome,email:u.email,isAdmin:u.email==='admin',temAcesso:u.acesso_laudos||u.email==='admin'};
+    const isAdmin=u.email==='admin';
+    let temAcesso=isAdmin;
+    if(!isAdmin){
+      const rows=await sbFetch(`dados_usuario?usuario_id=eq.${u.id}&select=dados`);
+      const dados=rows&&rows.length>0?rows[0].dados:{};
+      temAcesso=!!dados?.acesso_laudos;
+    }
+    usuarioLogado={id:u.id,nome:u.nome,email:u.email,isAdmin,temAcesso};
     document.getElementById('user-nome-sidebar').textContent=u.nome;
     document.getElementById('login-screen').classList.add('hidden');
     await carregarDados();
-    if(!usuarioLogado.temAcesso){
-      showPage('sem-acesso');
-    } else {
-      carregarHome();
-    }
+    if(!temAcesso){showPage('sem-acesso');}else{carregarHome();}
   } catch(e){document.getElementById('login-error').textContent=e.message;}
 }
 

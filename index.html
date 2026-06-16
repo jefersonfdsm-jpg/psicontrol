@@ -576,6 +576,10 @@
             <input type="checkbox" id="edit-acesso-docs" style="width:16px;height:16px;accent-color:var(--accent);">
             <span>📄 Acesso ao módulo de <strong>Documentos</strong> (Declarações e Encaminhamentos)</span>
           </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
+            <input type="checkbox" id="edit-acesso-laudos" style="width:16px;height:16px;accent-color:var(--accent);">
+            <span>📋 Acesso ao módulo de <strong>Laudos</strong> (Avaliação Neuropsicológica)</span>
+          </label>
         </div>
       </div>
     </div>
@@ -2546,6 +2550,7 @@ function abrirEditarUsuario(id, nome, email) {
   sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`).then(rows=>{
     const dados=rows&&rows.length>0?rows[0].dados:{};
     document.getElementById('edit-acesso-docs').checked=!!dados?.acesso_docs;
+    document.getElementById('edit-acesso-laudos').checked=!!dados?.acesso_laudos;
   }).catch(()=>{});
   document.getElementById('modal-editar-usuario').classList.add('open');
 }
@@ -2555,6 +2560,7 @@ async function salvarEdicaoUsuario() {
   const nome = document.getElementById('edit-usuario-nome').value.trim();
   const senha = document.getElementById('edit-usuario-senha').value.trim();
   const acessoDocs = document.getElementById('edit-acesso-docs').checked;
+  const acessoLaudos = document.getElementById('edit-acesso-laudos').checked;
   if (!nome) { showToast('⚠️ Nome não pode ser vazio'); return; }
   try {
     const dados = { nome };
@@ -2568,6 +2574,7 @@ async function salvarEdicaoUsuario() {
     const rows = await sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`);
     let dadosUser = (rows&&rows.length>0&&rows[0].dados)?rows[0].dados:{};
     dadosUser.acesso_docs = acessoDocs;
+    dadosUser.acesso_laudos = acessoLaudos;
     if(rows&&rows.length>0){
       await sbFetch(`dados_usuario?usuario_id=eq.${id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({dados:dadosUser})});
     } else {
