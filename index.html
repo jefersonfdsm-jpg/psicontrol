@@ -309,7 +309,7 @@
   .modulo-header { text-align:center; }
   .modulo-header h2 { font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--text); margin-bottom:6px; }
   .modulo-header p { color:var(--text2); font-size:.88rem; }
-  .modulo-cards { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:600px; width:90vw; }
+  .modulo-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:900px; width:90vw; }
   .modulo-card {
     background:var(--surface); border:2px solid var(--border); border-radius:16px;
     padding:32px 24px; text-align:center; cursor:pointer; transition:.25s;
@@ -549,6 +549,12 @@
       <p>M-CHAT-R, SNAP-IV e outros instrumentos de avaliação</p>
       <div class="m-badge" style="background:rgba(86,212,200,.15);color:var(--accent2);">Rastreio Clínico</div>
     </div>
+    <div class="modulo-card" onclick="irParaModulo('laudos')">
+      <div class="m-icon">📋</div>
+      <h3>Laudos</h3>
+      <p>Elaboração de laudos de avaliação neuropsicológica</p>
+      <div class="m-badge" style="background:rgba(240,180,41,.15);color:var(--accent3);">Avaliação</div>
+    </div>
   </div>
 </div>
 
@@ -575,10 +581,6 @@
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
             <input type="checkbox" id="edit-acesso-docs" style="width:16px;height:16px;accent-color:var(--accent);">
             <span>📄 Acesso ao módulo de <strong>Documentos</strong> (Declarações e Encaminhamentos)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
-            <input type="checkbox" id="edit-acesso-laudos" style="width:16px;height:16px;accent-color:var(--accent);">
-            <span>📋 Acesso ao módulo de <strong>Laudos</strong> (Avaliação Neuropsicológica)</span>
           </label>
         </div>
       </div>
@@ -2365,6 +2367,8 @@ async function irParaModulo(modulo) {
   document.getElementById('modulo-screen').classList.remove('open');
   if (modulo === 'escalas') {
     window.location.href = 'escalas.html';
+  } else if (modulo === 'laudos') {
+    window.location.href = 'laudos.html';
   } else {
     // PsiControl — carrega dados e abre dashboard
     showToast('⏳ Carregando dados...');
@@ -2550,7 +2554,6 @@ function abrirEditarUsuario(id, nome, email) {
   sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`).then(rows=>{
     const dados=rows&&rows.length>0?rows[0].dados:{};
     document.getElementById('edit-acesso-docs').checked=!!dados?.acesso_docs;
-    document.getElementById('edit-acesso-laudos').checked=!!dados?.acesso_laudos;
   }).catch(()=>{});
   document.getElementById('modal-editar-usuario').classList.add('open');
 }
@@ -2560,7 +2563,6 @@ async function salvarEdicaoUsuario() {
   const nome = document.getElementById('edit-usuario-nome').value.trim();
   const senha = document.getElementById('edit-usuario-senha').value.trim();
   const acessoDocs = document.getElementById('edit-acesso-docs').checked;
-  const acessoLaudos = document.getElementById('edit-acesso-laudos').checked;
   if (!nome) { showToast('⚠️ Nome não pode ser vazio'); return; }
   try {
     const dados = { nome };
@@ -2574,7 +2576,6 @@ async function salvarEdicaoUsuario() {
     const rows = await sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`);
     let dadosUser = (rows&&rows.length>0&&rows[0].dados)?rows[0].dados:{};
     dadosUser.acesso_docs = acessoDocs;
-    dadosUser.acesso_laudos = acessoLaudos;
     if(rows&&rows.length>0){
       await sbFetch(`dados_usuario?usuario_id=eq.${id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({dados:dadosUser})});
     } else {

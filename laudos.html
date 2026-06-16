@@ -445,15 +445,21 @@ function mostrarSecao(s){
 }
 
 // ===================== AUTH =====================
+async function sha256(text){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 async function fazerLogin(){
   const email=document.getElementById('login-email').value.trim();
   const senha=document.getElementById('login-senha').value;
   document.getElementById('login-error').textContent='';
   try {
-    const users=await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}`);
+    const users=await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}&select=id,nome,email,senha_hash,ativo`);
     const u=users?.[0];
     if(!u)throw new Error('Usuário não encontrado.');
-    if(u.senha!==senha)throw new Error('Senha incorreta.');
+    const hashDigitado=await sha256(senha);
+    if(hashDigitado!==u.senha_hash)throw new Error('Senha incorreta.');
     const isAdmin=u.email==='admin';
     let temAcesso=isAdmin;
     if(!isAdmin){
@@ -473,6 +479,18 @@ function fazerLogout(){usuarioLogado=null;document.getElementById('login-screen'
 
 async function verificarSessao(){
   try {
+    // Tenta usar sessão já existente do PsiControl
+    const sessao=localStorage.getItem('psi_sessao');
+    if(sessao){
+      const u=JSON.parse(sessao);
+      usuarioLogado={id:u.id,nome:u.nome,email:u.email,isAdmin:u.email==='admin',temAcesso:true};
+      document.getElementById('user-nome-sidebar').textContent=u.nome;
+      document.getElementById('login-screen').classList.add('hidden');
+      await carregarDados();
+      carregarHome();
+      return;
+    }
+    // Fallback: tenta login com email/senha salvos
     const email=localStorage.getItem('psi_email');
     const senha=localStorage.getItem('psi_senha');
     if(email&&senha){
