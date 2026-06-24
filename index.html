@@ -1759,13 +1759,16 @@ function renderPacientePage(){
     .reduce((acc,s)=>{
       const fin=state.financeiro.find(f=>f.sessaoId===s.id && f.auto && f.tipo==='receita');
       if(fin) return acc+Number(fin.valor);
-      // fallback: calcular pelo tipo
+      // fallback: calcular pelo tipo e abater repasse
       const vOver=s.valorSessao?parseFloat(String(s.valorSessao).replace(',','.'))||0:0;
       const vTipo = s.tipo==='anamnese'?(parseFloat(String(p.valorAnam||0).replace(',','.'))||0)
         :s.tipo==='avaliacao'?(parseFloat(String(p.valorAval||0).replace(',','.'))||0)
         :s.tipo==='pacote'?(parseFloat(String(p.valorPacote||0).replace(',','.'))||0)
         :(parseFloat(String(p.valor||0).replace(',','.'))||0);
-      return acc+(vOver||vTipo);
+      const bruto=vOver||vTipo;
+      const repasse=parseFloat(c?.repasse)||0;
+      const liquido=parseFloat((bruto - bruto*repasse/100).toFixed(2));
+      return acc+liquido;
     },0);
 
   document.getElementById('pac-stats').innerHTML=`
