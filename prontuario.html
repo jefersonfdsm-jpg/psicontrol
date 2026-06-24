@@ -149,7 +149,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="page-lista" class="active">
       <div class="page-title">Prontuário Eletrônico</div>
       <div class="page-sub">Selecione um paciente para visualizar ou adicionar registros</div>
-      <input class="search-bar" id="busca-pac" placeholder="🔍 Buscar paciente..." oninput="filtrarPacientes()">
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <input class="search-bar" id="busca-pac" placeholder="🔍 Buscar paciente..." oninput="filtrarPacientes()" style="margin-bottom:0;flex:1;">
+        <button class="btn btn-primary btn-sm" onclick="abrirModalNovoPaciente()" style="white-space:nowrap;">+ Novo Paciente</button>
+      </div>
       <div class="pac-grid" id="pac-grid"></div>
     </div>
 
@@ -189,7 +192,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   </div>
 </div>
 
-<!-- PDF AREA -->
+<!-- MODAL NOVO PACIENTE -->
+<div id="modal-novo-pac" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:380px;max-width:90vw;">
+    <h3 style="font-family:'DM Serif Display',serif;margin-bottom:20px;">Novo Paciente</h3>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:.76rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Nome Completo</label>
+      <input type="text" id="novo-pac-nome" placeholder="Nome do paciente" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:.9rem;outline:none;">
+    </div>
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-size:.76rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;">Observação <span style="font-weight:400;opacity:.6">(opcional)</span></label>
+      <input type="text" id="novo-pac-obs" placeholder="Ex: Paciente externo, convênio..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:.9rem;outline:none;">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn btn-outline btn-sm" onclick="fecharModalNovoPaciente()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="salvarNovoPaciente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div id="pdf-area"></div>
 <div id="toast"></div>
 
@@ -277,9 +298,22 @@ function iniciarApp(){
 // ===================== DADOS =====================
 async function carregarDados(){
   try {
-    const state=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
+    // Tenta carregar pacientes do Supabase primeiro, fallback para localStorage
+    let state={};
+    try {
+      const rows=await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
+      if(rows&&rows.length>0&&rows[0].dados) state=rows[0].dados;
+    } catch(e){}
+    // Fallback: localStorage
+    if(!state.pacientes||!state.pacientes.length){
+      const local=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
+      if(local.pacientes) state=local;
+    }
     pacientes=state.pacientes||[];
     clinicas=state.clinicas||[];
+    // Adiciona pacientes criados manualmente no prontuário (não estão no PsiControl)
+    const pacManuais=JSON.parse(localStorage.getItem('pront_pacientes_manuais')||'[]');
+    pacManuais.forEach(pm=>{if(!pacientes.find(p=>p.id===pm.id))pacientes.push(pm);});
     // Carrega registros do prontuário do Supabase
     const regs=await sbFetch(`prontuarios?usuario_id=eq.${usuarioLogado.id}&order=data.desc`)||[];
     registros=regs;
@@ -293,24 +327,62 @@ function getRegistrosPac(pacId){return registros.filter(r=>r.paciente_id===pacId
 
 function renderListaPacientes(filtro=''){
   const grid=document.getElementById('pac-grid');
-  const lista=pacientes.filter(p=>!filtro||p.nome.toLowerCase().includes(filtro.toLowerCase()));
+  // Ordena: com registros primeiro, depois alfabética
+  const lista=[...pacientes]
+    .filter(p=>!filtro||p.nome.toLowerCase().includes(filtro.toLowerCase()))
+    .sort((a,b)=>{
+      const ra=getRegistrosPac(a.id).length;
+      const rb=getRegistrosPac(b.id).length;
+      if(rb!==ra)return rb-ra;
+      return a.nome.localeCompare(b.nome,'pt-BR');
+    });
   if(!lista.length){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="e-icon">👥</div><p>Nenhum paciente encontrado.<br>Cadastre pacientes no módulo PsiControl.</p></div>`;
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="e-icon">👥</div><p>${filtro?'Nenhum paciente encontrado para "'+filtro+'"':'Clique em "+ Novo Paciente" para começar.'}</p></div>`;
     return;
   }
   grid.innerHTML=lista.map(p=>{
     const regs=getRegistrosPac(p.id);
-    const clinNome=getClinicaNome(p.clinicaId);
+    const clinNome=getClinicaNome(p.clinicaId)||p.obs||'';
     return`<div class="pac-card" onclick="abrirPaciente('${p.id}')">
       <div class="pac-nome">${p.nome}</div>
-      <div class="pac-clinica">${clinNome}</div>
-      <div class="pac-count">${regs.length} registro${regs.length!==1?'s':''}</div>
+      ${clinNome?`<div class="pac-clinica">${clinNome}</div>`:''}
+      <div class="pac-count">${regs.length>0?`${regs.length} registro${regs.length!==1?'s':''}`:'Sem registros'}</div>
     </div>`;
   }).join('');
 }
 
 function filtrarPacientes(){
   renderListaPacientes(document.getElementById('busca-pac').value);
+}
+
+// ===================== MODAL NOVO PACIENTE =====================
+function abrirModalNovoPaciente(){
+  document.getElementById('novo-pac-nome').value='';
+  document.getElementById('novo-pac-obs').value='';
+  const modal=document.getElementById('modal-novo-pac');
+  modal.style.display='flex';
+  setTimeout(()=>document.getElementById('novo-pac-nome').focus(),100);
+}
+
+function fecharModalNovoPaciente(){
+  document.getElementById('modal-novo-pac').style.display='none';
+}
+
+function salvarNovoPaciente(){
+  const nome=document.getElementById('novo-pac-nome').value.trim();
+  if(!nome){showToast('⚠️ Informe o nome do paciente.');return;}
+  const obs=document.getElementById('novo-pac-obs').value.trim();
+  const novo={id:uid(),nome,obs,manual:true};
+  // Salva no localStorage para persistir
+  const manuais=JSON.parse(localStorage.getItem('pront_pacientes_manuais')||'[]');
+  manuais.push(novo);
+  localStorage.setItem('pront_pacientes_manuais',JSON.stringify(manuais));
+  pacientes.push(novo);
+  fecharModalNovoPaciente();
+  renderListaPacientes(document.getElementById('busca-pac').value);
+  showToast('✅ Paciente adicionado!');
+  // Abre direto o prontuário do novo paciente
+  abrirPaciente(novo.id);
 }
 
 // ===================== PRONTUÁRIO DO PACIENTE =====================
