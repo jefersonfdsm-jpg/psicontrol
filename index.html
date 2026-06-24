@@ -2500,7 +2500,7 @@ async function fazerLogin() {
 
   try {
     // Busca usuário pelo email
-    const rows = await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}&ativo=eq.true&select=id,nome,email,senha_hash`);
+    const rows = await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}&ativo=eq.true&select=id,nome,email,senha_hash,acesso_docs,acesso_laudos`);
     if (!rows || rows.length === 0) { setLoginErro('Usuário não encontrado ou bloqueado.'); return; }
 
     const user = rows[0];
@@ -2509,7 +2509,7 @@ async function fazerLogin() {
     const hashDigitado = await sha256(senha);
     if (hashDigitado !== user.senha_hash) { setLoginErro('Senha incorreta.'); return; }
 
-    usuarioLogado = { id: user.id, nome: user.nome, email: user.email, isAdmin: user.email === 'admin' };
+    usuarioLogado = { id: user.id, nome: user.nome, email: user.email, isAdmin: user.email === 'admin', acesso_docs: !!user.acesso_docs, acesso_laudos: !!user.acesso_laudos };
     localStorage.setItem('psi_sessao', JSON.stringify(usuarioLogado));
 
     document.getElementById('login-screen').classList.add('hidden');
