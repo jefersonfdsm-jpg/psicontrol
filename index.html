@@ -1751,12 +1751,27 @@ function renderPacientePage(){
   // Stats do mês selecionado (ou geral se "ver todos")
   const sesStats = pacVerTodosFlag ? todasSes : todasSes.filter(s=>(s.data||'').startsWith(anoMesStr));
   const rl=sesStats.filter(s=>s.status==='realizada').length;
-  const valorSessao=Number(p.valor)||0;
   const labelPeriodo=pacVerTodosFlag?'Total geral':`Em ${nomeMesCap}`;
+
+  // Faturado: soma o valor real de cada sessão realizada e paga (via financeiro auto)
+  const faturado = sesStats
+    .filter(s=>s.status==='realizada' && s.cobr==='pago')
+    .reduce((acc,s)=>{
+      const fin=state.financeiro.find(f=>f.sessaoId===s.id && f.auto && f.tipo==='receita');
+      if(fin) return acc+Number(fin.valor);
+      // fallback: calcular pelo tipo
+      const vOver=s.valorSessao?parseFloat(String(s.valorSessao).replace(',','.'))||0:0;
+      const vTipo = s.tipo==='anamnese'?(parseFloat(String(p.valorAnam||0).replace(',','.'))||0)
+        :s.tipo==='avaliacao'?(parseFloat(String(p.valorAval||0).replace(',','.'))||0)
+        :s.tipo==='pacote'?(parseFloat(String(p.valorPacote||0).replace(',','.'))||0)
+        :(parseFloat(String(p.valor||0).replace(',','.'))||0);
+      return acc+(vOver||vTipo);
+    },0);
+
   document.getElementById('pac-stats').innerHTML=`
     <div class="stat-card"><div class="label">Sessões Realizadas</div><div class="value">${rl}</div><div class="sub">${labelPeriodo}</div></div>
     <div class="stat-card"><div class="label">Agendadas</div><div class="value">${sesStats.filter(s=>s.status==='agendada').length}</div><div class="sub">${labelPeriodo}</div></div>
-    <div class="stat-card"><div class="label">Faturado</div><div class="value" style="font-size:1.2rem;color:var(--success)">${formatMoney(rl*valorSessao)}</div><div class="sub">Valor/sessão: ${valorSessao>0?formatMoney(valorSessao):'Não definido'}</div></div>
+    <div class="stat-card"><div class="label">Faturado</div><div class="value" style="font-size:1.2rem;color:var(--success)">${formatMoney(faturado)}</div><div class="sub">Sessões pagas no período</div></div>
     <div class="stat-card"><div class="label">Pendentes</div><div class="value" style="color:var(--accent3)">${sesStats.filter(s=>s.cobr==='pendente').length}</div><div class="sub">${labelPeriodo}</div></div>`;
 
   // Lista filtrada por mês (ou todas)
@@ -1816,12 +1831,26 @@ function salvarSessao(){
     ? (parseFloat(String(p?.valorPacote||'0').replace(',','.'))||0)
     : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
   const valorSessao = valorDigitado > 0 ? valorDigitado : valorPadrao;
-  if(valorDigitado>0) dados.valorSessao=valorDigitado; // salva override na sessão
+  if(valorDigitado>0) dados.valorSessao=valorDigitado;
+
+  // Lógica especial do PACOTE: conta sessões de pacote já registradas para este paciente
+  // A 1ª sessão do pacote paga o valor total; as outras 3 ficam como isento
+  if(tipo==='pacote' && !editingSessaoId){
+    const sesPacote=state.sessoes.filter(s=>s.pacienteId===currentPacienteId&&s.tipo==='pacote');
+    const posicaoNoPacote=(sesPacote.length%4)+1; // 1,2,3,4,1,2,3,4...
+    dados.posicaoPacote=posicaoNoPacote;
+    if(posicaoNoPacote!==1){
+      dados.cobr='isento';
+      dados.pacoteIsento=true;
+    }
+  }
 
   // Porcentagem de repasse da clínica
   const repasse=parseFloat(c?.repasse)||0;
   const valorRepasse=repasse>0 ? parseFloat((valorSessao * repasse / 100).toFixed(2)) : 0;
   const valorLiquido=parseFloat((valorSessao - valorRepasse).toFixed(2));
+
+  const labelTipo=tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':tipo==='pacote'?'Pacote 4 Sessões':'Sessão';
 
   if(editingSessaoId){
     const s=state.sessoes.find(x=>x.id===editingSessaoId);
@@ -1829,7 +1858,7 @@ function salvarSessao(){
     if(s) Object.assign(s,dados);
     if(dados.status==='realizada' && dados.cobr==='pago' && (statusAnterior!=='realizada'||cobrAnterior!=='pago') && valorSessao>0){
       if(!state.financeiro.find(f=>f.sessaoId===editingSessaoId&&f.auto&&f.tipo==='receita')){
-        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':tipo==='pacote'?'Pacote 4 Sessões':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${labelTipo} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
         if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       }
     }
@@ -1840,10 +1869,14 @@ function salvarSessao(){
   } else {
     const novaId=uid();
     state.sessoes.push({id:novaId,pacienteId:currentPacienteId,...dados});
+    // Só lança financeiro se pago (pacote isento não lança)
     if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao>0){
-      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':tipo==='pacote'?'Pacote 4 Sessões':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${labelTipo} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
       if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
-      showToast(`✅ Sessão registrada! Receita líquida: ${formatMoney(valorLiquido)}${valorRepasse>0?' · Repasse '+formatMoney(valorRepasse):''}`);
+      const msgPacote=tipo==='pacote'?` (1ª de 4 — próximas 3 serão isentas automaticamente)`:'';
+      showToast(`✅ Sessão registrada! Receita líquida: ${formatMoney(valorLiquido)}${valorRepasse>0?' · Repasse '+formatMoney(valorRepasse):''}${msgPacote}`);
+    } else if(dados.pacoteIsento){
+      showToast(`✅ Sessão ${dados.posicaoPacote}ª/4 do pacote registrada (isenta)`);
     } else if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao===0){
       showToast('✅ Sessão registrada! (Defina o valor no cadastro do paciente para lançar receita automática)');
     } else {
