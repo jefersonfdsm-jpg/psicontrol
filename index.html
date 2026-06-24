@@ -672,6 +672,9 @@
     <button class="sb-btn" style="background:rgba(100,100,100,.08);border-color:rgba(100,100,100,.2);color:var(--text2);" onclick="limparCache()">
       🔄 Limpar Cache
     </button>
+    <button class="sb-btn" style="background:rgba(42,184,154,.08);border-color:rgba(42,184,154,.2);color:var(--accent);margin-top:4px;" onclick="recalcularLancamentos()">
+      🔁 Recalcular Financeiro
+    </button>
     <div class="last-save" id="last-save-txt">Nenhum salvamento</div>
   </div>
 </div>
@@ -1176,6 +1179,33 @@ function saveAll() {
   document.getElementById('last-save-txt').textContent = 'Salvo: '+now;
   showToast('💾 Dados salvos!');
 }
+
+function recalcularLancamentos(){
+  if(!confirm('Isso vai recalcular todos os lançamentos automáticos de sessões com base nos valores e repasses atuais. Continuar?')) return;
+  // Remove todos os lançamentos automáticos
+  state.financeiro = state.financeiro.filter(f=>!f.auto);
+  // Recria para cada sessão realizada e paga
+  state.sessoes.forEach(s=>{
+    if(s.status!=='realizada' || s.cobr!=='pago') return;
+    const p=getPaciente(s.pacienteId); if(!p) return;
+    const c=getClinica(p.clinicaId);
+    const vOver=s.valorSessao?parseFloat(String(s.valorSessao).replace(',','.'))||0:0;
+    const vTipo = s.tipo==='anamnese'?(parseFloat(String(p.valorAnam||0).replace(',','.'))||0)
+      :s.tipo==='avaliacao'?(parseFloat(String(p.valorAval||0).replace(',','.'))||0)
+      :s.tipo==='pacote'?(parseFloat(String(p.valorPacote||0).replace(',','.'))||0)
+      :(parseFloat(String(p.valor||0).replace(',','.'))||0);
+    const bruto=vOver||vTipo; if(!bruto) return;
+    const repasse=parseFloat(c?.repasse)||0;
+    const valorRepasse=repasse>0?parseFloat((bruto*repasse/100).toFixed(2)):0;
+    const valorLiquido=parseFloat((bruto-valorRepasse).toFixed(2));
+    const labelTipo=s.tipo==='anamnese'?'Anamnese':s.tipo==='avaliacao'?'Avaliação Neuropsicológica':s.tipo==='pacote'?'Pacote 4 Sessões':'Sessão';
+    state.financeiro.push({id:uid(),sessaoId:s.id,tipo:'receita',desc:`${labelTipo} – ${p.nome}`,valor:valorLiquido,data:s.data,cat:'Sessão',auto:true});
+    if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:s.id,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data:s.data,cat:'Repasse Clínica',auto:true});
+  });
+  saveAll();
+  renderFinanceiro();
+  showToast('✅ Lançamentos recalculados!');
+}
 function loadData() {
   try { const r=localStorage.getItem('psicontrol_data'); if(r) state=JSON.parse(r); } catch(e){}
   const ls=localStorage.getItem('psicontrol_lastsave');
@@ -1339,8 +1369,8 @@ function renderSidebarClinics(){
         <span style="flex:1;font-size:.85rem;">${c.nome}</span><span class="arrow">›</span>
       </div>
       <div class="clinica-subs ${currentClinicaId===c.id?'open':''}" id="nav-${c.id}">
-        ${getPacientesDaClinica(c.id).slice(0,5).map(p=>`<div class="clinica-sub ${currentPacienteId===p.id?'active':''}" onclick="showPage('paciente','${p.id}')"><span>•</span>${p.nome.split(' ')[0]}</div>`).join('')}
-        ${getPacientesDaClinica(c.id).length>5?`<div class="clinica-sub" style="opacity:.5">+${getPacientesDaClinica(c.id).length-5} mais...</div>`:''}
+        ${getPacientesDaClinica(c.id).slice(0,8).map(p=>`<div class="clinica-sub ${currentPacienteId===p.id?'active':''}" onclick="showPage('paciente','${p.id}')"><span>•</span>${p.nome.split(' ')[0]}</div>`).join('')}
+        ${getPacientesDaClinica(c.id).length>8?`<div class="clinica-sub" style="opacity:.6;cursor:pointer" onclick="showPage('clinica','${c.id}')">+${getPacientesDaClinica(c.id).length-8} mais...</div>`:''}
       </div>
     </div>`).join('');
 }
