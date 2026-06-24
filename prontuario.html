@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Prontuário — PsiControl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2a2d3e;
+  --accent:#2ab89a;--accent2:#56d4c8;--accent3:#f0b429;--danger:#f75c5c;
+  --text:#e8eaf0;--text2:#9ea3b8;--text3:#5c6080;
+  --radius:12px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+#login-screen.hidden{display:none;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;width:360px;max-width:90vw;}
+.login-box h2{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:6px;}
+.login-box p{color:var(--text2);font-size:.85rem;margin-bottom:28px;}
+.login-field{margin-bottom:16px;}
+.login-field label{display:block;font-size:.78rem;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+.login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:.92rem;outline:none;}
+.login-field input:focus{border-color:var(--accent);}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:12px;font-size:.95rem;font-weight:600;cursor:pointer;margin-top:8px;}
+#login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
+
+/* SEM ACESSO */
+#sem-acesso-screen{display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:40px;}
+#sem-acesso-screen.active{display:flex;}
+#sem-acesso-screen h2{font-family:'DM Serif Display',serif;font-size:1.5rem;}
+#sem-acesso-screen p{color:var(--text2);max-width:360px;}
+
+/* LAYOUT */
+#app{display:none;flex:1;flex-direction:column;}
+#app.active{display:flex;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar h1{font-family:'DM Serif Display',serif;font-size:1.2rem;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.btn{border:none;border-radius:var(--radius-sm);padding:8px 16px;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{opacity:.88;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:var(--accent);color:var(--text);}
+.btn-danger{background:rgba(247,92,92,.12);border:1px solid rgba(247,92,92,.25);color:var(--danger);}
+.btn-sm{padding:5px 12px;font-size:.78rem;}
+.back-link{color:var(--text2);font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;cursor:pointer;}
+.back-link:hover{color:var(--accent);}
+
+/* MAIN */
+.main{flex:1;padding:28px;max-width:960px;margin:0 auto;width:100%;}
+
+/* LISTA DE PACIENTES */
+#page-lista{display:none;}
+#page-lista.active{display:block;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:6px;}
+.page-sub{color:var(--text2);font-size:.85rem;margin-bottom:24px;}
+.search-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text);font-size:.9rem;width:100%;outline:none;margin-bottom:20px;}
+.search-bar:focus{border-color:var(--accent);}
+.pac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.pac-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:.18s;}
+.pac-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.pac-card .pac-nome{font-weight:600;font-size:.95rem;margin-bottom:4px;}
+.pac-card .pac-clinica{font-size:.76rem;color:var(--text3);}
+.pac-card .pac-count{font-size:.76rem;color:var(--accent);margin-top:8px;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-state .e-icon{font-size:3rem;margin-bottom:12px;}
+
+/* PRONTUÁRIO DO PACIENTE */
+#page-prontuario{display:none;}
+#page-prontuario.active{display:block;}
+.pront-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;}
+.pront-header-info h2{font-family:'DM Serif Display',serif;font-size:1.5rem;}
+.pront-header-info p{color:var(--text2);font-size:.83rem;margin-top:3px;}
+.registros-list{display:flex;flex-direction:column;gap:12px;margin-top:20px;}
+.registro-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;}
+.registro-card .reg-data{font-size:.76rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
+.registro-card .reg-texto{font-size:.9rem;line-height:1.7;color:var(--text);white-space:pre-wrap;}
+.registro-card .reg-actions{display:flex;gap:6px;margin-top:14px;justify-content:flex-end;}
+.registro-card.editing{border-color:var(--accent);}
+
+/* EDITOR DE REGISTRO */
+.editor-card{background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:20px;margin-bottom:20px;}
+.editor-card label{display:block;font-size:.76rem;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.editor-card input[type=date]{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--text);font-size:.88rem;outline:none;width:180px;}
+.editor-card input[type=date]:focus{border-color:var(--accent);}
+.editor-card textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;color:var(--text);font-size:.9rem;line-height:1.7;resize:vertical;min-height:160px;outline:none;font-family:'Inter',sans-serif;margin-top:14px;}
+.editor-card textarea:focus{border-color:var(--accent);}
+.editor-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 20px;font-size:.88rem;opacity:0;transition:.25s;z-index:9999;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* PDF hidden */
+#pdf-area{display:none;}
+
+@media(max-width:600px){
+  .main{padding:16px;}
+  .pac-grid{grid-template-columns:1fr 1fr;}
+  .pront-header{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h2>Prontuário</h2>
+    <p>PsiControl — Registros Clínicos</p>
+    <div class="login-field"><label>Login</label><input type="text" id="login-email" placeholder="Seu login"></div>
+    <div class="login-field"><label>Senha</label><input type="password" id="login-senha" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div id="login-error"></div>
+  </div>
+</div>
+
+<!-- SEM ACESSO -->
+<div id="sem-acesso-screen">
+  <div class="e-icon">🔒</div>
+  <h2>Acesso Restrito</h2>
+  <p>Você não tem permissão para acessar o módulo de Prontuários. Solicite ao administrador.</p>
+  <button class="btn btn-outline" onclick="window.location.href='index.html'">← Voltar ao início</button>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span onclick="window.location.href='index.html'" style="cursor:pointer;font-size:1.1rem;font-weight:700;font-family:'DM Serif Display',serif;color:var(--accent);">PsiControl</span>
+      <span style="color:var(--border)">|</span>
+      <span style="font-size:.88rem;color:var(--text2);">Prontuário Eletrônico</span>
+    </div>
+    <div class="topbar-right">
+      <span id="user-nome" style="font-size:.82rem;color:var(--text3);"></span>
+      <button class="btn btn-outline btn-sm" onclick="window.location.href='index.html'">← Módulos</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- LISTA DE PACIENTES -->
+    <div id="page-lista" class="active">
+      <div class="page-title">Prontuário Eletrônico</div>
+      <div class="page-sub">Selecione um paciente para visualizar ou adicionar registros</div>
+      <input class="search-bar" id="busca-pac" placeholder="🔍 Buscar paciente..." oninput="filtrarPacientes()">
+      <div class="pac-grid" id="pac-grid"></div>
+    </div>
+
+    <!-- PRONTUÁRIO DO PACIENTE -->
+    <div id="page-prontuario">
+      <div class="pront-header">
+        <div class="pront-header-info">
+          <span class="back-link" onclick="voltarLista()">← Pacientes</span>
+          <h2 id="pront-pac-nome" style="margin-top:6px;"></h2>
+          <p id="pront-pac-info"></p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="exportarPDF()">📄 Exportar PDF</button>
+          <button class="btn btn-primary btn-sm" onclick="abrirEditor()">+ Novo Registro</button>
+        </div>
+      </div>
+
+      <!-- EDITOR -->
+      <div id="editor-registro" style="display:none;">
+        <div class="editor-card">
+          <label>Data do Registro</label>
+          <input type="date" id="reg-data">
+          <textarea id="reg-texto" placeholder="Digite as anotações clínicas desta sessão..."></textarea>
+          <div class="editor-actions">
+            <button class="btn btn-outline btn-sm" onclick="fecharEditor()">Cancelar</button>
+            <button class="btn btn-primary btn-sm" onclick="salvarRegistro()">💾 Salvar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="registros-list" class="registros-list"></div>
+      <div id="registros-empty" class="empty-state" style="display:none;">
+        <div class="e-icon">📝</div>
+        <p>Nenhum registro ainda.<br>Clique em "+ Novo Registro" para começar.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF AREA -->
+<div id="pdf-area"></div>
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://nntvdmunpudovuiwrccz.supabase.co';
+const SB_KEY='sb_publishable_Z5XoCu4LUyMZjnMPCUZ1wg_IgphMzcf';
+
+let usuarioLogado=null;
+let pacientes=[];
+let clinicas=[];
+let registros=[];
+let pacienteAtual=null;
+let editandoId=null;
+
+async function sbFetch(path,opts={}){
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{...opts,headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}});
+  if(!r.ok)throw new Error(await r.text());
+  const txt=await r.text();
+  return txt?JSON.parse(txt):null;
+}
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function formatData(d){if(!d)return '';const[a,m,dia]=d.split('-');return`${dia}/${m}/${a}`;}
+function hoje(){return new Date().toISOString().slice(0,10);}
+
+// ===================== AUTH =====================
+async function sha256(text){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function fazerLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const senha=document.getElementById('login-senha').value;
+  document.getElementById('login-error').textContent='';
+  try {
+    const users=await sbFetch(`usuarios?email=eq.${encodeURIComponent(email)}&select=id,nome,email,senha_hash,ativo`);
+    const u=users?.[0];
+    if(!u)throw new Error('Usuário não encontrado.');
+    const hashDigitado=await sha256(senha);
+    if(hashDigitado!==u.senha_hash)throw new Error('Senha incorreta.');
+    const isAdmin=u.email==='admin';
+    let temAcesso=isAdmin;
+    if(!isAdmin){
+      const rows=await sbFetch(`dados_usuario?usuario_id=eq.${u.id}&select=dados`);
+      const dados=rows&&rows.length>0?rows[0].dados:{};
+      temAcesso=!!dados?.acesso_prontuario;
+    }
+    usuarioLogado={id:u.id,nome:u.nome,email:u.email,isAdmin,temAcesso};
+    iniciarApp();
+  } catch(e){document.getElementById('login-error').textContent=e.message;}
+}
+
+async function verificarSessao(){
+  try {
+    const sessao=localStorage.getItem('psi_sessao');
+    if(sessao){
+      const u=JSON.parse(sessao);
+      const isAdmin=u.email==='admin';
+      let temAcesso=isAdmin;
+      if(!isAdmin){
+        const rows=await sbFetch(`dados_usuario?usuario_id=eq.${u.id}&select=dados`);
+        const dados=rows&&rows.length>0?rows[0].dados:{};
+        temAcesso=!!dados?.acesso_prontuario;
+      }
+      usuarioLogado={id:u.id,nome:u.nome,email:u.email,isAdmin,temAcesso};
+      iniciarApp();
+      return;
+    }
+  } catch(e){}
+}
+
+function iniciarApp(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('user-nome').textContent=usuarioLogado.nome;
+  if(!usuarioLogado.temAcesso){
+    document.getElementById('sem-acesso-screen').classList.add('active');
+    return;
+  }
+  document.getElementById('app').classList.add('active');
+  carregarDados();
+}
+
+// ===================== DADOS =====================
+async function carregarDados(){
+  try {
+    const state=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
+    pacientes=state.pacientes||[];
+    clinicas=state.clinicas||[];
+    // Carrega registros do prontuário do Supabase
+    const regs=await sbFetch(`prontuarios?usuario_id=eq.${usuarioLogado.id}&order=data.desc`)||[];
+    registros=regs;
+    renderListaPacientes();
+  } catch(e){showToast('Erro ao carregar dados.');}
+}
+
+// ===================== LISTA DE PACIENTES =====================
+function getClinicaNome(id){return clinicas.find(c=>c.id===id)?.nome||'';}
+function getRegistrosPac(pacId){return registros.filter(r=>r.paciente_id===pacId);}
+
+function renderListaPacientes(filtro=''){
+  const grid=document.getElementById('pac-grid');
+  const lista=pacientes.filter(p=>!filtro||p.nome.toLowerCase().includes(filtro.toLowerCase()));
+  if(!lista.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="e-icon">👥</div><p>Nenhum paciente encontrado.<br>Cadastre pacientes no módulo PsiControl.</p></div>`;
+    return;
+  }
+  grid.innerHTML=lista.map(p=>{
+    const regs=getRegistrosPac(p.id);
+    const clinNome=getClinicaNome(p.clinicaId);
+    return`<div class="pac-card" onclick="abrirPaciente('${p.id}')">
+      <div class="pac-nome">${p.nome}</div>
+      <div class="pac-clinica">${clinNome}</div>
+      <div class="pac-count">${regs.length} registro${regs.length!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function filtrarPacientes(){
+  renderListaPacientes(document.getElementById('busca-pac').value);
+}
+
+// ===================== PRONTUÁRIO DO PACIENTE =====================
+function abrirPaciente(id){
+  pacienteAtual=pacientes.find(p=>p.id===id);
+  if(!pacienteAtual)return;
+  document.getElementById('pront-pac-nome').textContent=pacienteAtual.nome;
+  document.getElementById('pront-pac-info').textContent=getClinicaNome(pacienteAtual.clinicaId);
+  document.getElementById('page-lista').classList.remove('active');
+  document.getElementById('page-prontuario').classList.add('active');
+  fecharEditor();
+  renderRegistros();
+}
+
+function voltarLista(){
+  pacienteAtual=null;
+  editandoId=null;
+  document.getElementById('page-prontuario').classList.remove('active');
+  document.getElementById('page-lista').classList.add('active');
+  fecharEditor();
+}
+
+function renderRegistros(){
+  if(!pacienteAtual)return;
+  const regs=getRegistrosPac(pacienteAtual.id).sort((a,b)=>b.data.localeCompare(a.data));
+  const list=document.getElementById('registros-list');
+  const empty=document.getElementById('registros-empty');
+  if(!regs.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=regs.map(r=>`
+    <div class="registro-card" id="regcard-${r.id}">
+      <div class="reg-data">📅 ${formatData(r.data)}</div>
+      <div class="reg-texto">${escapeHtml(r.texto)}</div>
+      <div class="reg-actions">
+        <button class="btn btn-outline btn-sm" onclick="editarRegistro('${r.id}')">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirRegistro('${r.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function escapeHtml(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ===================== EDITOR =====================
+function abrirEditor(data='',texto=''){
+  editandoId=null;
+  document.getElementById('reg-data').value=data||hoje();
+  document.getElementById('reg-texto').value=texto;
+  document.getElementById('editor-registro').style.display='block';
+  document.getElementById('reg-texto').focus();
+}
+
+function editarRegistro(id){
+  const r=registros.find(x=>x.id===id);
+  if(!r)return;
+  editandoId=id;
+  document.getElementById('reg-data').value=r.data;
+  document.getElementById('reg-texto').value=r.texto;
+  document.getElementById('editor-registro').style.display='block';
+  document.getElementById('reg-texto').focus();
+}
+
+function fecharEditor(){
+  editandoId=null;
+  document.getElementById('editor-registro').style.display='none';
+  document.getElementById('reg-data').value='';
+  document.getElementById('reg-texto').value='';
+}
+
+async function salvarRegistro(){
+  const data=document.getElementById('reg-data').value;
+  const texto=document.getElementById('reg-texto').value.trim();
+  if(!data){showToast('⚠️ Informe a data.');return;}
+  if(!texto){showToast('⚠️ Escreva a anotação.');return;}
+  try {
+    if(editandoId){
+      await sbFetch(`prontuarios?id=eq.${editandoId}`,{method:'PATCH',body:JSON.stringify({data,texto})});
+      const r=registros.find(x=>x.id===editandoId);
+      if(r){r.data=data;r.texto=texto;}
+      showToast('✅ Registro atualizado!');
+    } else {
+      const novo={id:uid(),usuario_id:usuarioLogado.id,paciente_id:pacienteAtual.id,paciente_nome:pacienteAtual.nome,data,texto};
+      await sbFetch('prontuarios',{method:'POST',body:JSON.stringify(novo)});
+      registros.push(novo);
+      showToast('✅ Registro salvo!');
+    }
+    fecharEditor();
+    renderRegistros();
+    renderListaPacientes(document.getElementById('busca-pac').value);
+  } catch(e){showToast('Erro ao salvar: '+e.message);}
+}
+
+async function excluirRegistro(id){
+  if(!confirm('Excluir este registro?'))return;
+  try {
+    await sbFetch(`prontuarios?id=eq.${id}`,{method:'DELETE'});
+    registros=registros.filter(r=>r.id!==id);
+    renderRegistros();
+    renderListaPacientes(document.getElementById('busca-pac').value);
+    showToast('🗑 Registro excluído.');
+  } catch(e){showToast('Erro ao excluir.');}
+}
+
+// ===================== PDF =====================
+function exportarPDF(){
+  if(!pacienteAtual)return;
+  const regs=getRegistrosPac(pacienteAtual.id).sort((a,b)=>b.data.localeCompare(a.data));
+  const clinNome=getClinicaNome(pacienteAtual.clinicaId);
+  const profil=JSON.parse(localStorage.getItem('psi_perfil')||'{}');
+  const profNome=profil.nome||usuarioLogado.nome;
+  const profCRP=profil.crp||'';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#111;margin:0;padding:32px;}
+    h1{font-size:15pt;margin-bottom:4px;}
+    .sub{font-size:9pt;color:#555;margin-bottom:24px;}
+    .registro{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #ddd;}
+    .reg-data{font-size:9pt;font-weight:bold;color:#444;text-transform:uppercase;margin-bottom:6px;}
+    .reg-texto{font-size:10.5pt;line-height:1.7;white-space:pre-wrap;}
+    .rodape{margin-top:40px;padding-top:16px;border-top:1px solid #ccc;font-size:9pt;color:#555;}
+    @media print{body{margin:0;padding:20px;}}
+  </style></head><body>
+  <h1>Prontuário Eletrônico</h1>
+  <div class="sub">Paciente: <strong>${pacienteAtual.nome}</strong> | Clínica: ${clinNome} | Emitido em: ${formatData(hoje())}</div>
+  ${regs.map(r=>`<div class="registro"><div class="reg-data">📅 ${formatData(r.data)}</div><div class="reg-texto">${escapeHtml(r.texto)}</div></div>`).join('')}
+  <div class="rodape">${profNome}${profCRP?' — CRP '+profCRP:''}</div>
+  </body></html>`;
+
+  const iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  setTimeout(()=>{iframe.contentWindow.print();setTimeout(()=>iframe.remove(),2000);},400);
+}
+
+// ===================== INIT =====================
+window.addEventListener('DOMContentLoaded',verificarSessao);
+</script>
+</body>
+</html>

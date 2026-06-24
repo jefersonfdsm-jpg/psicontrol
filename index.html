@@ -536,7 +536,7 @@
     <h2>Olá, <span id="modulo-nome-usuario"></span> 👋</h2>
     <p>Escolha o módulo que deseja acessar</p>
   </div>
-  <div class="modulo-cards" style="grid-template-columns:repeat(4,1fr);max-width:1100px;">
+  <div class="modulo-cards" style="grid-template-columns:repeat(3,1fr);max-width:900px;">
     <div class="modulo-card" onclick="irParaModulo('psicontrol')">
       <div class="m-icon">🏥</div>
       <h3>PsiControl</h3>
@@ -560,6 +560,12 @@
       <h3>Documentos</h3>
       <p>Declarações de comparecimento e encaminhamentos</p>
       <div class="m-badge" style="background:rgba(247,92,92,.15);color:var(--danger);">Relatórios</div>
+    </div>
+    <div class="modulo-card" onclick="window.location.href='prontuario.html'" id="card-prontuario">
+      <div class="m-icon">🗂️</div>
+      <h3>Prontuário</h3>
+      <p>Registros clínicos eletrônicos por paciente</p>
+      <div class="m-badge" style="background:rgba(124,106,247,.15);color:#a78bfa;">Clínico</div>
     </div>
   </div>
 </div>
@@ -586,7 +592,15 @@
         <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
           <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
             <input type="checkbox" id="edit-acesso-docs" style="width:16px;height:16px;accent-color:var(--accent);">
-            <span>📄 Acesso ao módulo de <strong>Documentos</strong> (Declarações e Encaminhamentos)</span>
+            <span>📄 Acesso ao módulo de <strong>Documentos</strong></span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
+            <input type="checkbox" id="edit-acesso-laudos" style="width:16px;height:16px;accent-color:var(--accent);">
+            <span>📋 Acesso ao módulo de <strong>Laudos</strong></span>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.88rem;color:var(--text2);">
+            <input type="checkbox" id="edit-acesso-prontuario" style="width:16px;height:16px;accent-color:var(--accent);">
+            <span>🗂️ Acesso ao módulo de <strong>Prontuário</strong></span>
           </label>
         </div>
       </div>
@@ -2720,10 +2734,11 @@ function abrirEditarUsuario(id, nome, email) {
   document.getElementById('edit-usuario-nome').value = nome;
   document.getElementById('edit-usuario-email').value = email;
   document.getElementById('edit-usuario-senha').value = '';
-  // Carrega permissões atuais
   sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`).then(rows=>{
     const dados=rows&&rows.length>0?rows[0].dados:{};
     document.getElementById('edit-acesso-docs').checked=!!dados?.acesso_docs;
+    document.getElementById('edit-acesso-laudos').checked=!!dados?.acesso_laudos;
+    document.getElementById('edit-acesso-prontuario').checked=!!dados?.acesso_prontuario;
   }).catch(()=>{});
   document.getElementById('modal-editar-usuario').classList.add('open');
 }
@@ -2733,6 +2748,8 @@ async function salvarEdicaoUsuario() {
   const nome = document.getElementById('edit-usuario-nome').value.trim();
   const senha = document.getElementById('edit-usuario-senha').value.trim();
   const acessoDocs = document.getElementById('edit-acesso-docs').checked;
+  const acessoLaudos = document.getElementById('edit-acesso-laudos').checked;
+  const acessoProntuario = document.getElementById('edit-acesso-prontuario').checked;
   if (!nome) { showToast('⚠️ Nome não pode ser vazio'); return; }
   try {
     const dados = { nome };
@@ -2742,10 +2759,11 @@ async function salvarEdicaoUsuario() {
       dados.senha_hash = await sha256(senha);
     }
     await sbFetch(`usuarios?id=eq.${id}`, { method:'PATCH', body: JSON.stringify(dados) });
-    // Salva permissões nos dados do usuário
     const rows = await sbFetch(`dados_usuario?usuario_id=eq.${id}&select=dados`);
     let dadosUser = (rows&&rows.length>0&&rows[0].dados)?rows[0].dados:{};
     dadosUser.acesso_docs = acessoDocs;
+    dadosUser.acesso_laudos = acessoLaudos;
+    dadosUser.acesso_prontuario = acessoProntuario;
     if(rows&&rows.length>0){
       await sbFetch(`dados_usuario?usuario_id=eq.${id}`,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({dados:dadosUser})});
     } else {
