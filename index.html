@@ -2509,14 +2509,7 @@ async function fazerLogin() {
     const hashDigitado = await sha256(senha);
     if (hashDigitado !== user.senha_hash) { setLoginErro('Senha incorreta.'); return; }
 
-    // Busca permissões extras (podem não existir como coluna — trata com fallback)
-    let acesso_docs=false, acesso_laudos=false;
-    try {
-      const perm = await sbFetch(`usuarios?id=eq.${user.id}&select=acesso_docs,acesso_laudos`);
-      if(perm && perm[0]){ acesso_docs=!!perm[0].acesso_docs; acesso_laudos=!!perm[0].acesso_laudos; }
-    } catch(e){}
-
-    usuarioLogado = { id: user.id, nome: user.nome, email: user.email, isAdmin: user.email === 'admin', acesso_docs, acesso_laudos };
+    usuarioLogado = { id: user.id, nome: user.nome, email: user.email, isAdmin: user.email === 'admin' };
     localStorage.setItem('psi_sessao', JSON.stringify(usuarioLogado));
 
     document.getElementById('login-screen').classList.add('hidden');
@@ -2529,11 +2522,6 @@ async function fazerLogin() {
 
     // Mostrar tela de seleção de módulo
     document.getElementById('modulo-nome-usuario').textContent = user.nome.split(' ')[0];
-    // Controla visibilidade dos cards por permissão
-    const cardDocs=document.getElementById('card-documentos');
-    const cardLaudos=document.getElementById('card-laudos');
-    if(cardDocs) cardDocs.style.display=user.acesso_docs||user.email==='admin'?'':'none';
-    if(cardLaudos) cardLaudos.style.display=user.acesso_laudos||user.email==='admin'?'':'none';
     document.getElementById('modulo-screen').classList.add('open');
 
     showToast(`☁️ Bem-vindo, ${user.nome}!`);
@@ -2597,10 +2585,6 @@ function verificarSessao() {
       } else {
         // Mostra seleção de módulo
         document.getElementById('modulo-nome-usuario').textContent = usuarioLogado.nome.split(' ')[0];
-        const cardDocs=document.getElementById('card-documentos');
-        const cardLaudos=document.getElementById('card-laudos');
-        if(cardDocs) cardDocs.style.display=usuarioLogado.acesso_docs||usuarioLogado.isAdmin?'':'none';
-        if(cardLaudos) cardLaudos.style.display=usuarioLogado.acesso_laudos||usuarioLogado.isAdmin?'':'none';
         document.getElementById('modulo-screen').classList.add('open');
       }
       return;
