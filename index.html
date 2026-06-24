@@ -906,6 +906,16 @@
       <div class="field"><label>% Repasse à Clínica</label><input id="clinica-repasse" type="number" min="0" max="100" step="0.1" placeholder="Ex: 30"></div>
       <div class="field"><label style="color:var(--text3);font-size:.75rem;">Ex: 30 = a clínica fica com 30% do valor da sessão</label></div>
     </div>
+    <div style="margin:12px 0 6px;font-size:.78rem;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;">Valores Padrão dos Serviços</div>
+    <div style="font-size:.75rem;color:var(--text3);margin-bottom:10px;">Aplicados automaticamente aos novos pacientes desta clínica. Podem ser ajustados individualmente.</div>
+    <div class="form-row cols-2">
+      <div class="field"><label>Sessão Regular (R$)</label><input id="clinica-valor" type="number" min="0" step="0.01" placeholder="Ex: 150.00"></div>
+      <div class="field"><label>Anamnese (R$)</label><input id="clinica-valor-anam" type="number" min="0" step="0.01" placeholder="Ex: 250.00"></div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="field"><label>Avaliação Neuropsicológica (R$)</label><input id="clinica-valor-aval" type="number" min="0" step="0.01" placeholder="Ex: 800.00"></div>
+      <div class="field"><label>Pacote 4 Sessões (R$)</label><input id="clinica-valor-pacote" type="number" min="0" step="0.01" placeholder="Ex: 500.00"></div>
+    </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModals()">Cancelar</button>
       <button class="btn btn-primary" onclick="salvarClinica()">Salvar</button>
@@ -931,6 +941,9 @@
     </div>
     <div class="form-row cols-2">
       <div class="field"><label>Avaliação Neuropsicológica (R$)</label><input id="pac-valor-aval" type="number" min="0" step="0.01" placeholder="Ex: 800.00"></div>
+      <div class="field"><label>Pacote 4 Sessões (R$) <span style="font-size:.72rem;color:var(--text3);font-weight:400;">opcional</span></label><input id="pac-valor-pacote" type="number" min="0" step="0.01" placeholder="Ex: 500.00"></div>
+    </div>
+    <div class="form-row cols-2">
       <div class="field"><label>Status</label>
         <select id="pac-status">
           <option value="ativo">Ativo</option>
@@ -959,6 +972,7 @@
         <option value="sessao">Sessão Regular</option>
         <option value="anamnese">Anamnese</option>
         <option value="avaliacao">Avaliação Neuropsicológica</option>
+        <option value="pacote">Pacote 4 Sessões</option>
       </select></div>
       <div class="field"><label>Valor (R$) <span id="ses-valor-hint" style="font-size:.72rem;color:var(--text3);font-weight:400;"></span></label><input id="ses-valor" type="number" min="0" step="0.01" placeholder="Valor desta sessão"></div>
     </div>
@@ -1514,16 +1528,46 @@ function atualizarValorSessao(override){
     ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
     : tipo==='avaliacao'
     ? (parseFloat(String(p?.valorAval||'0').replace(',','.'))||0)
+    : tipo==='pacote'
+    ? (parseFloat(String(p?.valorPacote||'0').replace(',','.'))||0)
     : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
   const hint=document.getElementById('ses-valor-hint');
   if(hint) hint.textContent=valorPadrao>0?`(padrão: ${formatMoney(valorPadrao)})`:'';
-  // Se não há override já carregado, limpa o campo para que o padrão seja usado
   if(override===undefined) document.getElementById('ses-valor').value='';
 }
 
 // MODAIS
 function openModal(id){
   const today=new Date().toISOString().slice(0,10);
+  if(id==='modal-paciente'){
+    // Pré-popula com valores padrão da clínica atual
+    const c=getClinica(currentClinicaId);
+    document.getElementById('pac-nome').value='';
+    document.getElementById('pac-nasc').value='';
+    document.getElementById('pac-tel').value='';
+    document.getElementById('pac-email').value='';
+    document.getElementById('pac-diag').value='';
+    document.getElementById('pac-valor').value=c?.valor||'';
+    document.getElementById('pac-valor-anam').value=c?.valorAnam||'';
+    document.getElementById('pac-valor-aval').value=c?.valorAval||'';
+    document.getElementById('pac-valor-pacote').value=c?.valorPacote||'';
+    document.getElementById('pac-status').value='ativo';
+    document.getElementById('pac-obs').value='';
+    document.querySelector('#modal-paciente h3').textContent='Novo Paciente';
+    delete document.getElementById('modal-paciente').dataset.editing;
+  }
+  if(id==='modal-clinica' && !editingClinicaId){
+    document.getElementById('clinica-nome').value='';
+    document.getElementById('clinica-end').value='';
+    document.getElementById('clinica-cor').value='#7c6af7';
+    document.getElementById('clinica-obs').value='';
+    document.getElementById('clinica-repasse').value='';
+    document.getElementById('clinica-valor').value='';
+    document.getElementById('clinica-valor-anam').value='';
+    document.getElementById('clinica-valor-aval').value='';
+    document.getElementById('clinica-valor-pacote').value='';
+    document.getElementById('modal-clinica-title').textContent='Nova Clínica';
+  }
   if(id==='modal-sessao'){
     document.getElementById('ses-data').value=today;
     document.getElementById('ses-dur').value=50;
@@ -1558,8 +1602,14 @@ document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click
 function salvarClinica(){
   const nome=document.getElementById('clinica-nome').value.trim();if(!nome){showToast('⚠️ Informe o nome');return;}
   const repasse=parseFloat(document.getElementById('clinica-repasse').value)||0;
-  if(editingClinicaId){const c=state.clinicas.find(c=>c.id===editingClinicaId);if(c){c.nome=nome;c.end=document.getElementById('clinica-end').value;c.cor=document.getElementById('clinica-cor').value;c.obs=document.getElementById('clinica-obs').value;c.repasse=repasse;}}
-  else state.clinicas.push({id:uid(),nome,end:document.getElementById('clinica-end').value,cor:document.getElementById('clinica-cor').value,obs:document.getElementById('clinica-obs').value,repasse});
+  const valoresClinica={
+    valor:parseFloat(document.getElementById('clinica-valor').value)||0,
+    valorAnam:parseFloat(document.getElementById('clinica-valor-anam').value)||0,
+    valorAval:parseFloat(document.getElementById('clinica-valor-aval').value)||0,
+    valorPacote:parseFloat(document.getElementById('clinica-valor-pacote').value)||0
+  };
+  if(editingClinicaId){const c=state.clinicas.find(c=>c.id===editingClinicaId);if(c){c.nome=nome;c.end=document.getElementById('clinica-end').value;c.cor=document.getElementById('clinica-cor').value;c.obs=document.getElementById('clinica-obs').value;c.repasse=repasse;Object.assign(c,valoresClinica);}}
+  else state.clinicas.push({id:uid(),nome,end:document.getElementById('clinica-end').value,cor:document.getElementById('clinica-cor').value,obs:document.getElementById('clinica-obs').value,repasse,...valoresClinica});
   closeModals();renderSidebarClinics();saveAll();if(editingClinicaId)renderClinicaPage();showToast('✅ Clínica salva!');
 }
 function editClinica(){
@@ -1568,6 +1618,10 @@ function editClinica(){
   document.getElementById('clinica-nome').value=c.nome;document.getElementById('clinica-end').value=c.end||'';
   document.getElementById('clinica-cor').value=c.cor||'#7c6af7';document.getElementById('clinica-obs').value=c.obs||'';
   document.getElementById('clinica-repasse').value=c.repasse||'';
+  document.getElementById('clinica-valor').value=c.valor||'';
+  document.getElementById('clinica-valor-anam').value=c.valorAnam||'';
+  document.getElementById('clinica-valor-aval').value=c.valorAval||'';
+  document.getElementById('clinica-valor-pacote').value=c.valorPacote||'';
   openModal('modal-clinica');
 }
 function deleteClinica(){
@@ -1609,7 +1663,7 @@ function salvarPaciente(){
   const nome=document.getElementById('pac-nome').value.trim();if(!nome){showToast('⚠️ Informe o nome');return;}
   const modal=document.getElementById('modal-paciente');
   const editingId=modal.dataset.editing;
-  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,valorAnam:parseFloat(String(document.getElementById('pac-valor-anam').value).replace(',','.'))||0,valorAval:parseFloat(String(document.getElementById('pac-valor-aval').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
+  const dados={nome,nasc:document.getElementById('pac-nasc').value,tel:document.getElementById('pac-tel').value,email:document.getElementById('pac-email').value,diag:document.getElementById('pac-diag').value,valor:parseFloat(String(document.getElementById('pac-valor').value).replace(',','.'))||0,valorAnam:parseFloat(String(document.getElementById('pac-valor-anam').value).replace(',','.'))||0,valorAval:parseFloat(String(document.getElementById('pac-valor-aval').value).replace(',','.'))||0,valorPacote:parseFloat(String(document.getElementById('pac-valor-pacote').value).replace(',','.'))||0,status:document.getElementById('pac-status').value,obs:document.getElementById('pac-obs').value};
   if(editingId){
     const p=state.pacientes.find(x=>x.id===editingId);
     if(p) Object.assign(p,dados);
@@ -1618,7 +1672,7 @@ function salvarPaciente(){
     closeModals();renderPacientePage();renderSidebarClinics();saveAll();showToast('✅ Paciente atualizado!');
   } else {
     state.pacientes.push({id:uid(),clinicaId:currentClinicaId,...dados});
-    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-valor-anam','pac-valor-aval','pac-obs'].forEach(id=>document.getElementById(id).value='');
+    ['pac-nome','pac-nasc','pac-tel','pac-email','pac-diag','pac-valor','pac-valor-anam','pac-valor-aval','pac-valor-pacote','pac-obs'].forEach(id=>document.getElementById(id).value='');
     closeModals();renderPacientes();renderSidebarClinics();saveAll();showToast('✅ Paciente adicionado!');
   }
 }
@@ -1637,6 +1691,7 @@ function editPaciente(){
   document.getElementById('pac-valor').value=p.valor||'';
   document.getElementById('pac-valor-anam').value=p.valorAnam||'';
   document.getElementById('pac-valor-aval').value=p.valorAval||'';
+  document.getElementById('pac-valor-pacote').value=p.valorPacote||'';
   document.getElementById('pac-status').value=p.status||'ativo';
   document.getElementById('pac-obs').value=p.obs||'';
   // mark as editing
@@ -1757,6 +1812,8 @@ function salvarSessao(){
     ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
     : tipo==='avaliacao'
     ? (parseFloat(String(p?.valorAval||'0').replace(',','.'))||0)
+    : tipo==='pacote'
+    ? (parseFloat(String(p?.valorPacote||'0').replace(',','.'))||0)
     : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
   const valorSessao = valorDigitado > 0 ? valorDigitado : valorPadrao;
   if(valorDigitado>0) dados.valorSessao=valorDigitado; // salva override na sessão
@@ -1772,7 +1829,7 @@ function salvarSessao(){
     if(s) Object.assign(s,dados);
     if(dados.status==='realizada' && dados.cobr==='pago' && (statusAnterior!=='realizada'||cobrAnterior!=='pago') && valorSessao>0){
       if(!state.financeiro.find(f=>f.sessaoId===editingSessaoId&&f.auto&&f.tipo==='receita')){
-        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+        state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':tipo==='pacote'?'Pacote 4 Sessões':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
         if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:editingSessaoId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       }
     }
@@ -1784,7 +1841,7 @@ function salvarSessao(){
     const novaId=uid();
     state.sessoes.push({id:novaId,pacienteId:currentPacienteId,...dados});
     if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao>0){
-      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
+      state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'receita',desc:`${tipo==='anamnese'?'Anamnese':tipo==='avaliacao'?'Avaliação Neuropsicológica':tipo==='pacote'?'Pacote 4 Sessões':'Sessão'} – ${p?.nome||'Paciente'}`,valor:valorLiquido,data,cat:'Sessão',auto:true});
       if(valorRepasse>0) state.financeiro.push({id:uid(),sessaoId:novaId,tipo:'gasto',desc:`Repasse clínica (${repasse}%) – ${c?.nome||''}`,valor:valorRepasse,data,cat:'Repasse Clínica',auto:true});
       showToast(`✅ Sessão registrada! Receita líquida: ${formatMoney(valorLiquido)}${valorRepasse>0?' · Repasse '+formatMoney(valorRepasse):''}`);
     } else if(dados.status==='realizada' && dados.cobr==='pago' && valorSessao===0){
