@@ -266,7 +266,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <div id="secao-identificacao" class="secao active">
       <div class="secao-titulo">1 — Identificação</div>
       <div class="form-row cols-2">
-        <div class="field"><label>Paciente</label><select id="id-paciente" onchange="onPacienteSelect()"><option value="">Selecione o paciente</option></select></div>
+        <div class="field"><label>Paciente</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="id-paciente" onchange="onPacienteSelect()" style="flex:1"><option value="">Selecione o paciente</option><option value="__manual__">✏️ Digitar manualmente...</option></select>
+          </div>
+          <input type="text" id="id-paciente-manual" placeholder="Nome completo do paciente" style="display:none;margin-top:6px;" oninput="onPacienteManual()">
+        </div>
         <div class="field"><label>Data do Laudo</label><input type="date" id="id-data"></div>
       </div>
       <div class="form-row cols-3">
@@ -513,6 +518,7 @@ async function carregarDados(){
     const selPac=document.getElementById('id-paciente');
     selPac.innerHTML='<option value="">Selecione o paciente</option>';
     pacientes.forEach(p=>selPac.innerHTML+=`<option value="${p.id}">${p.nome}</option>`);
+    selPac.innerHTML+='<option value="__manual__">✏️ Digitar manualmente...</option>';
 
     const selClin=document.getElementById('id-clinica');
     selClin.innerHTML='<option value="">Selecione a clínica</option>';
@@ -637,14 +643,16 @@ function preencherEditor(l){
 function coletarDados(){
   const pacId=document.getElementById('id-paciente').value;
   const pac=pacientes.find(p=>p.id===pacId);
+  const nomeManual=document.getElementById('id-paciente-manual').value.trim();
+  const nomePaciente=pac?.nome||(pacId==='__manual__'?nomeManual:'')||document.getElementById('editor-titulo-header').textContent;
   return {
     usuario_id:usuarioLogado.id,
-    paciente_id:pacId,
-    paciente_nome:pac?.nome||document.getElementById('editor-titulo-header').textContent,
+    paciente_id:pacId==='__manual__'?null:pacId,
+    paciente_nome:nomePaciente,
     data_laudo:document.getElementById('id-data').value||new Date().toISOString().slice(0,10),
     status:laudoAtual?.status||'rascunho',
     identificacao:{
-      pacienteId:pacId,
+      pacienteId:pacId==='__manual__'?null:pacId,
       nasc:document.getElementById('id-nasc').value,
       idade:document.getElementById('id-idade').value,
       sexo:document.getElementById('id-sexo').value,
@@ -674,7 +682,7 @@ function coletarDados(){
 
 async function salvarLaudo(finalizar=false){
   const dados=coletarDados();
-  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Selecione o paciente.');return;}
+  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Informe o nome do paciente.');return;}
   if(finalizar)dados.status='finalizado';
   try {
     if(laudoAtual){
@@ -702,6 +710,16 @@ async function excluirLaudo(id){
 // ===================== PACIENTE SELECT =====================
 function onPacienteSelect(){
   const id=document.getElementById('id-paciente').value;
+  const manual=document.getElementById('id-paciente-manual');
+  if(id==='__manual__'){
+    manual.style.display='block';
+    manual.focus();
+    document.getElementById('editor-titulo-header').textContent='Novo Laudo';
+    document.getElementById('editor-breadcrumb').textContent='Novo Laudo';
+    return;
+  }
+  manual.style.display='none';
+  manual.value='';
   const p=pacientes.find(x=>x.id===id);
   if(!p)return;
   if(p.nasc)document.getElementById('id-nasc').value=p.nasc;
@@ -714,6 +732,12 @@ function onPacienteSelect(){
   }
   document.getElementById('editor-titulo-header').textContent=p.nome;
   document.getElementById('editor-breadcrumb').textContent=p.nome;
+}
+
+function onPacienteManual(){
+  const nome=document.getElementById('id-paciente-manual').value.trim();
+  document.getElementById('editor-titulo-header').textContent=nome||'Novo Laudo';
+  document.getElementById('editor-breadcrumb').textContent=nome||'Novo Laudo';
 }
 
 // ===================== PROCEDIMENTOS =====================
@@ -884,7 +908,7 @@ function toggleEscala(i){
 // ===================== PDF =====================
 function gerarPdfLaudo(){
   const dados=coletarDados();
-  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Selecione o paciente.');return;}
+  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Informe o nome do paciente.');return;}
 
   const pac=pacientes.find(p=>p.id===dados.identificacao.pacienteId)||{};
   const clin=clinicas.find(c=>c.id===dados.identificacao.clinicaId)||{};
