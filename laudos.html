@@ -505,7 +505,7 @@ async function verificarSessao(){
 async function carregarDados(){
   try {
     // Carrega pacientes e clínicas do localStorage do PsiControl
-    const state=JSON.parse(localStorage.getItem('psicontrol_state')||'{}');
+    const state=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
     pacientes=state.pacientes||[];
     clinicas=state.clinicas||[];
 

@@ -955,10 +955,12 @@
       <div class="field"><label>Duração (min)</label><input id="ses-dur" type="number" value="50"></div>
     </div>
     <div class="form-row cols-2">
-      <div class="field"><label>Tipo de Sessão</label><select id="ses-tipo">
+      <div class="field"><label>Tipo de Sessão</label><select id="ses-tipo" onchange="atualizarValorSessao()">
         <option value="sessao">Sessão Regular</option>
         <option value="anamnese">Anamnese</option>
+        <option value="avaliacao">Avaliação Neuropsicológica</option>
       </select></div>
+      <div class="field"><label>Valor (R$) <span id="ses-valor-hint" style="font-size:.72rem;color:var(--text3);font-weight:400;"></span></label><input id="ses-valor" type="number" min="0" step="0.01" placeholder="Valor desta sessão"></div>
     </div>
     <div class="form-row cols-2">
       <div class="field"><label>Status</label>
@@ -1504,6 +1506,21 @@ function renderHome(){
   }
 }
 
+// VALOR DA SESSÃO — atualiza hint com valor padrão do paciente conforme tipo
+function atualizarValorSessao(override){
+  const tipo=document.getElementById('ses-tipo')?.value||'sessao';
+  const p=getPaciente(currentPacienteId);
+  const valorPadrao = tipo==='anamnese'
+    ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
+    : tipo==='avaliacao'
+    ? (parseFloat(String(p?.valorAval||'0').replace(',','.'))||0)
+    : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
+  const hint=document.getElementById('ses-valor-hint');
+  if(hint) hint.textContent=valorPadrao>0?`(padrão: ${formatMoney(valorPadrao)})`:'';
+  // Se não há override já carregado, limpa o campo para que o padrão seja usado
+  if(override===undefined) document.getElementById('ses-valor').value='';
+}
+
 // MODAIS
 function openModal(id){
   const today=new Date().toISOString().slice(0,10);
@@ -1515,8 +1532,10 @@ function openModal(id){
     document.getElementById('ses-cobr').value='pago';
     document.getElementById('ses-resumo').value='';
     document.getElementById('ses-prox').value='';
+    document.getElementById('ses-valor').value='';
     document.getElementById('modal-sessao').querySelector('h3').textContent='Nova Sessão';
     editingSessaoId=null;
+    atualizarValorSessao();
   }
   if(id==='modal-financeiro') document.getElementById('fin-data').value=today;
   if(id==='modal-relatorio'){
@@ -1719,6 +1738,8 @@ function editSessao(id){
   document.getElementById('ses-cobr').value=s.cobr||'pago';
   document.getElementById('ses-resumo').value=s.resumo||'';
   document.getElementById('ses-prox').value=s.prox||'';
+  document.getElementById('ses-valor').value=s.valorSessao||'';
+  atualizarValorSessao(s.valorSessao);
   // update modal title
   document.getElementById('modal-sessao').querySelector('h3').textContent='Editar Sessão';
   document.getElementById('modal-sessao').classList.add('open');
@@ -1730,12 +1751,15 @@ function salvarSessao(){
   const p=getPaciente(currentPacienteId);
   const c=p?getClinica(p.clinicaId):null;
 
-  // Determina valor conforme tipo
-  const valorSessao = tipo==='anamnese'
+  // Valor digitado na sessão tem prioridade; se vazio, usa o padrão do paciente
+  const valorDigitado=parseFloat(String(document.getElementById('ses-valor').value||'').replace(',','.'))||0;
+  const valorPadrao = tipo==='anamnese'
     ? (parseFloat(String(p?.valorAnam||'0').replace(',','.'))||0)
     : tipo==='avaliacao'
     ? (parseFloat(String(p?.valorAval||'0').replace(',','.'))||0)
     : (parseFloat(String(p?.valor||'0').replace(',','.'))||0);
+  const valorSessao = valorDigitado > 0 ? valorDigitado : valorPadrao;
+  if(valorDigitado>0) dados.valorSessao=valorDigitado; // salva override na sessão
 
   // Porcentagem de repasse da clínica
   const repasse=parseFloat(c?.repasse)||0;

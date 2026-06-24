@@ -1,0 +1,46 @@
+Aqui está o resumo completo:
+
+📍 Hospedagem e Deploy
+
+URL: https://psicontrol.jeferson-fdsm.workers.dev
+Repositório: https://github.com/jefersonfdsm-jpg/psicontrol
+Deploy automático via GitHub → Cloudflare Pages
+Para atualizar: abrir CMD na pasta Desktop\PsiControl e executar:
+
+git add .
+git commit -m "descrição"
+git push
+
+Para baixar arquivos atualizados do GitHub: curl -o arquivo.html URL
+Importante: sempre salvar arquivos na pasta Desktop\PsiControl antes de fazer push. Quando o Claude gera um arquivo, usar botão direito → Salvar como na pasta correta, nunca abrir pelo Chrome.
+
+
+✅ O que foi feito
+
+Sistema de login com Supabase (tabela usuarios, senha com sha256)
+Módulo PsiControl: clínicas, pacientes, sessões, financeiro, relatórios
+Módulo Escalas: M-CHAT-R/F, SNAP-IV, Portage, IRDI, CBCL 6-18
+Módulo Documentos: declarações e encaminhamentos com PDF
+Módulo Laudos: editor de laudos neuropsicológicos com 8 seções
+Tela de seleção de módulos após login (PsiControl, Escalas, Laudos)
+Histórico de documentos salvos no Supabase
+Botão "Limpar Cache" para forçar atualização do PWA
+Deploy automático via GitHub conectado ao Cloudflare
+Bug do IRDI corrigido (div duplicada)
+Valores por tipo de sessão (anamnese, sessão regular, avaliação neuropsicológica)
+Repasse percentual por clínica lançado automaticamente como despesa
+Tipos de profissionais atualizados no encaminhamento
+
+
+❌ Pendências
+
+Excluir projeto antigo rato-calmo-74c3 no Cloudflare
+Testar módulo de Laudos completamente
+Implementar módulo de escrita de laudos com IA (projeto separado)
+Liberar acesso ao módulo de Laudos pelo painel admin (checkbox já implementado)
+
+
+🔑 Credenciais
+
+Admin: admin / Admin@123
+Supabase: https://nntvdmunpudovuiwrccz.supabase.co
