@@ -302,23 +302,74 @@
 
   /* MODULE SELECTION */
   #modulo-screen {
-    position:fixed; inset:0; background:var(--bg); z-index:9998;
-    display:none; align-items:center; justify-content:center; flex-direction:column; gap:32px;
+    position:fixed; inset:0; background:#0e1a1a; z-index:9998;
+    display:none; align-items:center; justify-content:center; flex-direction:column; gap:28px;
+    background-image: radial-gradient(ellipse at 60% 20%, rgba(26,107,107,.18) 0%, transparent 60%),
+                      radial-gradient(ellipse at 20% 80%, rgba(42,138,138,.10) 0%, transparent 50%);
   }
   #modulo-screen.open { display:flex; }
   .modulo-header { text-align:center; }
-  .modulo-header h2 { font-family:'DM Serif Display',serif; font-size:1.6rem; color:var(--text); margin-bottom:6px; }
-  .modulo-header p { color:var(--text2); font-size:.88rem; }
-  .modulo-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; max-width:900px; width:90vw; }
+  .modulo-header h2 { font-family:'DM Serif Display',serif; font-size:1.7rem; color:#e8ecec; margin-bottom:6px; }
+  .modulo-header p { color:#a8b0b0; font-size:.88rem; }
+  .modulo-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:880px; width:90vw; }
   .modulo-card {
-    background:var(--surface); border:2px solid var(--border); border-radius:16px;
-    padding:32px 24px; text-align:center; cursor:pointer; transition:.25s;
+    border-radius:18px; padding:28px 20px; text-align:center; cursor:pointer;
+    transition:.22s; position:relative; overflow:hidden;
+    border:1.5px solid transparent;
   }
-  .modulo-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.3); }
-  .modulo-card .m-icon { font-size:2.8rem; margin-bottom:12px; }
-  .modulo-card h3 { font-family:'DM Serif Display',serif; font-size:1.3rem; color:var(--text); margin-bottom:6px; }
-  .modulo-card p { font-size:.82rem; color:var(--text2); line-height:1.5; }
-  .modulo-card .m-badge { display:inline-block; margin-top:12px; padding:3px 12px; border-radius:20px; font-size:.72rem; font-weight:600; }
+  .modulo-card::before {
+    content:''; position:absolute; inset:0; border-radius:18px;
+    opacity:0; transition:.22s;
+  }
+  .modulo-card:hover { transform:translateY(-5px); box-shadow:0 20px 48px rgba(0,0,0,.4); }
+  .modulo-card:hover::before { opacity:1; }
+  .modulo-card .m-icon { font-size:2.6rem; margin-bottom:12px; display:block; }
+  .modulo-card h3 { font-family:'DM Serif Display',serif; font-size:1.2rem; margin-bottom:6px; }
+  .modulo-card p { font-size:.8rem; line-height:1.55; opacity:.8; }
+  .modulo-card .m-badge { display:inline-block; margin-top:14px; padding:3px 14px; border-radius:20px; font-size:.7rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+
+  /* PsiControl — Teal escuro principal */
+  .modulo-card.mod-psicontrol { background:linear-gradient(145deg,#1a3d3d,#0e2424); border-color:#1a6b6b; }
+  .modulo-card.mod-psicontrol h3 { color:#7dd4c8; }
+  .modulo-card.mod-psicontrol p { color:#a8c8c4; }
+  .modulo-card.mod-psicontrol .m-badge { background:rgba(42,138,138,.25); color:#7dd4c8; }
+  .modulo-card.mod-psicontrol:hover { border-color:#2a8a8a; box-shadow:0 20px 48px rgba(26,107,107,.35); }
+
+  /* Escalas — Teal médio */
+  .modulo-card.mod-escalas { background:linear-gradient(145deg,#0f2e2e,#091c1c); border-color:#2a8a8a; }
+  .modulo-card.mod-escalas h3 { color:#56d4c8; }
+  .modulo-card.mod-escalas p { color:#8abfbb; }
+  .modulo-card.mod-escalas .m-badge { background:rgba(86,212,200,.2); color:#56d4c8; }
+  .modulo-card.mod-escalas:hover { border-color:#56d4c8; box-shadow:0 20px 48px rgba(42,138,138,.3); }
+
+  /* Laudos — Cinza prateado com teal */
+  .modulo-card.mod-laudos { background:linear-gradient(145deg,#1e2828,#141c1c); border-color:#a8b0b0; }
+  .modulo-card.mod-laudos h3 { color:#d4d8d8; }
+  .modulo-card.mod-laudos p { color:#a8b0b0; }
+  .modulo-card.mod-laudos .m-badge { background:rgba(168,176,176,.15); color:#d4d8d8; }
+  .modulo-card.mod-laudos:hover { border-color:#e8ecec; box-shadow:0 20px 48px rgba(168,176,176,.2); }
+
+  /* Documentos — Teal quente (verde-azul mais claro) */
+  .modulo-card.mod-documentos { background:linear-gradient(145deg,#122e2a,#0a1c1a); border-color:#3aaa90; }
+  .modulo-card.mod-documentos h3 { color:#6dd4b8; }
+  .modulo-card.mod-documentos p { color:#8abfb0; }
+  .modulo-card.mod-documentos .m-badge { background:rgba(58,170,144,.2); color:#6dd4b8; }
+  .modulo-card.mod-documentos:hover { border-color:#6dd4b8; box-shadow:0 20px 48px rgba(58,170,144,.3); }
+
+  /* Prontuário — Invertido: fundo claro/prata */
+  .modulo-card.mod-prontuario { background:linear-gradient(145deg,#1c2e30,#111e20); border-color:#4a9090; }
+  .modulo-card.mod-prontuario h3 { color:#a8d8d4; }
+  .modulo-card.mod-prontuario p { color:#88b4b0; }
+  .modulo-card.mod-prontuario .m-badge { background:rgba(74,144,144,.2); color:#a8d8d4; }
+  .modulo-card.mod-prontuario:hover { border-color:#a8d8d4; box-shadow:0 20px 48px rgba(74,144,144,.3); }
+
+  .modulo-footer { text-align:center; }
+  .modulo-footer button {
+    background:transparent; border:1px solid rgba(168,176,176,.2);
+    color:#a8b0b0; border-radius:8px; padding:7px 18px;
+    font-size:.76rem; cursor:pointer; transition:.15s;
+  }
+  .modulo-footer button:hover { border-color:#a8b0b0; color:#e8ecec; }
 
   /* MOBILE TOPBAR */
   #mobile-topbar {
@@ -536,37 +587,40 @@
     <h2>Olá, <span id="modulo-nome-usuario"></span> 👋</h2>
     <p>Escolha o módulo que deseja acessar</p>
   </div>
-  <div class="modulo-cards" style="grid-template-columns:repeat(3,1fr);max-width:900px;">
-    <div class="modulo-card" onclick="irParaModulo('psicontrol')">
-      <div class="m-icon">🏥</div>
+  <div class="modulo-cards" style="grid-template-columns:repeat(3,1fr);max-width:880px;">
+    <div class="modulo-card mod-psicontrol" onclick="irParaModulo('psicontrol')">
+      <span class="m-icon">🏥</span>
       <h3>PsiControl</h3>
       <p>Clínicas, pacientes, sessões, financeiro e relatórios</p>
-      <div class="m-badge" style="background:rgba(42,184,154,.15);color:var(--accent);">Atendimentos</div>
+      <div class="m-badge">Atendimentos</div>
     </div>
-    <div class="modulo-card" onclick="irParaModulo('escalas')">
-      <div class="m-icon">Ψ</div>
+    <div class="modulo-card mod-escalas" onclick="irParaModulo('escalas')">
+      <span class="m-icon">Ψ</span>
       <h3>Escalas de Rastreio</h3>
       <p>M-CHAT-R, SNAP-IV e outros instrumentos de avaliação</p>
-      <div class="m-badge" style="background:rgba(86,212,200,.15);color:var(--accent2);">Rastreio Clínico</div>
+      <div class="m-badge">Rastreio Clínico</div>
     </div>
-    <div class="modulo-card" onclick="irParaModulo('laudos')" id="card-laudos">
-      <div class="m-icon">📋</div>
+    <div class="modulo-card mod-laudos" onclick="irParaModulo('laudos')" id="card-laudos">
+      <span class="m-icon">📋</span>
       <h3>Laudos</h3>
       <p>Elaboração de laudos de avaliação neuropsicológica</p>
-      <div class="m-badge" style="background:rgba(240,180,41,.15);color:var(--accent3);">Avaliação</div>
+      <div class="m-badge">Avaliação</div>
     </div>
-    <div class="modulo-card" onclick="window.location.href='documentos.html'" id="card-documentos">
-      <div class="m-icon">📄</div>
+    <div class="modulo-card mod-documentos" onclick="window.location.href='documentos.html'" id="card-documentos">
+      <span class="m-icon">📄</span>
       <h3>Documentos</h3>
       <p>Declarações de comparecimento e encaminhamentos</p>
-      <div class="m-badge" style="background:rgba(247,92,92,.15);color:var(--danger);">Relatórios</div>
+      <div class="m-badge">Relatórios</div>
     </div>
-    <div class="modulo-card" onclick="window.location.href='prontuario.html'" id="card-prontuario">
-      <div class="m-icon">🗂️</div>
+    <div class="modulo-card mod-prontuario" onclick="window.location.href='prontuario.html'" id="card-prontuario">
+      <span class="m-icon">🗂️</span>
       <h3>Prontuário</h3>
       <p>Registros clínicos eletrônicos por paciente</p>
-      <div class="m-badge" style="background:rgba(124,106,247,.15);color:#a78bfa;">Clínico</div>
+      <div class="m-badge">Clínico</div>
     </div>
+  </div>
+  <div class="modulo-footer">
+    <button onclick="limparCache()">🔄 Limpar Cache</button>
   </div>
 </div>
 
