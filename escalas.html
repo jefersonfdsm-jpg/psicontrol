@@ -162,6 +162,15 @@ tbody tr:hover td{background:rgba(255,255,255,.02);color:var(--text);}
   .form-row.cols-2{grid-template-columns:1fr;}
   .page-header{flex-direction:column;align-items:flex-start;}
   .aplicacao-header{flex-direction:column;align-items:flex-start;}
+  .resultado-header{flex-direction:column;gap:10px;}
+  .btn-group{flex-wrap:wrap;gap:6px;}
+  table{font-size:.75rem;}
+  thead th,tbody td{padding:7px 8px;}
+  .table-wrap{overflow-x:auto;}
+}
+@media(max-width:420px){
+  .cards-row.cols-3{grid-template-columns:1fr;}
+  .snap-header-row,.snap-item{grid-template-columns:1fr repeat(4,40px);}
 }
 </style>
 </head>

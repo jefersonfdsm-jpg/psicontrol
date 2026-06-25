@@ -93,7 +93,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   #sidebar.open{transform:translateX(0);}
   #main{margin-left:0!important;padding-top:calc(70px + env(safe-area-inset-top));padding-bottom:24px;padding-left:16px;padding-right:16px;height:100vh;overflow-y:auto;}
   .field-row.cols-2,.field-row.cols-3{grid-template-columns:1fr;}
-  .page-header{flex-direction:column;align-items:flex-start;}
+  .page-header{flex-direction:column;align-items:flex-start;gap:10px;}
+  .page-header div{flex-wrap:wrap;gap:6px;}
+  .doc-card{flex-direction:column;align-items:flex-start;gap:10px;}
+  .doc-card .doc-actions{width:100%;justify-content:flex-end;}
+  .btn{min-height:40px;}
+  .modal{padding:18px 14px;width:96vw;}
+}
+@media(max-width:420px){
+  .field-row{grid-template-columns:1fr;}
+  select,input{font-size:.92rem;}
 }
 </style>
 </head>

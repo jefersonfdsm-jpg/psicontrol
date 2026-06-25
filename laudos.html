@@ -144,6 +144,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   #mobile-topbar{display:flex;}
   .form-row.cols-2,.form-row.cols-3{grid-template-columns:1fr;}
   .cards-row.cols-3{grid-template-columns:1fr;}
+  .editor-header{flex-direction:column;align-items:flex-start;gap:10px;}
+  .editor-header .editor-actions{flex-wrap:wrap;gap:6px;}
+  .editor-section{padding:16px;}
+  .cards-row{gap:10px;}
+  .laudo-card{padding:14px;}
+  .laudo-card .laudo-title{font-size:.9rem;}
+}
+@media(max-width:420px){
+  .cards-row.cols-2{grid-template-columns:1fr;}
+  #main{padding:64px 12px 20px;}
 }
 </style>
 </head>

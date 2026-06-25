@@ -114,10 +114,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* PDF hidden */
 #pdf-area{display:none;}
 
-@media(max-width:600px){
+@media(max-width:768px){
   .main{padding:16px;}
+  .topbar{padding:0 16px;}
+  .topbar h1{font-size:1rem;}
+  .pront-header{flex-direction:column;gap:12px;}
+  .pront-header-info h2{font-size:1.2rem;}
+  .pront-header div:last-child{display:flex;gap:6px;flex-wrap:wrap;}
   .pac-grid{grid-template-columns:1fr 1fr;}
-  .pront-header{flex-direction:column;}
+  .clinica-folder-body{grid-template-columns:1fr 1fr;}
+  .clinica-folder-title{font-size:.85rem;gap:7px;}
+  .clinica-folder-meta{display:none;}
+  .editor-card textarea{min-height:120px;}
+  .registro-card .reg-actions{flex-wrap:wrap;}
+}
+@media(max-width:420px){
+  .pac-grid{grid-template-columns:1fr;}
+  .clinica-folder-body{grid-template-columns:1fr;}
+  .topbar-right span{display:none;}
 }
 </style>
 </head>
