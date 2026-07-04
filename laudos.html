@@ -1034,6 +1034,20 @@ ${dados.referencias?`<h2>Referências Bibliográficas</h2><p style="line-height:
 }
 
 verificarSessao();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js').then(r=>{
+      r.addEventListener('updatefound',()=>{
+        const nw=r.installing;
+        nw.addEventListener('statechange',()=>{
+          if(nw.state==='activated')
+            caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))).then(()=>location.reload());
+        });
+      });
+    }).catch(e=>console.log('SW erro:',e));
+  });
+}
 </script>
 </body>
 </html>
