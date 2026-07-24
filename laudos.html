@@ -560,7 +560,7 @@ async function carregarHome(){
 // ===================== LAUDOS =====================
 async function carregarLaudos(){
   try {
-    const laudos=await sbFetch(`laudos?usuario_id=eq.${usuarioLogado.id}&order=updated_at.desc`)||[];
+    const laudos=await sbFetch(`laudos?usuario_id=eq.${usuarioLogado.id}&order=created_at.desc`)||[];
     document.getElementById('laudos-lista').innerHTML=laudos.length
       ? laudos.map(l=>laudoItemHTML(l)).join('')
       : '<p style="color:var(--text3);font-size:.85rem;">Nenhum laudo ainda.</p>';

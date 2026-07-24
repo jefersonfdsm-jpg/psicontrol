@@ -2342,7 +2342,7 @@ function deleteRendaFixa(){
 function renderRendaFixaPage(){
   const r=(state.rendasFixas||[]).find(x=>x.id===currentRendaId);if(!r)return;
   const hoje=new Date();
-  if(rendaAno===undefined){rendaAno=hoje.getFullYear();rendaMes=hoje.getMonth();}
+  if(rendaAno===undefined||rendaAno===null){rendaAno=hoje.getFullYear();rendaMes=hoje.getMonth();}
 
   document.getElementById('renda-breadcrumb').textContent=r.nome;
   document.getElementById('renda-page-nome').textContent=r.nome;
@@ -2350,29 +2350,21 @@ function renderRendaFixaPage(){
   const tipoLabel={emprego:'Emprego / CLT',autonomo:'Autônomo / PJ',docencia:'Docência',outro:'Outro'};
   document.getElementById('renda-page-sub').textContent=`${tipoLabel[r.tipo]||r.tipo} · Dia ${r.dia||'?'} · ${formatMoney(r.valor)}/mês`;
 
-  // Lançamentos desta renda
-  const lancamentos=(state.financeiro||[]).filter(f=>f.rendaId===r.id&&f.tipo==='receita');
-  const totalRecebido=lancamentos.reduce((a,f)=>a+Number(f.valor),0);
-  const mesesLancados=new Set(lancamentos.map(f=>(f.data||'').slice(0,7))).size;
+  // Atualiza título do mês
+  const titulo=document.getElementById('renda-mes-titulo');
+  if(titulo) titulo.textContent=new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'});
+
+  // Stats gerais
+  const todosLanc=(state.financeiro||[]).filter(f=>f.rendaId===r.id&&f.tipo==='receita');
+  const totalRecebido=todosLanc.reduce((a,f)=>a+Number(f.valor),0);
+  const mesesLancados=new Set(todosLanc.map(f=>(f.data||'').slice(0,7))).size;
 
   document.getElementById('renda-stats').innerHTML=`
     <div class="stat-card"><div class="label">Valor Mensal</div><div class="value" style="color:var(--accent2);font-size:1.3rem">${formatMoney(r.valor)}</div><div class="sub">${tipoLabel[r.tipo]||''}</div></div>
     <div class="stat-card"><div class="label">Total Recebido</div><div class="value" style="color:var(--success);font-size:1.3rem">${formatMoney(totalRecebido)}</div><div class="sub">${mesesLancados} mês(es)</div></div>
     <div class="stat-card"><div class="label">Dia Pgto</div><div class="value">${r.dia||'?'}</div><div class="sub">Todo mês</div></div>`;
 
-  // Tabela de lançamentos
-  const tbody=document.getElementById('renda-lancamentos');
-  if(lancamentos.length===0){
-    tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text3)">Nenhum lançamento ainda</td></tr>`;
-  } else {
-    tbody.innerHTML=lancamentos.sort((a,b)=>new Date(b.data)-new Date(a.data)).map(f=>`
-      <tr>
-        <td>${formatDate(f.data)}</td>
-        <td style="color:var(--success);font-family:'DM Serif Display',serif">${formatMoney(f.valor)}</td>
-        <td><span class="badge badge-active">Recebido</span></td>
-        <td><button class="btn btn-danger btn-sm" onclick="deleteFinanceiro('${f.id}')">🗑</button></td>
-      </tr>`).join('');
-  }
+  renderRendaFixaLancamentos();
 }
 
 function lancarRendaMes(){
@@ -2380,13 +2372,83 @@ function lancarRendaMes(){
   const hoje=new Date();
   const dataLanc=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(r.dia||hoje.getDate()).padStart(2,'0')}`;
   const anoMesStr=dataLanc.slice(0,7);
-  // Verifica se já lançou este mês
   const jaLancou=state.financeiro.find(f=>f.rendaId===r.id&&(f.data||'').startsWith(anoMesStr));
   if(jaLancou){showToast('⚠️ Já foi lançado este mês!');return;}
   state.financeiro.push({id:uid(),rendaId:r.id,tipo:'receita',desc:`${r.nome} — ${new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'})}`,valor:r.valor,data:dataLanc,cat:r.tipo==='emprego'?'Emprego':r.tipo==='docencia'?'Docência':'Renda Fixa'});
   renderRendaFixaPage();
   saveAll();
   showToast(`✅ ${formatMoney(r.valor)} lançado!`);
+}
+
+function abrirLancarRenda(){
+  const r=(state.rendasFixas||[]).find(x=>x.id===currentRendaId);if(!r)return;
+  const hoje=new Date();
+  const dia=String(r.dia||hoje.getDate()).padStart(2,'0');
+  const mes=String(rendaMes+1).padStart(2,'0');
+  document.getElementById('lr-data').value=`${rendaAno}-${mes}-${dia}`;
+  document.getElementById('lr-valor').value=r.valor;
+  openModal('modal-lancar-renda');
+}
+
+function salvarLancamentoRenda(){
+  const r=(state.rendasFixas||[]).find(x=>x.id===currentRendaId);if(!r)return;
+  const data=document.getElementById('lr-data').value;
+  const valor=parseFloat(document.getElementById('lr-valor').value)||0;
+  const obs=document.getElementById('lr-obs').value.trim();
+  if(!data){showToast('⚠️ Informe a data');return;}
+  if(!valor){showToast('⚠️ Informe o valor');return;}
+  const anoMesStr=data.slice(0,7);
+  const jaLancou=state.financeiro.find(f=>f.rendaId===r.id&&(f.data||'').startsWith(anoMesStr));
+  if(jaLancou){showToast('⚠️ Já existe lançamento neste mês!');return;}
+  state.financeiro.push({id:uid(),rendaId:r.id,tipo:'receita',desc:obs||`${r.nome} — ${new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'})}`,valor,data,cat:r.tipo==='emprego'?'Emprego':r.tipo==='docencia'?'Docência':'Renda Fixa'});
+  closeModals();
+  renderRendaFixaPage();
+  saveAll();
+  showToast(`✅ ${formatMoney(valor)} lançado!`);
+}
+
+function rendaNavMes(dir){
+  rendaMes+=dir;
+  if(rendaMes>11){rendaMes=0;rendaAno++;}
+  if(rendaMes<0){rendaMes=11;rendaAno--;}
+  const hoje=new Date();
+  const btnHoje=document.getElementById('renda-btn-hoje');
+  if(btnHoje) btnHoje.style.display=(rendaAno===hoje.getFullYear()&&rendaMes===hoje.getMonth())?'none':'inline-flex';
+  const titulo=document.getElementById('renda-mes-titulo');
+  if(titulo) titulo.textContent=new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'});
+  renderRendaFixaLancamentos();
+}
+
+function rendaIrHoje(){
+  const hoje=new Date();
+  rendaAno=hoje.getFullYear();
+  rendaMes=hoje.getMonth();
+  const btnHoje=document.getElementById('renda-btn-hoje');
+  if(btnHoje) btnHoje.style.display='none';
+  const titulo=document.getElementById('renda-mes-titulo');
+  if(titulo) titulo.textContent=new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'});
+  renderRendaFixaLancamentos();
+}
+
+function renderRendaFixaLancamentos(){
+  const r=(state.rendasFixas||[]).find(x=>x.id===currentRendaId);if(!r)return;
+  const anoMesStr=`${rendaAno}-${String(rendaMes+1).padStart(2,'0')}`;
+  const lancamentos=(state.financeiro||[]).filter(f=>f.rendaId===r.id&&f.tipo==='receita'&&(f.data||'').startsWith(anoMesStr));
+  const lista=document.getElementById('renda-lista');
+  if(!lista)return;
+  if(!lancamentos.length){
+    lista.innerHTML=`<div style="padding:24px;text-align:center;color:var(--text3);font-size:.88rem;">Nenhum lançamento em ${new Date(rendaAno,rendaMes,1).toLocaleString('pt-BR',{month:'long',year:'numeric'})}</div>`;
+    return;
+  }
+  lista.innerHTML=lancamentos.map(f=>`
+    <div class="fin-item">
+      <div style="flex:1">
+        <div style="font-size:.88rem;font-weight:500">${f.desc||r.nome}</div>
+        <div style="font-size:.76rem;color:var(--text3)">${formatDate(f.data)}</div>
+      </div>
+      <div style="color:var(--success);font-weight:600">${formatMoney(f.valor)}</div>
+      <button class="btn btn-danger btn-sm" onclick="deleteFinanceiro('${f.id}')">🗑</button>
+    </div>`).join('');
 }
 
 // RELATÓRIOS
@@ -2739,13 +2801,6 @@ async function saveAll() {
     showToast('⚠️ Erro ao salvar na nuvem');
     console.error(e);
   }
-}
-
-function loadData() {
-  const raw = localStorage.getItem('psicontrol_data');
-  if (raw) { try { state = JSON.parse(raw); } catch(e) {} }
-  const ls = localStorage.getItem('psicontrol_lastsave');
-  if (ls) document.getElementById('last-save-txt').textContent = 'Salvo: ' + ls;
 }
 
 // ===================== ALTERAR SENHA =====================
