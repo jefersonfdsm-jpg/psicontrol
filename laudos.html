@@ -137,6 +137,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 #hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;padding:8px;}
 #sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
 #sidebar-overlay.open{display:block;}
+.instrumento-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;}
+.instrumento-item span{flex:1;font-size:.88rem;}
+.instrumento-item button{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:1rem;padding:0 4px;}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px;cursor:pointer;transition:.18s;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+.plan-card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.plan-card-info h4{font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:4px;}
+.plan-card-info p{font-size:.78rem;color:var(--text2);}
+.plan-card-actions{display:flex;gap:6px;flex-shrink:0;}
 @media(max-width:768px){
   #sidebar{transform:translateX(-100%);transition:.3s;}
   #sidebar.open{transform:translateX(0);}
@@ -176,20 +184,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 <!-- MOBILE TOPBAR -->
 <div id="mobile-topbar">
   <button id="hamburger" onclick="toggleSidebar()">☰</button>
-  <span style="font-family:'DM Serif Display',serif;color:var(--accent);font-size:1.1rem;">Laudos</span>
+  <span style="font-family:'DM Serif Display',serif;color:var(--accent);font-size:1.1rem;">Avaliação Neuropsicológica</span>
 </div>
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
   <div class="logo">
-    <h1>Laudos</h1>
+    <h1 style="font-size:1rem;">Avaliação Neuropsicológica</h1>
     <span>PsiControl</span>
     <div class="user-name" id="user-nome-sidebar"></div>
   </div>
   <div class="nav-section">Menu</div>
   <div class="nav-item active" onclick="showPage('home')">
     <span class="icon">🏠</span> Início
+  </div>
+  <div class="nav-item" onclick="showPage('planejamento')">
+    <span class="icon">🗂️</span> Planejamento
   </div>
   <div class="nav-item" onclick="showPage('laudos')">
     <span class="icon">📋</span> Meus Laudos
@@ -223,12 +234,92 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   <!-- HOME -->
   <div id="page-home" class="page active">
     <div class="page-header">
-      <div><h2>Bem-vindo 👋</h2><p>Módulo de Laudos Psicológicos</p></div>
+      <div><h2>Bem-vindo 👋</h2><p>Avaliação Neuropsicológica — PsiControl</p></div>
       <button class="btn btn-primary" onclick="novoLaudo()">+ Novo Laudo</button>
     </div>
     <div class="cards-row cols-3" id="home-stats"></div>
     <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:14px;">Laudos Recentes</h3>
     <div id="home-recentes"></div>
+  </div>
+
+  <!-- PLANEJAMENTO -->
+  <div id="page-planejamento" class="page">
+    <div class="page-header">
+      <div><h2>Planejamento de Avaliação</h2><p>Registro de queixas, hipóteses e instrumentos planejados</p></div>
+      <button class="btn btn-primary" onclick="abrirNovoPlanejamento()">+ Novo Planejamento</button>
+    </div>
+    <div id="planejamento-lista"></div>
+  </div>
+
+  <!-- EDITOR DE PLANEJAMENTO -->
+  <div id="page-planejamento-editor" class="page">
+    <div class="breadcrumb">
+      <span class="crumb" onclick="showPage('planejamento')">Planejamento</span>
+      <span>›</span>
+      <span id="plan-breadcrumb" style="color:var(--text2)">Novo</span>
+    </div>
+    <div class="editor-header">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;" id="plan-titulo-header">Novo Planejamento</div>
+        <div style="font-size:.78rem;color:var(--text2);margin-top:3px;">Planejamento de Avaliação Neuropsicológica</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('planejamento')">Cancelar</button>
+        <button class="btn btn-primary btn-sm" onclick="salvarPlanejamento()">💾 Salvar</button>
+      </div>
+    </div>
+
+    <!-- Seção: Identificação -->
+    <div class="editor-section">
+      <div class="section-title">Identificação</div>
+      <div class="form-row cols-2">
+        <div class="field">
+          <label>Paciente</label>
+          <select id="plan-paciente" onchange="onPlanPacienteSelect()"><option value="">Selecione o paciente</option><option value="__manual__">✏️ Digitar manualmente...</option></select>
+          <input type="text" id="plan-paciente-manual" placeholder="Nome completo do paciente" style="display:none;margin-top:6px;">
+        </div>
+        <div class="field"><label>Data de Início</label><input type="date" id="plan-data"></div>
+      </div>
+    </div>
+
+    <!-- Seção: Queixas -->
+    <div class="editor-section">
+      <div class="section-title">Queixas e Demanda Inicial</div>
+      <div class="field">
+        <label>Queixa Principal</label>
+        <textarea id="plan-queixa" rows="4" placeholder="Descreva as queixas relatadas pelo paciente e/ou responsável..."></textarea>
+      </div>
+      <div class="field" style="margin-top:14px;">
+        <label>Histórico Relevante</label>
+        <textarea id="plan-historico" rows="3" placeholder="Informações relevantes do histórico clínico, escolar, familiar..."></textarea>
+      </div>
+    </div>
+
+    <!-- Seção: Hipóteses -->
+    <div class="editor-section">
+      <div class="section-title">Hipóteses Diagnósticas</div>
+      <div class="field">
+        <label>Hipóteses (CIDs ou descrição clínica)</label>
+        <textarea id="plan-hipoteses" rows="4" placeholder="Ex: F84.0 - Transtorno do Espectro Autista&#10;F90.0 - TDAH&#10;F81 - Transtornos de aprendizagem..."></textarea>
+      </div>
+    </div>
+
+    <!-- Seção: Instrumentos -->
+    <div class="editor-section">
+      <div class="section-title">Instrumentos Planejados</div>
+      <div class="field">
+        <label>Testes e Escalas</label>
+        <div id="plan-instrumentos-lista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="plan-instrumento-novo" placeholder="Ex: WISC-V, BASC-3, Vineland..." style="flex:1;">
+          <button class="btn btn-outline btn-sm" onclick="adicionarInstrumento()">+ Adicionar</button>
+        </div>
+      </div>
+      <div class="field" style="margin-top:14px;">
+        <label>Observações do Planejamento</label>
+        <textarea id="plan-obs" rows="3" placeholder="Notas adicionais sobre o planejamento..."></textarea>
+      </div>
+    </div>
   </div>
 
   <!-- LISTA DE LAUDOS -->
@@ -519,20 +610,18 @@ async function verificarSessao(){
 // ===================== DADOS =====================
 async function carregarDados(){
   try {
-    // Carrega pacientes e clínicas do localStorage do PsiControl
     const state=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
     pacientes=state.pacientes||[];
     clinicas=state.clinicas||[];
-
-    // Preenche selects
     const selPac=document.getElementById('id-paciente');
     selPac.innerHTML='<option value="">Selecione o paciente</option>';
     pacientes.forEach(p=>selPac.innerHTML+=`<option value="${p.id}">${p.nome}</option>`);
     selPac.innerHTML+='<option value="__manual__">✏️ Digitar manualmente...</option>';
-
     const selClin=document.getElementById('id-clinica');
     selClin.innerHTML='<option value="">Selecione a clínica</option>';
     clinicas.forEach(c=>selClin.innerHTML+=`<option value="${c.id}">${c.nome}</option>`);
+    // Carrega planejamentos
+    await carregarPlanejamentos();
   } catch(e){console.error(e);}
 }
 
@@ -1031,6 +1120,154 @@ ${dados.referencias?`<h2>Referências Bibliográficas</h2><p style="line-height:
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+// ===================== PLANEJAMENTO =====================
+let planejamentos=[];
+let planejamentoAtual=null;
+let instrumentosTemp=[];
+
+async function carregarPlanejamentos(){
+  try{
+    const rows=await sbFetch(`planejamentos?usuario_id=eq.${usuarioLogado.id}&order=created_at.desc`)||[];
+    planejamentos=rows;
+  }catch(e){planejamentos=[];}
+}
+
+function renderPlanejamentoLista(){
+  const el=document.getElementById('planejamento-lista');
+  if(!planejamentos.length){
+    el.innerHTML=`<div style="text-align:center;padding:60px;color:var(--text3)"><div style="font-size:3rem;margin-bottom:12px">🗂️</div><p>Nenhum planejamento ainda.<br>Clique em "+ Novo Planejamento" para começar.</p></div>`;
+    return;
+  }
+  el.innerHTML=planejamentos.map(p=>`
+    <div class="plan-card" onclick="editarPlanejamento('${p.id}')">
+      <div class="plan-card-info">
+        <h4>${p.paciente_nome||'Paciente não informado'}</h4>
+        <p>📅 ${p.data_inicio?formatDataPlan(p.data_inicio):'Sem data'} · ${(p.instrumentos||[]).length} instrumento(s)</p>
+        ${p.hipoteses?`<p style="margin-top:4px;color:var(--text3)">${p.hipoteses.slice(0,80)}${p.hipoteses.length>80?'...':''}</p>`:''}
+      </div>
+      <div class="plan-card-actions">
+        <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();criarLaudoDoPlanejamento('${p.id}')">📋 Gerar Laudo</button>
+        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();excluirPlanejamento('${p.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function formatDataPlan(d){if(!d)return'';const[a,m,dia]=d.split('-');return`${dia}/${m}/${a}`;}
+
+function abrirNovoPlanejamento(){
+  planejamentoAtual=null;
+  instrumentosTemp=[];
+  const sel=document.getElementById('plan-paciente');
+  sel.innerHTML='<option value="">Selecione o paciente</option>';
+  pacientes.forEach(p=>sel.innerHTML+=`<option value="${p.id}">${p.nome}</option>`);
+  sel.innerHTML+='<option value="__manual__">✏️ Digitar manualmente...</option>';
+  sel.value='';
+  document.getElementById('plan-paciente-manual').style.display='none';
+  document.getElementById('plan-paciente-manual').value='';
+  document.getElementById('plan-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('plan-queixa').value='';
+  document.getElementById('plan-historico').value='';
+  document.getElementById('plan-hipoteses').value='';
+  document.getElementById('plan-obs').value='';
+  document.getElementById('plan-titulo-header').textContent='Novo Planejamento';
+  document.getElementById('plan-breadcrumb').textContent='Novo';
+  renderInstrumentos();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-planejamento-editor').classList.add('active');
+}
+
+function onPlanPacienteSelect(){
+  const val=document.getElementById('plan-paciente').value;
+  const manual=document.getElementById('plan-paciente-manual');
+  if(val==='__manual__'){manual.style.display='block';manual.focus();return;}
+  manual.style.display='none';
+  const p=pacientes.find(x=>x.id===val);
+  if(p){document.getElementById('plan-titulo-header').textContent=p.nome;document.getElementById('plan-breadcrumb').textContent=p.nome;}
+}
+
+function adicionarInstrumento(){
+  const input=document.getElementById('plan-instrumento-novo');
+  const val=input.value.trim();if(!val)return;
+  instrumentosTemp.push(val);input.value='';renderInstrumentos();
+}
+
+function removerInstrumento(i){instrumentosTemp.splice(i,1);renderInstrumentos();}
+
+function renderInstrumentos(){
+  const el=document.getElementById('plan-instrumentos-lista');
+  if(!instrumentosTemp.length){el.innerHTML='<div style="color:var(--text3);font-size:.82rem;">Nenhum instrumento adicionado ainda.</div>';return;}
+  el.innerHTML=instrumentosTemp.map((inst,i)=>`
+    <div class="instrumento-item"><span>🔬 ${inst}</span><button onclick="removerInstrumento(${i})">✕</button></div>`).join('');
+}
+
+async function salvarPlanejamento(){
+  const pacId=document.getElementById('plan-paciente').value;
+  const nomeManual=document.getElementById('plan-paciente-manual').value.trim();
+  const p=pacientes.find(x=>x.id===pacId);
+  const nomePac=p?.nome||(pacId==='__manual__'?nomeManual:'')||'';
+  if(!nomePac){showToast('⚠️ Informe o paciente.');return;}
+  const dados={usuario_id:usuarioLogado.id,paciente_id:pacId==='__manual__'?null:pacId,paciente_nome:nomePac,data_inicio:document.getElementById('plan-data').value,queixa:document.getElementById('plan-queixa').value,historico:document.getElementById('plan-historico').value,hipoteses:document.getElementById('plan-hipoteses').value,instrumentos:instrumentosTemp,obs:document.getElementById('plan-obs').value,updated_at:new Date().toISOString()};
+  try{
+    if(planejamentoAtual){
+      await sbFetch(`planejamentos?id=eq.${planejamentoAtual.id}`,{method:'PATCH',body:JSON.stringify(dados)});
+      const idx=planejamentos.findIndex(x=>x.id===planejamentoAtual.id);
+      if(idx>=0) planejamentos[idx]={...planejamentos[idx],...dados};
+      showToast('✅ Planejamento atualizado!');
+    } else {
+      const novo={id:Date.now().toString(36)+Math.random().toString(36).slice(2),...dados,created_at:new Date().toISOString()};
+      await sbFetch('planejamentos',{method:'POST',body:JSON.stringify(novo)});
+      planejamentos.unshift(novo);planejamentoAtual=novo;
+      showToast('✅ Planejamento salvo!');
+    }
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-planejamento').classList.add('active');
+    renderPlanejamentoLista();
+  }catch(e){showToast('Erro ao salvar: '+e.message);}
+}
+
+async function editarPlanejamento(id){
+  const p=planejamentos.find(x=>x.id===id);if(!p)return;
+  planejamentoAtual=p;instrumentosTemp=[...(p.instrumentos||[])];
+  const sel=document.getElementById('plan-paciente');
+  sel.innerHTML='<option value="">Selecione o paciente</option>';
+  pacientes.forEach(pac=>sel.innerHTML+=`<option value="${pac.id}">${pac.nome}</option>`);
+  sel.innerHTML+='<option value="__manual__">✏️ Digitar manualmente...</option>';
+  if(p.paciente_id){sel.value=p.paciente_id;document.getElementById('plan-paciente-manual').style.display='none';}
+  else{sel.value='__manual__';document.getElementById('plan-paciente-manual').style.display='block';document.getElementById('plan-paciente-manual').value=p.paciente_nome||'';}
+  document.getElementById('plan-data').value=p.data_inicio||'';
+  document.getElementById('plan-queixa').value=p.queixa||'';
+  document.getElementById('plan-historico').value=p.historico||'';
+  document.getElementById('plan-hipoteses').value=p.hipoteses||'';
+  document.getElementById('plan-obs').value=p.obs||'';
+  document.getElementById('plan-titulo-header').textContent=p.paciente_nome||'Planejamento';
+  document.getElementById('plan-breadcrumb').textContent=p.paciente_nome||'Editar';
+  renderInstrumentos();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-planejamento-editor').classList.add('active');
+}
+
+async function excluirPlanejamento(id){
+  if(!confirm('Excluir este planejamento?'))return;
+  try{
+    await sbFetch(`planejamentos?id=eq.${id}`,{method:'DELETE'});
+    planejamentos=planejamentos.filter(x=>x.id!==id);
+    renderPlanejamentoLista();showToast('🗑 Planejamento excluído.');
+  }catch(e){showToast('Erro ao excluir.');}
+}
+
+function criarLaudoDoPlanejamento(id){
+  const p=planejamentos.find(x=>x.id===id);if(!p)return;
+  novoLaudo();
+  setTimeout(()=>{
+    const sel=document.getElementById('id-paciente');
+    if(p.paciente_id){sel.value=p.paciente_id;onPacienteSelect();}
+    else{sel.value='__manual__';document.getElementById('id-paciente-manual').style.display='block';document.getElementById('id-paciente-manual').value=p.paciente_nome||'';onPacienteManual();}
+    if(p.queixa) document.getElementById('dem-texto').value=p.queixa;
+    if(p.historico){const el=document.getElementById('an-historia');if(el)el.value=p.historico;}
+    showToast('✅ Laudo criado com dados do planejamento!');
+  },400);
 }
 
 verificarSessao();
