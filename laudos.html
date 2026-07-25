@@ -203,10 +203,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <span class="icon">🗂️</span> Planejamento
   </div>
   <div class="nav-item" onclick="showPage('laudos')">
-    <span class="icon">📋</span> Meus Laudos
+    <span class="icon">📋</span> Minhas Avaliações
   </div>
   <div class="nav-item" onclick="novoLaudo()">
-    <span class="icon">✏️</span> Novo Laudo
+    <span class="icon">✏️</span> Nova Avaliação
   </div>
   <div class="sidebar-bottom">
     <button class="sb-btn" style="background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);" onclick="window.location.href='index.html'">
@@ -235,10 +235,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   <div id="page-home" class="page active">
     <div class="page-header">
       <div><h2>Bem-vindo 👋</h2><p>Avaliação Neuropsicológica — PsiControl</p></div>
-      <button class="btn btn-primary" onclick="novoLaudo()">+ Novo Laudo</button>
+      <button class="btn btn-primary" onclick="novoLaudo()">+ Nova Avaliação</button>
     </div>
     <div class="cards-row cols-3" id="home-stats"></div>
-    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:14px;">Laudos Recentes</h3>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:14px;">Avaliações Recentes</h3>
     <div id="home-recentes"></div>
   </div>
 
@@ -326,8 +326,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   <!-- LISTA DE LAUDOS -->
   <div id="page-laudos" class="page">
     <div class="page-header">
-      <div><h2>Meus Laudos</h2><p>Todos os laudos elaborados</p></div>
-      <button class="btn btn-primary" onclick="novoLaudo()">+ Novo Laudo</button>
+      <div><h2>Minhas Avaliações</h2><p>Todos os laudos elaborados</p></div>
+      <button class="btn btn-primary" onclick="novoLaudo()">+ Nova Avaliação</button>
     </div>
     <div id="laudos-lista"></div>
   </div>
@@ -335,13 +335,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
   <!-- EDITOR DE LAUDO -->
   <div id="page-editor" class="page">
     <div class="breadcrumb">
-      <span class="crumb" onclick="showPage('laudos')">Laudos</span>
+      <span class="crumb" onclick="showPage('laudos')">Avaliações</span>
       <span>›</span>
-      <span id="editor-breadcrumb" style="color:var(--text2)">Novo Laudo</span>
+      <span id="editor-breadcrumb" style="color:var(--text2)">Nova Avaliação</span>
     </div>
     <div class="editor-header">
       <div>
-        <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;" id="editor-titulo-header">Novo Laudo</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;" id="editor-titulo-header">Nova Avaliação</div>
         <div style="font-size:.78rem;color:var(--text2);margin-top:3px;" id="editor-sub-header">Rascunho</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -643,7 +643,7 @@ async function carregarHome(){
     const recentes=laudos.slice(0,5);
     document.getElementById('home-recentes').innerHTML=recentes.length
       ? recentes.map(l=>laudoItemHTML(l)).join('')
-      : '<p style="color:var(--text3);font-size:.85rem;">Nenhum laudo ainda. Clique em "+ Novo Laudo" para começar.</p>';
+      : '<p style="color:var(--text3);font-size:.85rem;">Nenhum laudo ainda. Clique em "+ Nova Avaliação" para começar.</p>';
   } catch(e){console.error(e);}
 }
 
@@ -680,8 +680,8 @@ function novoLaudo(){
   dominios=[];
   limparEditor();
   document.getElementById('id-data').value=new Date().toISOString().slice(0,10);
-  document.getElementById('editor-breadcrumb').textContent='Novo Laudo';
-  document.getElementById('editor-titulo-header').textContent='Novo Laudo';
+  document.getElementById('editor-breadcrumb').textContent='Nova Avaliação';
+  document.getElementById('editor-titulo-header').textContent='Nova Avaliação';
   document.getElementById('editor-sub-header').textContent='Rascunho';
   renderProcedimentos();
   renderDominios();
@@ -782,7 +782,7 @@ function coletarDados(){
 
 async function salvarLaudo(finalizar=false){
   const dados=coletarDados();
-  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Informe o nome do paciente.');return;}
+  if(!dados.paciente_nome||dados.paciente_nome==='Nova Avaliação'){showToast('⚠️ Informe o nome do paciente.');return;}
   if(finalizar)dados.status='finalizado';
   try {
     if(laudoAtual){
@@ -814,8 +814,8 @@ function onPacienteSelect(){
   if(id==='__manual__'){
     manual.style.display='block';
     manual.focus();
-    document.getElementById('editor-titulo-header').textContent='Novo Laudo';
-    document.getElementById('editor-breadcrumb').textContent='Novo Laudo';
+    document.getElementById('editor-titulo-header').textContent='Nova Avaliação';
+    document.getElementById('editor-breadcrumb').textContent='Nova Avaliação';
     return;
   }
   manual.style.display='none';
@@ -836,8 +836,8 @@ function onPacienteSelect(){
 
 function onPacienteManual(){
   const nome=document.getElementById('id-paciente-manual').value.trim();
-  document.getElementById('editor-titulo-header').textContent=nome||'Novo Laudo';
-  document.getElementById('editor-breadcrumb').textContent=nome||'Novo Laudo';
+  document.getElementById('editor-titulo-header').textContent=nome||'Nova Avaliação';
+  document.getElementById('editor-breadcrumb').textContent=nome||'Nova Avaliação';
 }
 
 // ===================== PROCEDIMENTOS =====================
@@ -1008,7 +1008,7 @@ function toggleEscala(i){
 // ===================== PDF =====================
 function gerarPdfLaudo(){
   const dados=coletarDados();
-  if(!dados.paciente_nome||dados.paciente_nome==='Novo Laudo'){showToast('⚠️ Informe o nome do paciente.');return;}
+  if(!dados.paciente_nome||dados.paciente_nome==='Nova Avaliação'){showToast('⚠️ Informe o nome do paciente.');return;}
 
   const pac=pacientes.find(p=>p.id===dados.identificacao.pacienteId)||{};
   const clin=clinicas.find(c=>c.id===dados.identificacao.clinicaId)||{};
