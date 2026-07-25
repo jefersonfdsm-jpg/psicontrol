@@ -265,6 +265,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-outline btn-sm" onclick="showPage('planejamento')">Cancelar</button>
+        <button class="btn btn-outline btn-sm" onclick="exportarPDFPlanejamento()">📄 Exportar PDF</button>
         <button class="btn btn-primary btn-sm" onclick="salvarPlanejamento()">💾 Salvar</button>
       </div>
     </div>
@@ -1255,6 +1256,56 @@ async function excluirPlanejamento(id){
     planejamentos=planejamentos.filter(x=>x.id!==id);
     renderPlanejamentoLista();showToast('🗑 Planejamento excluído.');
   }catch(e){showToast('Erro ao excluir.');}
+}
+
+function exportarPDFPlanejamento(){
+  const pacNome=document.getElementById('plan-titulo-header').textContent||'Paciente';
+  const dataInicio=document.getElementById('plan-data').value;
+  const queixa=document.getElementById('plan-queixa').value;
+  const historico=document.getElementById('plan-historico').value;
+  const hipoteses=document.getElementById('plan-hipoteses').value;
+  const obs=document.getElementById('plan-obs').value;
+  const profil=JSON.parse(localStorage.getItem('psi_perfil')||'{}');
+  const profNome=profil.nome||usuarioLogado?.nome||'';
+  const profCRP=profil.crp||'';
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const dataFormatada=dataInicio?new Date(dataInicio+'T12:00:00').toLocaleDateString('pt-BR'):'';
+
+  const instrumentosHtml=instrumentosTemp.length
+    ?`<ul style="margin:6px 0 0 18px;padding:0;">${instrumentosTemp.map(i=>`<li style="margin-bottom:4px;">${i}</li>`).join('')}</ul>`
+    :'<p style="color:#888;font-style:italic;">Nenhum instrumento adicionado.</p>';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#111;margin:0;padding:32px;line-height:1.6;}
+    h1{font-size:15pt;color:#1a6b6b;margin-bottom:4px;}
+    .sub{font-size:9pt;color:#555;margin-bottom:28px;border-bottom:2px solid #1a6b6b;padding-bottom:12px;}
+    .secao{margin-bottom:20px;}
+    .secao h2{font-size:11pt;font-weight:bold;color:#1a6b6b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;border-bottom:1px solid #ddd;padding-bottom:4px;}
+    .secao p{margin:0;white-space:pre-wrap;}
+    .rodape{margin-top:40px;padding-top:16px;border-top:1px solid #ccc;font-size:9pt;color:#555;text-align:center;}
+    @media print{body{padding:20px;}}
+  </style></head><body>
+  <h1>Planejamento de Avaliação Neuropsicológica</h1>
+  <div class="sub">
+    Paciente: <strong>${pacNome}</strong>${dataFormatada?' · Data de início: '+dataFormatada:''}<br>
+    Emitido em: ${hoje}
+  </div>
+  ${queixa?`<div class="secao"><h2>Queixas e Demanda Inicial</h2><p>${queixa}</p></div>`:''}
+  ${historico?`<div class="secao"><h2>Histórico Relevante</h2><p>${historico}</p></div>`:''}
+  ${hipoteses?`<div class="secao"><h2>Hipóteses Diagnósticas</h2><p>${hipoteses}</p></div>`:''}
+  <div class="secao"><h2>Instrumentos Planejados</h2>${instrumentosHtml}</div>
+  ${obs?`<div class="secao"><h2>Observações</h2><p>${obs}</p></div>`:''}
+  <div class="rodape">${profNome}${profCRP?' — CRP '+profCRP:''}</div>
+  </body></html>`;
+
+  const iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  setTimeout(()=>{iframe.contentWindow.print();setTimeout(()=>iframe.remove(),2000);},400);
 }
 
 function criarLaudoDoPlanejamento(id){
