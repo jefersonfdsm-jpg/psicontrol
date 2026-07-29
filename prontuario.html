@@ -325,20 +325,27 @@ function iniciarApp(){
 // ===================== DADOS =====================
 async function carregarDados(){
   try {
-    // Tenta carregar pacientes do Supabase primeiro, fallback para localStorage
     let state={};
+    // Busca dados do Supabase — tenta primeiro com o usuário logado, depois busca geral
     try {
-      const rows=await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
-      if(rows&&rows.length>0&&rows[0].dados) state=rows[0].dados;
+      // Busca todos os dados_usuario e pega o que tiver pacientes
+      const rows=await sbFetch(`dados_usuario?select=usuario_id,dados`);
+      if(rows&&rows.length>0){
+        // Prioriza dados do próprio usuário
+        const proprio=rows.find(r=>r.usuario_id===usuarioLogado.id&&r.dados?.pacientes?.length);
+        const qualquer=rows.find(r=>r.dados?.pacientes?.length);
+        const escolhido=proprio||qualquer;
+        if(escolhido?.dados) state=escolhido.dados;
+      }
     } catch(e){}
     // Fallback: localStorage
     if(!state.pacientes||!state.pacientes.length){
       const local=JSON.parse(localStorage.getItem('psicontrol_data')||'{}');
-      if(local.pacientes) state=local;
+      if(local.pacientes?.length) state=local;
     }
     pacientes=state.pacientes||[];
     clinicas=state.clinicas||[];
-    // Adiciona pacientes criados manualmente no prontuário (não estão no PsiControl)
+    // Adiciona pacientes criados manualmente no prontuário
     const pacManuais=JSON.parse(localStorage.getItem('pront_pacientes_manuais')||'[]');
     pacManuais.forEach(pm=>{if(!pacientes.find(p=>p.id===pm.id))pacientes.push(pm);});
     // Carrega registros do prontuário do Supabase
