@@ -144,6 +144,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <div class="nav-item" onclick="showPage('encaminhamento')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Encaminhamento
     </div>
+    <div class="nav-item" onclick="showPage('solicitacao')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></span> Solicitação de Relatório
+    </div>
     <div class="nav-item" onclick="showPage('historico')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Histórico
     </div>
@@ -177,6 +180,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
         </div>
         <h3>Encaminhamento</h3>
         <p>Documento de encaminhamento para outro profissional ou especialidade. Inclui dados do paciente, especialidade e justificativa clínica.</p>
+      </div>
+      <div class="doc-card" onclick="showPage('solicitacao')">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(240,180,41,.15);display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="12" y1="9" x2="8" y2="9"/></svg>
+        </div>
+        <h3>Solicitação de Relatório</h3>
+        <p>Solicite relatórios à escola ou a outros profissionais de saúde. Inclui dados do paciente, destinatário e motivo da solicitação.</p>
       </div>
     </div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;">
@@ -313,6 +323,73 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <div style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="gerarEncaminhamento()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Gerar PDF
+      </button>
+      <button class="btn btn-outline" onclick="showPage('home')">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- SOLICITAÇÃO DE RELATÓRIO -->
+  <div id="page-solicitacao" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('home')">Documentos</span><span>›</span><span style="color:var(--text2)">Solicitação de Relatório</span></div>
+    <div class="page-header"><div><h2>Solicitação de Relatório</h2><p>Preencha os dados para gerar o documento</p></div></div>
+
+    <div class="form-section">
+      <h4>Tipo de Solicitação</h4>
+      <div class="field-row cols-2">
+        <div class="field">
+          <label>Tipo</label>
+          <select id="sol-tipo" onchange="atualizarLabelDestinatario()">
+            <option value="escolar">Relatório Escolar</option>
+            <option value="profissional">Relatório de Profissional de Saúde</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Data</label>
+          <input type="date" id="sol-data">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>Dados do Paciente</h4>
+      <div class="field-row cols-2">
+        <div class="field"><label>Nome do Paciente</label><input type="text" id="sol-pac-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Data de Nascimento</label><input type="date" id="sol-pac-nasc"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>Destinatário</h4>
+      <div class="field-row cols-2">
+        <div class="field"><label id="sol-label-dest">Nome da Escola / Instituição</label><input type="text" id="sol-dest-nome" placeholder="Ex: Escola Municipal João Silva"></div>
+        <div class="field"><label id="sol-label-resp">Responsável / Diretor(a)</label><input type="text" id="sol-dest-resp" placeholder="Ex: Diretora Maria Santos"></div>
+      </div>
+      <div class="field-row cols-1" style="margin-top:12px;">
+        <div class="field"><label>Cidade / Estado</label><input type="text" id="sol-cidade" placeholder="Ex: Piranhas — AL"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>Solicitação</h4>
+      <div class="field-row cols-1">
+        <div class="field">
+          <label>Motivo da Solicitação</label>
+          <textarea id="sol-motivo" rows="3" placeholder="Ex: Solicito relatório de desempenho escolar para fins de avaliação neuropsicológica..."></textarea>
+        </div>
+      </div>
+      <div class="field-row cols-1" style="margin-top:12px;">
+        <div class="field">
+          <label>Informações Específicas / Observações <span style="font-weight:400;font-size:.75rem;color:var(--text3)">(opcional)</span></label>
+          <textarea id="sol-obs" rows="3" placeholder="Ex: Solicito informações específicas sobre comportamento em sala, interação social, desempenho em leitura e escrita..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarSolicitacao()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Gerar PDF
       </button>
       <button class="btn btn-outline" onclick="showPage('home')">Cancelar</button>
@@ -496,6 +573,11 @@ function showPage(p){
   document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
   closeSidebar();
   const el=document.getElementById('page-'+p);if(el)el.classList.add('active');
+  if(p==='solicitacao'){
+    const solData=document.getElementById('sol-data');
+    if(solData&&!solData.value) solData.value=new Date().toISOString().slice(0,10);
+    atualizarLabelDestinatario();
+  }
   if(p==='historico') carregarHistorico();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -577,6 +659,119 @@ function onEncParaChange(){
   const sel = document.getElementById('enc-para');
   const row = document.getElementById('enc-outro-row');
   if(row) row.style.display = sel.value === '__outro__' ? '' : 'none';
+}
+
+function atualizarLabelDestinatario(){
+  const tipo=document.getElementById('sol-tipo').value;
+  const labelDest=document.getElementById('sol-label-dest');
+  const labelResp=document.getElementById('sol-label-resp');
+  if(tipo==='escolar'){
+    labelDest.textContent='Nome da Escola / Instituição';
+    labelResp.textContent='Responsável / Diretor(a)';
+  } else if(tipo==='profissional'){
+    labelDest.textContent='Nome do Profissional / Clínica';
+    labelResp.textContent='Especialidade';
+  } else {
+    labelDest.textContent='Nome do Destinatário / Instituição';
+    labelResp.textContent='Responsável / Cargo';
+  }
+}
+
+async function gerarSolicitacao(){
+  const tipo=document.getElementById('sol-tipo').value;
+  const data=document.getElementById('sol-data').value;
+  const pacNome=document.getElementById('sol-pac-nome').value.trim();
+  const pacNasc=document.getElementById('sol-pac-nasc').value;
+  const destNome=document.getElementById('sol-dest-nome').value.trim();
+  const destResp=document.getElementById('sol-dest-resp').value.trim();
+  const cidade=document.getElementById('sol-cidade').value.trim();
+  const motivo=document.getElementById('sol-motivo').value.trim();
+  const obs=document.getElementById('sol-obs').value.trim();
+
+  if(!pacNome){showToast('⚠️ Informe o nome do paciente.');return;}
+  if(!destNome){showToast('⚠️ Informe o destinatário.');return;}
+
+  const perfil=perfilAtual||{};
+  const clinicaAtual=document.getElementById('sol-clinica')?.value||'';
+  const dataFormatada=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'';
+  const nascFormatada=pacNasc?new Date(pacNasc+'T12:00:00').toLocaleDateString('pt-BR'):'';
+  const tipoLabel={escolar:'Relatório Escolar',profissional:'Relatório de Profissional de Saúde',outro:'Relatório'}[tipo]||'Relatório';
+
+  const cidadeData=cidade||perfil.cidade||'';
+
+  const logoClinica=perfil.logoClinica||'';
+  const logoProf=perfil.logoProf||'';
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:Arial,sans-serif;font-size:11pt;color:#111;margin:0;padding:32px;line-height:1.7;}
+    .header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a6b6b;padding-bottom:14px;margin-bottom:24px;}
+    .header-info{text-align:center;flex:1;}
+    .header-info .nome{font-size:13pt;font-weight:bold;color:#1a6b6b;}
+    .header-info .sub{font-size:9pt;color:#555;}
+    .logo-img{max-height:60px;max-width:90px;object-fit:contain;}
+    .titulo{font-size:13pt;font-weight:bold;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:24px;color:#1a6b6b;}
+    .dest{margin-bottom:20px;}
+    .dest p{margin:2px 0;font-size:10.5pt;}
+    .corpo{margin-bottom:20px;font-size:10.5pt;text-align:justify;}
+    .assinatura{margin-top:48px;text-align:center;}
+    .assinatura .linha{display:inline-block;width:260px;border-top:1px solid #111;margin-bottom:6px;}
+    .assinatura p{font-size:10pt;margin:2px 0;}
+    .rodape-data{text-align:right;margin-bottom:16px;font-size:10pt;color:#555;}
+    @media print{body{padding:20px;}}
+  </style></head><body>
+  <div class="header">
+    ${logoClinica?`<img src="${logoClinica}" class="logo-img">`:'<div style="width:90px"></div>'}
+    <div class="header-info">
+      <div class="nome">${perfil.nome||''}</div>
+      <div class="sub">${perfil.crp?'CRP '+perfil.crp+' · ':''} Psicólogo Clínico</div>
+      ${perfil.clinica?`<div class="sub">${perfil.clinica}</div>`:''}
+      ${perfil.endereco?`<div class="sub">${perfil.endereco}</div>`:''}
+    </div>
+    ${logoProf?`<img src="${logoProf}" class="logo-img">`:'<div style="width:90px"></div>'}
+  </div>
+
+  <div class="titulo">Solicitação de ${tipoLabel}</div>
+
+  <div class="dest">
+    <p><strong>A(o):</strong> ${destNome}</p>
+    ${destResp?`<p><strong>${tipo==='profissional'?'Especialidade':'Responsável'}:</strong> ${destResp}</p>`:''}
+  </div>
+
+  <div class="corpo">
+    <p>Eu, <strong>${perfil.nome||'_____________'}</strong>${perfil.crp?', inscrito(a) no CRP sob o nº <strong>'+perfil.crp+'</strong>':''}, Psicólogo(a) Clínico(a), venho por meio deste solicitar ${tipoLabel.toLowerCase()} referente ao(à) paciente:</p>
+    <br>
+    <p><strong>Paciente:</strong> ${pacNome}</p>
+    ${nascFormatada?`<p><strong>Data de Nascimento:</strong> ${nascFormatada}</p>`:''}
+    <br>
+    <p>${motivo||'Solicito o relatório para fins de acompanhamento e avaliação psicológica.'}</p>
+    ${obs?`<br><p><strong>Informações específicas solicitadas:</strong><br>${obs}</p>`:''}
+  </div>
+
+  <div class="rodape-data">${cidadeData?cidadeData+', ':''} ${dataFormatada||new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'})}</div>
+
+  <div class="assinatura">
+    <div class="linha"></div>
+    <p><strong>${perfil.nome||'_____________'}</strong></p>
+    <p>${perfil.crp?'CRP '+perfil.crp+' · ':''} Psicólogo Clínico</p>
+  </div>
+  </body></html>`;
+
+  // Inicializa data
+  const solDataEl=document.getElementById('sol-data');
+  if(solDataEl&&!solDataEl.value) solDataEl.value=new Date().toISOString().slice(0,10);
+
+  // Abre PDF via iframe
+  const iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  setTimeout(()=>{iframe.contentWindow.focus();iframe.contentWindow.print();setTimeout(()=>iframe.remove(),2000);},400);
+
+  // Salva no histórico
+  try{ await salvarDocumento('solicitacao',pacNome,html); }catch(e){}
 }
 
 function gerarEncaminhamento() {
