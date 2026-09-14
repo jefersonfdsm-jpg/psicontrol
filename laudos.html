@@ -620,10 +620,10 @@ Responda em JSON com este formato exato:
 {"analise":"texto da análise","proximos_passos":["opção 1","opção 2","opção 3"]}`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/api/ia',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({prompt})
     });
     const data=await resp.json();
     const txt=data.content?.[0]?.text||'';
@@ -694,10 +694,10 @@ Gere o laudo com as seguintes seções. Responda SOMENTE em JSON com este format
 }`;
 
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/api/ia',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({prompt})
     });
     const data=await resp.json();
     const txt=data.content?.[0]?.text||'';

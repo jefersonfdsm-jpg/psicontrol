@@ -1580,7 +1580,7 @@ function verResultadoSeguimento(apId){
     <div class="table-wrap"><table>
       <thead><tr><th>Item</th><th>Questão</th><th>Resultado</th></tr></thead>
       <tbody>${seg.itensFalha.map(n=>{
-        const item=SEG_ITENS[n];
+        const item=MCHAT.find(q=>q.n===n);
         const r=seg.respostas[n];
         return`<tr>
           <td>${n}</td>
@@ -1622,7 +1622,7 @@ function gerarPdfSeguimento(){
     <span style="font-size:11px;color:#555;">${seg.rec}</span>
   </div>
   <table><thead><tr><th>Item</th><th>Questão</th><th>Resultado</th></tr></thead><tbody>
-  ${seg.itensFalha.map(n=>{const item=SEG_ITENS[n];const r=seg.respostas[n];
+  ${seg.itensFalha.map(n=>{const item=MCHAT.find(q=>q.n===n);const r=seg.respostas[n];
     return`<tr><td>${n}</td><td>${item?item.texto:''}</td><td style="text-align:center;color:${r==='passou'?'#3fd4a0':'#ef4444'};font-weight:bold;">${r==='passou'?'✓ Passou':'⚠️ Falhou'}</td></tr>`;
   }).join('')}</tbody></table>
   <p style="margin-top:16px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>

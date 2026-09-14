@@ -2675,6 +2675,7 @@ async function fazerLogin() {
     // Mostrar tela de seleção de módulo
     document.getElementById('modulo-nome-usuario').textContent = user.nome.split(' ')[0];
     document.getElementById('modulo-screen').classList.add('open');
+    aplicarAcessoLaudos();
 
     showToast(`☁️ Bem-vindo, ${user.nome}!`);
   } catch(e) {
@@ -2682,6 +2683,19 @@ async function fazerLogin() {
     console.error(e);
   } finally {
     document.getElementById('login-btn').textContent = 'Entrar';
+  }
+}
+
+async function aplicarAcessoLaudos() {
+  const card = document.getElementById('card-laudos');
+  if (!card || !usuarioLogado) return;
+  if (usuarioLogado.isAdmin) { card.style.display = ''; return; }
+  try {
+    const rows = await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
+    const acesso = rows && rows[0] && rows[0].dados && rows[0].dados.acesso_laudos;
+    card.style.display = acesso ? '' : 'none';
+  } catch (e) {
+    card.style.display = 'none';
   }
 }
 
@@ -2738,6 +2752,7 @@ function verificarSessao() {
         // Mostra seleção de módulo
         document.getElementById('modulo-nome-usuario').textContent = usuarioLogado.nome.split(' ')[0];
         document.getElementById('modulo-screen').classList.add('open');
+        aplicarAcessoLaudos();
       }
       return;
     } catch(e) {}
@@ -2948,6 +2963,7 @@ function voltarModulos(){
   sessionStorage.removeItem('psi_modulo');
   document.getElementById('modulo-nome-usuario').textContent = usuarioLogado?.nome?.split(' ')[0]||'';
   document.getElementById('modulo-screen').classList.add('open');
+  aplicarAcessoLaudos();
 }
 
 // INIT
