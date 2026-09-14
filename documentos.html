@@ -691,7 +691,7 @@ async function gerarSolicitacao(){
   if(!pacNome){showToast('⚠️ Informe o nome do paciente.');return;}
   if(!destNome){showToast('⚠️ Informe o destinatário.');return;}
 
-  const perfil=perfilAtual||{};
+  const perfil=perfilProfissional||{};
   const clinicaAtual=document.getElementById('sol-clinica')?.value||'';
   const dataFormatada=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'';
   const nascFormatada=pacNasc?new Date(pacNasc+'T12:00:00').toLocaleDateString('pt-BR'):'';
@@ -724,7 +724,7 @@ async function gerarSolicitacao(){
     ${logoClinica?`<img src="${logoClinica}" class="logo-img">`:'<div style="width:90px"></div>'}
     <div class="header-info">
       <div class="nome">${perfil.nome||''}</div>
-      <div class="sub">${perfil.crp?'CRP '+perfil.crp+' · ':''} Psicólogo Clínico</div>
+      <div class="sub">${perfil.registro?'CRP '+perfil.registro+' · ':''} Psicólogo Clínico</div>
       ${perfil.clinica?`<div class="sub">${perfil.clinica}</div>`:''}
       ${perfil.endereco?`<div class="sub">${perfil.endereco}</div>`:''}
     </div>
@@ -739,7 +739,7 @@ async function gerarSolicitacao(){
   </div>
 
   <div class="corpo">
-    <p>Eu, <strong>${perfil.nome||'_____________'}</strong>${perfil.crp?', inscrito(a) no CRP sob o nº <strong>'+perfil.crp+'</strong>':''}, Psicólogo(a) Clínico(a), venho por meio deste solicitar ${tipoLabel.toLowerCase()} referente ao(à) paciente:</p>
+    <p>Eu, <strong>${perfil.nome||'_____________'}</strong>${perfil.registro?', inscrito(a) no CRP sob o nº <strong>'+perfil.registro+'</strong>':''}, Psicólogo(a) Clínico(a), venho por meio deste solicitar ${tipoLabel.toLowerCase()} referente ao(à) paciente:</p>
     <br>
     <p><strong>Paciente:</strong> ${pacNome}</p>
     ${nascFormatada?`<p><strong>Data de Nascimento:</strong> ${nascFormatada}</p>`:''}
@@ -753,7 +753,7 @@ async function gerarSolicitacao(){
   <div class="assinatura">
     <div class="linha"></div>
     <p><strong>${perfil.nome||'_____________'}</strong></p>
-    <p>${perfil.crp?'CRP '+perfil.crp+' · ':''} Psicólogo Clínico</p>
+    <p>${perfil.registro?'CRP '+perfil.registro+' · ':''} Psicólogo Clínico</p>
   </div>
   </body></html>`;
 
