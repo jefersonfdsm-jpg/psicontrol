@@ -355,7 +355,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
     <div class="form-section">
       <h4>Dados do Paciente</h4>
       <div class="field-row cols-2">
-        <div class="field"><label>Nome do Paciente</label><input type="text" id="sol-pac-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Nome do Paciente</label><input type="text" id="sol-pac-nome" list="sol-pacientes-lista" autocomplete="off" oninput="onSolPacInput()" placeholder="Escolha um paciente ou digite um novo nome"><datalist id="sol-pacientes-lista"></datalist></div>
         <div class="field"><label>Data de Nascimento</label><input type="date" id="sol-pac-nasc"></div>
       </div>
     </div>
@@ -503,6 +503,9 @@ function preencherSelects(){
     const el=document.getElementById(id);
     if(el)el.innerHTML=`<option value="">Selecione o paciente</option>${optPacs}`;
   });
+  // Solicitação: sugere os pacientes já cadastrados, mas continua permitindo digitar um nome novo
+  const dlPacs=document.getElementById('sol-pacientes-lista');
+  if(dlPacs)dlPacs.innerHTML=psiState.pacientes.map(p=>`<option value="${(p.nome||'').replace(/"/g,'&quot;')}"></option>`).join('');
   // Clínicas — usa LOGOS para nomes conhecidos + clínicas do PsiControl
   const clinicasDisponiveis=[
     ...Object.keys(LOGOS).map(nome=>({id:nome,nome})),
@@ -565,6 +568,15 @@ function onEncPacSelect(){
   const opt=sel.options[sel.selectedIndex];
   const nasc=opt?.dataset?.nasc;
   if(nasc)document.getElementById('enc-nasc').value=nasc;
+}
+function onSolPacInput(){
+  const campo=document.getElementById('sol-pac-nome');
+  if(!campo)return;
+  const nome=campo.value.trim().toLowerCase();
+  if(!nome)return;
+  const p=psiState.pacientes.find(x=>(x.nome||'').trim().toLowerCase()===nome);
+  const campoNasc=document.getElementById('sol-pac-nasc');
+  if(p&&p.nasc&&campoNasc)campoNasc.value=p.nasc;
 }
 
 // NAV
