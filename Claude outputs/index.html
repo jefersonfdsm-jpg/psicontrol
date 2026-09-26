@@ -2339,8 +2339,7 @@ function irParaModuloPaciente(modulo){
   const arq = { prontuario:'prontuario.html', escalas:'escalas.html', documentos:'documentos.html', laudos:'laudos.html' }[modulo];
   if(!arq) return;
   const q = `?paciente=${encodeURIComponent(p.id)}&nome=${encodeURIComponent(p.nome)}`
-          + (p.nasc ? `&nasc=${encodeURIComponent(p.nasc)}` : '')
-          + (modulo === 'prontuario' ? '&acao=nova' : '');
+          + (p.nasc ? `&nasc=${encodeURIComponent(p.nasc)}` : '');
   window.location.href = arq + q;
 }
 

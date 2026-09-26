@@ -9,12 +9,12 @@
 <title>Documentos — PsiControl</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#091414;--surface:#101e1e;--surface2:#142828;--border:#1a3535;--accent:#1a6b6b;--accent2:#2a8a8a;--accent3:#f0b429;--danger:#ef4444;--success:#2a8a8a;--text:#e8ecec;--text2:#a8b0b0;--text3:#3a6060;--radius:12px;--sidebar:260px;}
+:root{--bg:#EEF3F7;--surface:#FFFFFF;--surface2:#F2F7FA;--border:#D2DFE8;--accent:#2E6E97;--accent2:#17405C;--accent3:#A9711A;--danger:#B3261E;--success:#2E6E97;--text:#17405C;--text2:#4A6B82;--text3:#5F7D93;--radius:12px;--sidebar:260px;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;}
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
 #login-screen.hidden{display:none;}
-.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(23,64,92,0.14);}
 .login-psi{font-family:'DM Serif Display',serif;font-size:3.5rem;color:var(--accent);margin-bottom:6px;}
 .login-box h1{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:4px;}
 .login-box .sub{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;}
@@ -23,7 +23,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:.2s;}
 .login-field input:focus{border-color:var(--accent);}
 .login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px;}
-.login-btn:hover{background:#1fa085;}
+.login-btn:hover{background:#245A7C;}
 .login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
 .back-link{font-size:.78rem;color:var(--text3);margin-top:16px;cursor:pointer;text-decoration:underline;}
 #sidebar{width:var(--sidebar);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;z-index:100;}
@@ -34,12 +34,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .nav-section{padding:12px 12px 4px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:.87rem;color:var(--text2);transition:.2s;border:1px solid transparent;}
 .nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.nav-item.active{background:rgba(46,110,151,.18);color:var(--accent);border-color:rgba(46,110,151,.35);}
 .nav-item .icon{width:20px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
 .sb-btn{width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid;}
-.sb-btn-back{background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);}
-.sb-btn-sair{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--danger);}
+.sb-btn-back{background:rgba(46,110,151,.15);border-color:rgba(46,110,151,.3);color:var(--accent);}
+.sb-btn-sair{background:rgba(179,38,30,.08);border-color:rgba(179,38,30,.2);color:var(--danger);}
 #main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;padding:28px 32px;}
 .page{display:none;animation:fadeUp .3s ease;}
 .page.active{display:block;}
@@ -49,12 +49,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .page-header p{color:var(--text2);font-size:.88rem;margin-top:2px;}
 .btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:7px;}
 .btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:#1fa085;}
+.btn-primary:hover{background:#245A7C;}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
 .btn-sm{padding:5px 12px;font-size:.78rem;}
 .doc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;cursor:pointer;transition:.25s;}
-.doc-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.doc-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(23,64,92,0.10);}
 .doc-card h3{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:6px;}
 .doc-card p{font-size:.83rem;color:var(--text2);line-height:1.5;}
 .form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;}
@@ -71,20 +71,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .hist-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .hist-item:hover{border-color:var(--accent);}
 .hist-badge{font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
-.hist-badge.declaracao{background:rgba(42,184,154,.15);color:var(--accent);}
-.hist-badge.encaminhamento{background:rgba(86,212,200,.15);color:var(--accent2);}
+.hist-badge.declaracao{background:rgba(46,110,151,.15);color:var(--accent);}
+.hist-badge.encaminhamento{background:rgba(46,110,151,.15);color:var(--accent2);}
 .hist-actions{display:flex;gap:6px;flex-shrink:0;}
 #toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:.85rem;color:var(--text);z-index:9999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;}
-.doc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9998;flex-direction:column;}
+.doc-modal-overlay{display:none;position:fixed;inset:0;background:rgba(23,64,92,0.18);z-index:9998;flex-direction:column;}
 .doc-modal-overlay.open{display:flex;}
-.doc-modal-bar{background:#1e3d38;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
+.doc-modal-bar{background:#17405C;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
 .doc-modal-bar span{color:var(--accent);font-size:.85rem;font-weight:600;}
 .doc-modal-actions{display:flex;gap:8px;}
 .doc-modal-iframe{flex:1;width:100%;border:none;background:#fff;}
 #toast.show{opacity:1;transform:translateY(0);}
 #mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:calc(52px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding-left:16px;padding-right:16px;gap:12px;}
 #hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;padding:8px;min-width:44px;min-height:44px;}
-#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(23,64,92,0.18);z-index:99;}
 #sidebar-overlay.open{display:block;}
 @media(max-width:768px){
   body{overflow:auto;}
@@ -496,6 +496,28 @@ function carregarPerfil(){
   });
 }
 
+
+// ===== paciente vindo da ficha (PsiControl) =====
+function pacienteDaURL(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const id = q.get('paciente');
+    if(!id) return null;
+    return { id, nome: q.get('nome') || '', nasc: q.get('nasc') || '' };
+  }catch(e){ return null; }
+}
+function aplicarPacienteDaURL(){
+  const alvo = pacienteDaURL();
+  if(!alvo) return;
+  if(!psiState.pacientes.find(p=>p.id===alvo.id)) return;
+  ['dec-paciente','enc-paciente','sol-paciente'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && [...el.options].some(o=>o.value===alvo.id)) el.value = alvo.id;
+  });
+  try{ onEncPacSelect(); }catch(e){}
+  try{ onSolPacSelect(); }catch(e){}
+}
+
 function preencherSelects(){
   // Pacientes
   const optPacs=psiState.pacientes.map(p=>`<option value="${p.id}" data-nasc="${p.nasc||''}">${p.nome}</option>`).join('');
@@ -522,6 +544,7 @@ function preencherSelects(){
   const mm=String(agora.getMinutes()).padStart(2,'0');
   const ht=document.getElementById('dec-horario');
   if(ht&&!ht.value)ht.value=`${hh}:${mm}`;
+  aplicarPacienteDaURL();
 }
 
 function getClinicaInfo(clinicaId){
@@ -529,7 +552,7 @@ function getClinicaInfo(clinicaId){
   if(LOGOS[clinicaId])return LOGOS[clinicaId];
   // Depois no psiState
   const c=psiState.clinicas.find(x=>x.id===clinicaId);
-  if(c)return{nome:c.nome,endereco:c.endereco||'',telefone:c.telefone||'',img:null,cor:'#1a5c4e'};
+  if(c)return{nome:c.nome,endereco:c.endereco||'',telefone:c.telefone||'',img:null,cor:'#2E6E97'};
   return null;
 }
 
@@ -537,7 +560,7 @@ function cabecalhoHTML(clinicaInfo,profNome,profCrp,profissao){
   const logoHtml=clinicaInfo?.img
     ?`<img src="${clinicaInfo.img}" style="max-height:70px;max-width:140px;object-fit:contain;">`
     :`<div style="width:100px;height:60px;border:1.5px dashed #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;">Logo</div>`;
-  const cor=clinicaInfo?.cor||'#1a5c4e';
+  const cor=clinicaInfo?.cor||'#2E6E97';
   return`<div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;margin-bottom:4px;border-bottom:2.5px solid ${cor};">
     <div style="min-width:120px;">${logoHtml}</div>
     <div style="text-align:center;flex:1;padding:0 20px;">
@@ -712,12 +735,12 @@ async function gerarSolicitacao(){
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
     body{font-family:Arial,sans-serif;font-size:11pt;color:#111;margin:0;padding:32px;line-height:1.7;}
-    .header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #1a6b6b;padding-bottom:14px;margin-bottom:24px;}
+    .header{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #2E6E97;padding-bottom:14px;margin-bottom:24px;}
     .header-info{text-align:center;flex:1;}
-    .header-info .nome{font-size:13pt;font-weight:bold;color:#1a6b6b;}
+    .header-info .nome{font-size:13pt;font-weight:bold;color:#2E6E97;}
     .header-info .sub{font-size:9pt;color:#555;}
     .logo-img{max-height:60px;max-width:90px;object-fit:contain;}
-    .titulo{font-size:13pt;font-weight:bold;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:24px;color:#1a6b6b;}
+    .titulo{font-size:13pt;font-weight:bold;text-align:center;text-transform:uppercase;letter-spacing:.08em;margin-bottom:24px;color:#2E6E97;}
     .dest{margin-bottom:20px;}
     .dest p{margin:2px 0;font-size:10.5pt;}
     .corpo{margin-bottom:20px;font-size:10.5pt;text-align:justify;}

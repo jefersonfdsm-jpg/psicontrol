@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c1418;--surface:#141e24;--surface2:#1a2830;--border:#223035;
-  --accent:#4a9090;--accent2:#a8b0b0;--accent3:#f0b429;--danger:#f75c5c;
-  --text:#e8ecec;--text2:#a8b0b0;--text3:#4a6868;
+  --bg:#EEF3F7;--surface:#FFFFFF;--surface2:#F2F7FA;--border:#D2DFE8;
+  --accent:#2E6E97;--accent2:#17405C;--accent3:#A9711A;--danger:#B3261E;
+  --text:#17405C;--text2:#4A6B82;--text3:#5F7D93;
   --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -48,7 +48,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .btn-primary:hover{opacity:.88;}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-outline:hover{border-color:var(--accent);color:var(--text);}
-.btn-danger{background:rgba(247,92,92,.12);border:1px solid rgba(247,92,92,.25);color:var(--danger);}
+.btn-danger{background:rgba(179,38,30,.12);border:1px solid rgba(179,38,30,.25);color:var(--danger);}
 .btn-sm{padding:5px 12px;font-size:.78rem;}
 .back-link{color:var(--text2);font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:4px;cursor:pointer;}
 .back-link:hover{color:var(--accent);}
@@ -352,6 +352,7 @@ async function carregarDados(){
     const regs=await sbFetch(`prontuarios?usuario_id=eq.${usuarioLogado.id}&order=data.desc`)||[];
     registros=regs;
     renderListaPacientes();
+    abrirPacienteDaURL();
   } catch(e){showToast('Erro ao carregar dados.');}
 }
 
@@ -465,6 +466,25 @@ function salvarNovoPaciente(){
 }
 
 // ===================== PRONTUÁRIO DO PACIENTE =====================
+
+// ===== paciente vindo da ficha (PsiControl) =====
+function pacienteDaURL(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const id = q.get('paciente');
+    if(!id) return null;
+    return { id, nome: q.get('nome') || '', nasc: q.get('nasc') || '', acao: q.get('acao') || '' };
+  }catch(e){ return null; }
+}
+
+function abrirPacienteDaURL(){
+  const alvo = pacienteDaURL();
+  if(!alvo) return;
+  if(!pacientes.find(p=>p.id===alvo.id)) return;
+  abrirPaciente(alvo.id);
+  if(alvo.acao === 'nova') setTimeout(()=>{ try{ abrirEditor(); }catch(e){} }, 120);
+}
+
 function abrirPaciente(id){
   pacienteAtual=pacientes.find(p=>p.id===id);
   if(!pacienteAtual)return;

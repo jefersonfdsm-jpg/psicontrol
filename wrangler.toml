@@ -6,3 +6,8 @@ main = "src/index.js"
 directory = "./"
 binding = "ASSETS"
 run_worker_first = ["/api/*"]
+
+# Mantem o projeto do Supabase ativo: consulta leve de 4 em 4 horas (6x por dia),
+# rodando na nuvem da Cloudflare — nao depende do computador estar ligado.
+[triggers]
+crons = ["0 */4 * * *"]

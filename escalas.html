@@ -9,12 +9,12 @@
 <title>Escalas de Rastreio — PsiControl</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a1418;--surface:#111e24;--surface2:#162830;--border:#1a3540;--accent:#56d4c8;--accent2:#7dd4c8;--accent3:#f0b429;--danger:#ef4444;--success:#56d4c8;--text:#e8ecec;--text2:#a8b0b0;--text3:#4a7a80;--radius:12px;--sidebar:260px;}
+:root{--bg:#EEF3F7;--surface:#FFFFFF;--surface2:#F2F7FA;--border:#D2DFE8;--accent:#2E6E97;--accent2:#17405C;--accent3:#A9711A;--danger:#B3261E;--success:#2F7A63;--text:#17405C;--text2:#4A6B82;--text3:#5F7D93;--radius:12px;--sidebar:260px;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;}
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
 #login-screen.hidden{display:none;}
-.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:380px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(23,64,92,0.14);}
 .login-psi{font-family:'DM Serif Display',serif;font-size:3.5rem;color:var(--accent);margin-bottom:6px;}
 .login-box h1{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--accent);margin-bottom:4px;}
 .login-box .sub{font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:28px;}
@@ -23,7 +23,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:.2s;}
 .login-field input:focus{border-color:var(--accent);}
 .login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px;}
-.login-btn:hover{background:#1fa085;}
+.login-btn:hover{background:#245A7C;}
 .login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
 .back-link{font-size:.78rem;color:var(--text3);margin-top:16px;cursor:pointer;text-decoration:underline;}
 .back-link:hover{color:var(--accent2);}
@@ -35,13 +35,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .nav-section{padding:12px 12px 4px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:.87rem;color:var(--text2);transition:.2s;border:1px solid transparent;}
 .nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.nav-item.active{background:rgba(46,110,151,.18);color:var(--accent);border-color:rgba(46,110,151,.35);}
 .nav-item .icon{width:20px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
 .sb-btn{width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid;}
-.sb-btn-back{background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);}
-.sb-btn-back:hover{background:rgba(42,184,154,.28);}
-.sb-btn-sair{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--danger);}
+.sb-btn-back{background:rgba(46,110,151,.15);border-color:rgba(46,110,151,.3);color:var(--accent);}
+.sb-btn-back:hover{background:rgba(46,110,151,.28);}
+.sb-btn-sair{background:rgba(179,38,30,.08);border-color:rgba(179,38,30,.2);color:var(--danger);}
 #main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;padding:28px 32px;position:relative;z-index:1;}
 .page{display:none;animation:fadeUp .3s ease;}
 .page.active{display:block;}
@@ -51,7 +51,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .page-header p{color:var(--text2);font-size:.88rem;margin-top:2px;}
 .btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:7px;}
 .btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:#1fa085;}
+.btn-primary:hover{background:#245A7C;}
 .btn-danger{background:var(--danger);color:#fff;}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
@@ -65,7 +65,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .stat-card .sub{font-size:.78rem;color:var(--text2);margin-top:4px;}
 .escalas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:28px;}
 .escala-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;cursor:pointer;transition:.25s;}
-.escala-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3);}
+.escala-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 32px rgba(23,64,92,0.10);}
 .escala-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
 .escala-card h3{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:6px;}
 .escala-card p{font-size:.82rem;color:var(--text2);line-height:1.5;margin-bottom:14px;}
@@ -79,29 +79,29 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:.4s;}
 .questao-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:14px;transition:.2s;}
-.questao-card.respondida{border-color:rgba(42,184,154,.35);}
+.questao-card.respondida{border-color:rgba(46,110,151,.35);}
 .questao-num{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
 .questao-texto{font-size:.95rem;color:var(--text);line-height:1.6;margin-bottom:16px;}
 .questao-opcoes{display:flex;gap:10px;flex-wrap:wrap;}
 .opcao-btn{padding:10px 22px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit;font-size:.9rem;transition:.2s;font-weight:500;}
 .opcao-btn:hover{border-color:var(--accent);color:var(--accent);}
-.opcao-btn.sel-verde{border-color:var(--success);background:rgba(63,212,160,.15);color:var(--success);font-weight:700;}
-.opcao-btn.sel-risco{border-color:var(--accent3);background:rgba(240,180,41,.13);color:var(--accent3);font-weight:700;}
+.opcao-btn.sel-verde{border-color:var(--success);background:rgba(47,122,99,.15);color:var(--success);font-weight:700;}
+.opcao-btn.sel-risco{border-color:var(--accent3);background:rgba(169,113,26,.13);color:var(--accent3);font-weight:700;}
 .snap-header-row{display:grid;grid-template-columns:1fr repeat(4,78px);gap:6px;padding:10px 14px;background:var(--surface2);border-radius:8px;margin-bottom:8px;font-size:.72rem;color:var(--text3);text-align:center;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
 .snap-header-row span:first-child{text-align:left;}
 .snap-item{display:grid;grid-template-columns:1fr repeat(4,78px);gap:6px;align-items:center;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;transition:.2s;}
-.snap-item.respondido{border-color:rgba(42,184,154,.3);}
+.snap-item.respondido{border-color:rgba(46,110,151,.3);}
 .snap-texto{font-size:.87rem;color:var(--text);line-height:1.4;}
 .snap-opcao{display:flex;align-items:center;justify-content:center;}
 .snap-radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .snap-radio:hover{border-color:var(--accent);}
 .snap-radio.sel{border-color:var(--accent);background:var(--accent);}
 .snap-radio.sel::after{content:'';width:9px;height:9px;border-radius:50%;background:#fff;display:block;}
-.subescala-title{font-size:.78rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;padding:8px 14px;background:rgba(86,212,200,.07);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
+.subescala-title{font-size:.78rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:20px 0 10px;padding:8px 14px;background:rgba(46,110,151,.07);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
 .resultado-box{border-radius:var(--radius);padding:24px;margin-bottom:24px;text-align:center;}
-.resultado-box.baixo{background:rgba(63,212,160,.08);border:2px solid rgba(63,212,160,.4);}
-.resultado-box.medio{background:rgba(240,180,41,.08);border:2px solid rgba(240,180,41,.4);}
-.resultado-box.alto{background:rgba(239,68,68,.08);border:2px solid rgba(239,68,68,.4);}
+.resultado-box.baixo{background:rgba(47,122,99,.08);border:2px solid rgba(47,122,99,.4);}
+.resultado-box.medio{background:rgba(169,113,26,.08);border:2px solid rgba(169,113,26,.4);}
+.resultado-box.alto{background:rgba(179,38,30,.08);border:2px solid rgba(179,38,30,.4);}
 .resultado-titulo{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:8px;}
 .resultado-pontuacao{font-family:'DM Serif Display',serif;font-size:3rem;margin:8px 0;}
 .historico-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:.2s;}
@@ -111,7 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .historico-data{margin-left:auto;text-align:right;flex-shrink:0;}
 .historico-data .data{font-size:.78rem;color:var(--text2);}
 .historico-data .pontos{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--accent);}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(23,64,92,0.18);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:fadeUp .25s ease;}
 .modal h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px;}
@@ -124,13 +124,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
 table{width:100%;border-collapse:collapse;}
 thead th{padding:11px 14px;text-align:left;font-size:.71rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--surface2);}
-tbody td{padding:12px 14px;font-size:.86rem;color:var(--text2);border-bottom:1px solid rgba(255,255,255,.04);}
+tbody td{padding:12px 14px;font-size:.86rem;color:var(--text2);border-bottom:1px solid rgba(23,64,92,.09);}
 tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover td{background:rgba(255,255,255,.02);color:var(--text);}
+tbody tr:hover td{background:rgba(46,110,151,.05);color:var(--text);}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500;}
-.badge-baixo{background:rgba(63,212,160,.15);color:var(--success);}
-.badge-medio{background:rgba(240,180,41,.15);color:var(--accent3);}
-.badge-alto{background:rgba(239,68,68,.15);color:var(--danger);}
+.badge-baixo{background:rgba(47,122,99,.15);color:var(--success);}
+.badge-medio{background:rgba(169,113,26,.15);color:var(--accent3);}
+.badge-alto{background:rgba(179,38,30,.15);color:var(--danger);}
 .empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
 .empty-state .empty-icon{font-size:3rem;margin-bottom:12px;opacity:.4;}
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text3);margin-bottom:14px;flex-wrap:wrap;}
@@ -140,17 +140,17 @@ tbody tr:hover td{background:rgba(255,255,255,.02);color:var(--text);}
 #toast.show{opacity:1;transform:translateY(0);}
 #perfil-screen{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;align-items:center;justify-content:center;}
 #perfil-screen.open{display:flex;}
-.perfil-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:420px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.perfil-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:420px;max-width:92vw;text-align:center;box-shadow:0 24px 60px rgba(23,64,92,0.14);}
 .perfil-box h2{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--text);margin-bottom:6px;}
 .perfil-box .sub{font-size:.83rem;color:var(--text2);margin-bottom:24px;line-height:1.5;}
 #mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:calc(52px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;align-items:center;padding-left:16px;padding-right:16px;gap:12px;}
 #hamburger{background:none;border:none;color:var(--text);cursor:pointer;font-size:1.6rem;display:flex;align-items:center;justify-content:center;padding:8px;min-width:44px;min-height:44px;}
-#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(23,64,92,0.18);z-index:99;}
 #sidebar-overlay.open{display:block;}
 @media(max-width:768px){
   body{overflow:auto;}
   #mobile-topbar{display:flex;}
-  #sidebar{transform:translateX(-100%);transition:transform .3s ease;width:280px;box-shadow:4px 0 24px rgba(0,0,0,.4);}
+  #sidebar{transform:translateX(-100%);transition:transform .3s ease;width:280px;box-shadow:4px 0 24px rgba(23,64,92,0.14);}
   #sidebar.open{transform:translateX(0);}
   #main{margin-left:0 !important;padding-top:calc(70px + env(safe-area-inset-top));padding-bottom:24px;padding-left:16px;padding-right:16px;height:100vh;overflow-y:auto;}
   .cards-row.cols-3{grid-template-columns:1fr 1fr;}
@@ -731,6 +731,17 @@ function renderHome(){
 }
 
 // INICIAR
+
+// ===== paciente vindo da ficha (PsiControl) =====
+function pacienteDaURL(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const id = q.get('paciente');
+    if(!id) return null;
+    return { id, nome: q.get('nome') || '', nasc: q.get('nasc') || '', acao: q.get('acao') || '' };
+  }catch(e){ return null; }
+}
+
 function toggleNovoPaciente(){
   const val=document.getElementById('apl-paciente').value;
   const novoCampos=document.getElementById('novo-pac-fields');
@@ -774,6 +785,8 @@ function iniciarAplicacao(tipo){
   document.getElementById('novo-pac-nasc').value='';
   document.getElementById('apl-nasc-row').style.display='';
   document.getElementById('apl-informante-row').style.display='none';
+  const _alvo=pacienteDaURL();
+  if(_alvo && psiState.pacientes.find(p=>p.id===_alvo.id)){ sel.value=_alvo.id; try{ toggleNovoPaciente(); }catch(e){} }
   document.getElementById('modal-aplicacao').classList.add('open');
 }
 
@@ -1607,26 +1620,26 @@ function gerarPdfSeguimento(){
   <table style="margin:14px 0;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td><td><b>Informante:</b> ${ap.informante}</td></tr></table>
 
   <h2 style="background:#f5f5f5;padding:8px;margin-top:16px;">PARTE 1 — M-CHAT-R (Triagem)</h2>
-  <div style="text-align:center;padding:12px;border:2px solid ${ap.cor==='baixo'?'#3fd4a0':ap.cor==='medio'?'#f0b429':'#ef4444'};border-radius:6px;margin:10px 0;">
+  <div style="text-align:center;padding:12px;border:2px solid ${ap.cor==='baixo'?'#4A8FB8':ap.cor==='medio'?'#f0b429':'#ef4444'};border-radius:6px;margin:10px 0;">
     <strong style="font-size:16px;">${ap.nivel} — ${ap.pontos}/20 pontos</strong><br>
     <span style="font-size:11px;color:#555;">${ap.rec}</span>
   </div>
   <table><thead><tr><th>Nº</th><th>Questão</th><th>Resposta</th><th>Risco?</th></tr></thead><tbody>
   ${MCHAT.map(q=>{const r=ap.respostas[q.n];const eR=(q.ricoSim&&r==='sim')||(!q.ricoSim&&r==='nao');
-    return`<tr><td>${q.n}</td><td>${q.texto}</td><td style="text-align:center;font-weight:bold;">${r==='sim'?'Sim':'Não'}</td><td style="text-align:center;color:${eR?'#ef4444':'#3fd4a0'}">${eR?'⚠️':'✓'}</td></tr>`;
+    return`<tr><td>${q.n}</td><td>${q.texto}</td><td style="text-align:center;font-weight:bold;">${r==='sim'?'Sim':'Não'}</td><td style="text-align:center;color:${eR?'#ef4444':'#4A8FB8'}">${eR?'⚠️':'✓'}</td></tr>`;
   }).join('')}</tbody></table>
 
   <h2 style="background:#f5f5f5;padding:8px;margin-top:20px;">PARTE 2 — M-CHAT-R/F (Consulta de Seguimento)</h2>
-  <div style="text-align:center;padding:12px;border:2px solid ${seg.cor==='baixo'?'#3fd4a0':'#ef4444'};border-radius:6px;margin:10px 0;">
+  <div style="text-align:center;padding:12px;border:2px solid ${seg.cor==='baixo'?'#4A8FB8':'#ef4444'};border-radius:6px;margin:10px 0;">
     <strong style="font-size:16px;">${seg.resultado} — ${seg.nFalhas} falha(s) na consulta</strong><br>
     <span style="font-size:11px;color:#555;">${seg.rec}</span>
   </div>
   <table><thead><tr><th>Item</th><th>Questão</th><th>Resultado</th></tr></thead><tbody>
   ${seg.itensFalha.map(n=>{const item=MCHAT.find(q=>q.n===n);const r=seg.respostas[n];
-    return`<tr><td>${n}</td><td>${item?item.texto:''}</td><td style="text-align:center;color:${r==='passou'?'#3fd4a0':'#ef4444'};font-weight:bold;">${r==='passou'?'✓ Passou':'⚠️ Falhou'}</td></tr>`;
+    return`<tr><td>${n}</td><td>${item?item.texto:''}</td><td style="text-align:center;color:${r==='passou'?'#4A8FB8':'#ef4444'};font-weight:bold;">${r==='passou'?'✓ Passou':'⚠️ Falhou'}</td></tr>`;
   }).join('')}</tbody></table>
   <p style="margin-top:16px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
-  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
 }
 function renderMchatHistorico(){
@@ -1863,7 +1876,7 @@ function gerarPdfMchat(){
   const aps=[...escalasState.aplicacoes].filter(a=>a.tipo==='mchat');
   const ap=aps[aps.length-1];if(!ap)return;
   const ic={baixo:'🟢',medio:'🟡',alto:'🔴'};
-  const cc={baixo:'#3fd4a0',medio:'#f0b429',alto:'#ef4444'};
+  const cc={baixo:'#4A8FB8',medio:'#f0b429',alto:'#ef4444'};
   const win=window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>M-CHAT-R — ${ap.pacienteNome}</title>
   <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
@@ -1878,11 +1891,11 @@ function gerarPdfMchat(){
   </div>
   <table><thead><tr><th>Nº</th><th>Questão</th><th>Resposta</th><th>Risco?</th></tr></thead><tbody>
   ${MCHAT.map(q=>{const r=ap.respostas[q.n];const eR=(q.ricoSim&&r==='sim')||(!q.ricoSim&&r==='nao');
-    return`<tr><td>${q.n}</td><td>${q.texto}</td><td style="text-align:center;font-weight:bold;">${r==='sim'?'Sim':'Não'}</td><td style="text-align:center;color:${eR?'#ef4444':'#3fd4a0'}">${eR?'⚠️ Risco':'✓ OK'}</td></tr>`;
+    return`<tr><td>${q.n}</td><td>${q.texto}</td><td style="text-align:center;font-weight:bold;">${r==='sim'?'Sim':'Não'}</td><td style="text-align:center;color:${eR?'#ef4444':'#4A8FB8'}">${eR?'⚠️ Risco':'✓ OK'}</td></tr>`;
   }).join('')}</tbody></table>
   ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
   <p style="margin-top:16px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
-  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
 }
 function gerarPdfSnap(){
@@ -1897,18 +1910,18 @@ function gerarPdfSnap(){
   <p style="text-align:center;color:#666;font-size:11px;">Mattos et al. Rev. Psiq. RS 28(3):290-297 · Swanson, 1992</p>
   <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td></tr></table>
   <table style="margin-bottom:16px;text-align:center;"><thead><tr><th>Subescala</th><th>Pontuação</th><th>Corte</th><th>Resultado</th></tr></thead><tbody>
-    <tr><td>Desatenção (1–9)</td><td style="font-size:16px;font-weight:bold;color:${d>=6?'#ef4444':'#3fd4a0'}">${d}/9</td><td>≥6</td><td>${d>=6?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
-    <tr><td>Hiperatividade/Impulsividade (10–18)</td><td style="font-size:16px;font-weight:bold;color:${h>=6?'#ef4444':'#3fd4a0'}">${h}/9</td><td>≥6</td><td>${h>=6?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
-    <tr><td>Oposição/Desafio — TOD (19–26)</td><td style="font-size:16px;font-weight:bold;color:${t>=4?'#ef4444':'#3fd4a0'}">${t}/8</td><td>≥4</td><td>${t>=4?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
+    <tr><td>Desatenção (1–9)</td><td style="font-size:16px;font-weight:bold;color:${d>=6?'#ef4444':'#4A8FB8'}">${d}/9</td><td>≥6</td><td>${d>=6?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
+    <tr><td>Hiperatividade/Impulsividade (10–18)</td><td style="font-size:16px;font-weight:bold;color:${h>=6?'#ef4444':'#4A8FB8'}">${h}/9</td><td>≥6</td><td>${h>=6?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
+    <tr><td>Oposição/Desafio — TOD (19–26)</td><td style="font-size:16px;font-weight:bold;color:${t>=4?'#ef4444':'#4A8FB8'}">${t}/8</td><td>≥4</td><td>${t>=4?'⚠️ Acima do corte':'✓ Normal'}</td></tr>
   </tbody></table>
   <table><thead><tr><th>Nº</th><th>Subescala</th><th>Item</th><th>Resposta</th><th>Classif.</th></tr></thead><tbody>
   ${SNAP.map(q=>{const r=ap.respostas[q.n]||0;const sn={d:'Desatenção',h:'Hiperatividade',t:'TOD'};
-    return`<tr><td>${q.n}</td><td>${sn[q.sub]}</td><td>${q.texto}</td><td style="text-align:center;">${r}—${opts[r]}</td><td style="text-align:center;color:${r>=2?'#ef4444':'#3fd4a0'}">${r>=2?'Clínico':'Normal'}</td></tr>`;
+    return`<tr><td>${q.n}</td><td>${sn[q.sub]}</td><td>${q.texto}</td><td style="text-align:center;">${r}—${opts[r]}</td><td style="text-align:center;color:${r>=2?'#ef4444':'#4A8FB8'}">${r>=2?'Clínico':'Normal'}</td></tr>`;
   }).join('')}</tbody></table>
   <p style="margin-top:10px;font-size:10px;color:#999;">Pontos de corte: Costa et al. (amostra 680 crianças/adolescentes BH). Não substitui avaliação clínica completa.</p>
   ${ap.obs?`<p style="font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
   <p style="font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
-  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
 }
 
@@ -2364,7 +2377,7 @@ function gerarPdfPortage(){
   else interpretacao=`O perfil geral de desenvolvimento apresenta <b>desempenho abaixo do esperado</b>, com ${pctGeral}% dos itens alcançados. Recomenda-se avaliação complementar e programa de estimulação estruturado em todas as áreas defasadas.`;
 
   // Gráfico SVG de barras horizontais segmentadas
-  const coresArea={'Socialização':'#2ab89a','Linguagem':'#56d4c8','Cognição':'#f0b429','Autocuidados':'#ef4444','Motor':'#9370db'};
+  const coresArea={'Socialização':'#2E6E97','Linguagem':'#4A8FB8','Cognição':'#f0b429','Autocuidados':'#ef4444','Motor':'#9370db'};
   const barWidth=340, barH=22, gap=38, svgH=Object.keys(perfisArea).length*(barH+gap)+20;
   let svgBars='';
   Object.entries(perfisArea).forEach(([area,p],i)=>{
@@ -2379,9 +2392,9 @@ function gerarPdfPortage(){
     const nivel=p.pct>=80?'Satisfatório':p.pct>=60?'Atenção':'Prioritário';
     svgBars+=`
       <text x="0" y="${y+15}" font-size="11" font-family="Georgia" fill="#111" font-weight="bold">${area}</text>
-      <text x="${barWidth+50}" y="${y+15}" font-size="10" font-family="Georgia" fill="${p.pct>=80?'#2a7a5a':p.pct>=60?'#a06000':'#c00'}">${p.pct}% — ${nivel}</text>
+      <text x="${barWidth+50}" y="${y+15}" font-size="10" font-family="Georgia" fill="${p.pct>=80?'#245A7C':p.pct>=60?'#a06000':'#c00'}">${p.pct}% — ${nivel}</text>
       <rect x="0" y="${y+20}" width="${barWidth}" height="${barH}" rx="4" fill="#eee"/>
-      ${wS>0?`<rect x="0" y="${y+20}" width="${wS}" height="${barH}" rx="4" fill="#3fd4a0"/>
+      ${wS>0?`<rect x="0" y="${y+20}" width="${wS}" height="${barH}" rx="4" fill="#4A8FB8"/>
       ${wS>20?`<text x="${wS/2}" y="${y+20+barH/2+4}" text-anchor="middle" font-size="9" fill="white" font-weight="bold">${pctS}%</text>`:''}`:'' }
       ${wAV>0?`<rect x="${wS}" y="${y+20}" width="${wAV}" height="${barH}" rx="0" fill="#f0b429"/>
       ${wAV>20?`<text x="${wS+wAV/2}" y="${y+20+barH/2+4}" text-anchor="middle" font-size="9" fill="white" font-weight="bold">${pctAV}%</text>`:''}`:'' }
@@ -2419,8 +2432,8 @@ function gerarPdfPortage(){
     </div>`;
   }
   if(areasOk.length>0){
-    analiseHTML+=`<div style="background:#f0fff4;border:1px solid #b7ebc7;border-radius:6px;padding:10px 12px;margin-bottom:8px;">
-      <div style="font-size:11px;color:#2a7a5a;font-weight:bold;margin-bottom:4px;">🟢 ÁREAS COM DESEMPENHO SATISFATÓRIO</div>
+    analiseHTML+=`<div style="background:#F4F8FB;border:1px solid #D3E4EF;border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+      <div style="font-size:11px;color:#245A7C;font-weight:bold;margin-bottom:4px;">🟢 ÁREAS COM DESEMPENHO SATISFATÓRIO</div>
       ${areasOk.map(([area,v])=>`<span style="font-size:10px;color:#333;display:block;margin-bottom:2px;"><b>${area}</b> — ${v.pct}% alcançado. Manter estimulação e avançar para faixas seguintes.</span>`).join('')}
     </div>`;
   }
@@ -2437,13 +2450,13 @@ function gerarPdfPortage(){
     const faixasComDados=Object.entries(faixasArea).filter(([,v])=>v.total>0);
     if(faixasComDados.length===0)return;
     faixaHTML+=`<h3 style="font-size:12px;color:${coresArea[area]||'#333'};margin:14px 0 6px;border-bottom:2px solid ${coresArea[area]||'#333'};padding-bottom:3px;">${area.toUpperCase()}</h3>
-    <table><thead><tr><th>Faixa Etária</th><th>Avaliados</th><th style="color:#2a7a5a">S (Sim)</th><th style="color:#a06000">AV</th><th style="color:#c00">N (Não)</th><th>% Alcançado</th><th>Situação</th></tr></thead><tbody>
+    <table><thead><tr><th>Faixa Etária</th><th>Avaliados</th><th style="color:#245A7C">S (Sim)</th><th style="color:#a06000">AV</th><th style="color:#c00">N (Não)</th><th>% Alcançado</th><th>Situação</th></tr></thead><tbody>
     ${faixasComDados.map(([faixa,r])=>{
       const pct=Math.round(r.sim/r.total*100);
       const niv=pct>=80?'Satisfatório':pct>=60?'Atenção':'Prioritário';
-      const cor=pct>=80?'#2a7a5a':pct>=60?'#a06000':'#c00';
+      const cor=pct>=80?'#245A7C':pct>=60?'#a06000':'#c00';
       return`<tr><td>${faixa} anos</td><td>${r.total}/${r.itensTotal}</td>
-        <td style="text-align:center;color:#2a7a5a;font-weight:bold;">${r.sim}</td>
+        <td style="text-align:center;color:#245A7C;font-weight:bold;">${r.sim}</td>
         <td style="text-align:center;color:#a06000;font-weight:bold;">${r.av}</td>
         <td style="text-align:center;color:#c00;font-weight:bold;">${r.nao}</td>
         <td style="text-align:center;font-weight:bold;">${pct}%</td>
@@ -2464,7 +2477,7 @@ function gerarPdfPortage(){
   <style>
     body{font-family:Georgia,serif;margin:28px 32px;color:#111;font-size:11px;}
     h1{font-size:18px;text-align:center;margin-bottom:4px;}
-    h2{font-size:13px;margin-top:18px;margin-bottom:8px;background:#f5f5f5;padding:6px 10px;border-left:4px solid #2ab89a;}
+    h2{font-size:13px;margin-top:18px;margin-bottom:8px;background:#f5f5f5;padding:6px 10px;border-left:4px solid #2E6E97;}
     h3{font-size:12px;margin-top:14px;margin-bottom:6px;}
     table{width:100%;border-collapse:collapse;margin-top:6px;font-size:10px;}
     th{background:#f0f0f0;padding:5px 7px;text-align:left;border:1px solid #ddd;font-size:10px;}
@@ -2495,15 +2508,15 @@ function gerarPdfPortage(){
 
   <h2>1. Resumo Geral</h2>
   <table>
-    <thead><tr><th>Indicador</th><th style="text-align:center">Total</th><th style="text-align:center;color:#2a7a5a">S (Sim)</th><th style="text-align:center;color:#a06000">AV</th><th style="text-align:center;color:#c00">N (Não)</th><th style="text-align:center">% Alcançado</th><th style="text-align:center">Classificação</th></tr></thead>
+    <thead><tr><th>Indicador</th><th style="text-align:center">Total</th><th style="text-align:center;color:#245A7C">S (Sim)</th><th style="text-align:center;color:#a06000">AV</th><th style="text-align:center;color:#c00">N (Não)</th><th style="text-align:center">% Alcançado</th><th style="text-align:center">Classificação</th></tr></thead>
     <tbody>
     ${PORTAGE_AREAS.map(area=>{
       const p=perfisArea[area];if(!p)return'';
       const niv=p.pct>=80?'Satisfatório':p.pct>=60?'Atenção':'Prioritário';
-      const cor=p.pct>=80?'#2a7a5a':p.pct>=60?'#a06000':'#c00';
+      const cor=p.pct>=80?'#245A7C':p.pct>=60?'#a06000':'#c00';
       return`<tr><td style="color:${coresArea[area]||'#333'};font-weight:bold;">${area}</td>
         <td style="text-align:center;">${p.total}</td>
-        <td style="text-align:center;color:#2a7a5a;font-weight:bold;">${p.sim}</td>
+        <td style="text-align:center;color:#245A7C;font-weight:bold;">${p.sim}</td>
         <td style="text-align:center;color:#a06000;font-weight:bold;">${p.av}</td>
         <td style="text-align:center;color:#c00;font-weight:bold;">${p.nao}</td>
         <td style="text-align:center;font-weight:bold;">${p.pct}%</td>
@@ -2512,11 +2525,11 @@ function gerarPdfPortage(){
     <tr style="background:#f0f0f0;font-weight:bold;">
       <td>TOTAL GERAL</td>
       <td style="text-align:center;">${totalResp}</td>
-      <td style="text-align:center;color:#2a7a5a;">${totalSim}</td>
+      <td style="text-align:center;color:#245A7C;">${totalSim}</td>
       <td style="text-align:center;color:#a06000;">${totalAV}</td>
       <td style="text-align:center;color:#c00;">${totalNao}</td>
       <td style="text-align:center;">${pctGeral}%</td>
-      <td style="text-align:center;color:${pctGeral>=80?'#2a7a5a':pctGeral>=60?'#a06000':'#c00'};">${pctGeral>=80?'Satisfatório':pctGeral>=60?'Atenção':'Prioritário'}</td>
+      <td style="text-align:center;color:${pctGeral>=80?'#245A7C':pctGeral>=60?'#a06000':'#c00'};">${pctGeral>=80?'Satisfatório':pctGeral>=60?'Atenção':'Prioritário'}</td>
     </tr>
     </tbody>
   </table>
@@ -2526,7 +2539,7 @@ function gerarPdfPortage(){
     ${svgBars}
   </svg>
   <div class="legenda">
-    <div class="leg-item"><div class="leg-cor" style="background:#3fd4a0"></div> S — Sim (alcançado)</div>
+    <div class="leg-item"><div class="leg-cor" style="background:#4A8FB8"></div> S — Sim (alcançado)</div>
     <div class="leg-item"><div class="leg-cor" style="background:#f0b429"></div> AV — Às vezes (em desenvolvimento)</div>
     <div class="leg-item"><div class="leg-cor" style="background:#ef4444"></div> N — Não alcançado</div>
   </div>
@@ -2538,7 +2551,7 @@ function gerarPdfPortage(){
   ${analiseHTML}
 
   <h2>5. Recomendações</h2>
-  <div style="background:#f0faf5;border:1px solid #b7ebc7;border-radius:4px;padding:10px 12px;font-size:11px;line-height:1.7;">${rec}</div>
+  <div style="background:#F2F7FA;border:1px solid #D3E4EF;border-radius:4px;padding:10px 12px;font-size:11px;line-height:1.7;">${rec}</div>
 
   <h2>6. Detalhamento por Faixa Etária</h2>
   ${faixaHTML}
@@ -2556,7 +2569,7 @@ function gerarPdfPortage(){
   <p style="margin-top:20px;font-size:9px;color:#999;text-align:center;border-top:1px solid #eee;padding-top:8px;">
     Guia Portage de Educação Pré-Escolar · ${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}
   </p>
-  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;">🖨 Imprimir / Salvar PDF</button>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);
   win.document.close();
 }
@@ -2945,7 +2958,7 @@ function gerarPdfIrdi(){
   const ap=window._irdiApAtual;if(!ap)return;
   const totalResp=Object.keys(ap.respostas).length;
   const presentes=Object.values(ap.respostas).filter(r=>r==='P').length;
-  const cor=ap.totalAusencias===0?'#3fd4a0':ap.totalAusencias===1?'#f0b429':'#ef4444';
+  const cor=ap.totalAusencias===0?'#4A8FB8':ap.totalAusencias===1?'#f0b429':'#ef4444';
   const win=window.open('','_blank');
   let linhas='';
   IRDI_FAIXAS.forEach(f=>{
@@ -2955,7 +2968,7 @@ function gerarPdfIrdi(){
     linhas+=`<tr style="background:#f5f5f5;"><td colspan="3" style="padding:7px 8px;font-size:12px;font-weight:bold;color:#9370db;">${f} meses</td></tr>`;
     itens.forEach(i=>{
       const r=ap.respostas[`${f}-${i.n}`];if(!r)return;
-      linhas+=`<tr><td>${i.n}</td><td>${i.texto}</td><td style="text-align:center;font-weight:bold;color:${r==='P'?'#3fd4a0':'#ef4444'}">${r==='P'?'✓ Presente':'✗ Ausente'}</td></tr>`;
+      linhas+=`<tr><td>${i.n}</td><td>${i.texto}</td><td style="text-align:center;font-weight:bold;color:${r==='P'?'#4A8FB8':'#ef4444'}">${r==='P'?'✓ Presente':'✗ Ausente'}</td></tr>`;
     });
   });
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>IRDI — ${ap.pacienteNome}</title>

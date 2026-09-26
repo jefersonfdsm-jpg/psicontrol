@@ -56,4 +56,32 @@ export default {
     // Tudo que não for /api/* continua sendo servido como arquivo estático normal
     return env.ASSETS.fetch(request);
   },
+
+  // Roda automaticamente no horário do cron definido no wrangler.toml.
+  // Faz uma consulta leve ao banco só para contar como atividade e evitar
+  // que o projeto gratuito do Supabase seja pausado por inatividade.
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(manterSupabaseAtivo());
+  },
 };
+
+const SUPABASE_URL = 'https://nntvdmunpudovuiwrccz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_Z5XoCu4LUyMZjnMPCUZ1wg_IgphMzcf';
+
+async function manterSupabaseAtivo() {
+  // Duas consultas diferentes e bem pequenas, para contar como uso real do banco.
+  const tabelas = ['usuarios', 'dados_usuario'];
+  for (const tabela of tabelas) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?select=id&limit=1`, {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+      });
+      console.log(`ping supabase ${tabela}: ${r.status}`);
+    } catch (e) {
+      console.log(`ping supabase ${tabela} falhou: ${e}`);
+    }
+  }
+}
