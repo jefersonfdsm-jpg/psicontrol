@@ -143,9 +143,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   html.embed .menu-toggle,
   html.embed #menu-toggle,
   html.embed #watermark{ display:none !important; }
+
+  /* a tela de login nem chega a ser pintada quando ja existe sessao salva */
+  html.sessao-salva #login-screen{ display:none !important; }
 </style>
 </head>
 <body>
+<script>
+/* primeira coisa da pagina: se ha sessao salva, o login nao pinta */
+try{ if(localStorage.getItem('psi_sessao')) document.documentElement.classList.add('sessao-salva'); }catch(e){}
+</script>
+
 <script>
 (function(){
   try{
@@ -173,6 +181,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div id="login-error"></div>
   </div>
 </div>
+<script>
+/* decide antes de pintar: se ja existe sessao salva, nao mostra a tela de login */
+try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-screen').classList.add('hidden'); }catch(e){}
+</script>
+
 
 <!-- SEM ACESSO -->
 <div id="sem-acesso-screen">
