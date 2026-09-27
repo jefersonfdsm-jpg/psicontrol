@@ -137,9 +137,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:.88rem;opacity:0;transition:.25s;z-index:9999;pointer-events:none;white-space:nowrap;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ===== modo embutido: quando o módulo abre dentro do PsiControl ===== */
+  html.embed body{ height:auto !important; min-height:0 !important; overflow:auto !important; display:block !important; }
+  html.embed #sidebar{ display:none !important; }
+  html.embed #main{ margin-left:0 !important; height:auto !important; padding:22px 26px !important; }
+  html.embed #app{ padding:0 !important; }
+  html.embed #sidebar-overlay,
+  html.embed .menu-toggle,
+  html.embed #menu-toggle,
+  html.embed #watermark{ display:none !important; }
 </style>
 </head>
 <body>
+<script>
+(function(){
+  try{
+    if(new URLSearchParams(location.search).get('embed') !== '1') return;
+    document.documentElement.classList.add('embed');
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('[onclick]').forEach(function(el){
+        var a = el.getAttribute('onclick') || '';
+        if(a.indexOf('index.html') >= 0) el.style.display = 'none';
+      });
+    });
+  }catch(e){}
+})();
+</script>
+
 
 <!-- LOGIN -->
 <div id="login-screen">
