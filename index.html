@@ -653,6 +653,21 @@
   .ini-chip.ac{ color:var(--accent); border-color:rgba(46,110,151,.32); }
   .ini-chip.am{ color:var(--accent3); border-color:rgba(169,113,26,.34); background:rgba(169,113,26,.07); }
   .ini-nada{ font-size:.85rem; color:var(--text3); padding:20px 0; }
+  .ini-acao{
+    font-family:'DM Sans',sans-serif; font-size:.78rem; font-weight:500;
+    color:var(--accent); cursor:pointer; margin-left:10px;
+  }
+  .ini-acao:hover{ text-decoration:underline; }
+
+  /* ===== abas do financeiro ===== */
+  .fin-abas{ display:flex; gap:2px; overflow-x:auto; border-bottom:1px solid var(--border); margin-bottom:18px; }
+  .fin-aba{
+    border:0; background:none; font-family:inherit; font-size:.84rem;
+    color:var(--text3); padding:10px 14px; cursor:pointer; white-space:nowrap;
+    border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .fin-aba:hover{ color:var(--text2); }
+  .fin-aba.on{ color:var(--accent); border-bottom-color:var(--accent); font-weight:500; }
 
 </style>
 </head>
@@ -877,28 +892,37 @@
       <div class="nav-item" onclick="showPage('agenda')">
         <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> Agenda e resumo
       </div>
-    <div class="nav-section">Clínicas &amp; Pacientes</div>
-    <div id="clinicas-nav"></div>
-    <div class="nav-item" onclick="openModal('modal-clinica')" style="margin:4px 8px;">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span> Nova Clínica
+    <div class="nav-section">Módulos</div>
+    <div class="nav-item" onclick="window.location.href='prontuario.html'">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5A1.5 1.5 0 0 1 5.5 5H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5.5A1.5 1.5 0 0 1 4 17.5z"/><path d="M4 6.5A1.5 1.5 0 0 0 5.5 8H20"/><path d="M8.5 12h7"/><path d="M8.5 16h4"/></svg></span> Prontuário
     </div>
-    <div class="nav-section">Outras Rendas</div>
-    <div id="rendas-nav"></div>
-    <div class="nav-item" onclick="openModal('modal-renda-fixa')" style="margin:4px 8px;">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span> Nova Renda Fixa
+    <div class="nav-item" onclick="window.location.href='escalas.html'">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="m8.2 9.2 1.6 1.6 3-3"/><path d="m8.2 15.4 1.6 1.6 3-3"/><path d="M15.6 9.6H17"/><path d="M15.6 15.8H17"/></svg></span> Escalas
     </div>
-    <div class="nav-section">Gestão</div>
+    <div class="nav-item" onclick="window.location.href='documentos.html'">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7.4A1.9 1.9 0 0 0 5.5 5.4v13.2a1.9 1.9 0 0 0 1.9 1.9h9.2a1.9 1.9 0 0 0 1.9-1.9V8z"/><path d="M14 3.5V8h4.5"/><path d="M8.8 13h6.4"/><path d="M8.8 16.4h6.4"/></svg></span> Documentos
+    </div>
+    <div class="nav-item" id="nav-laudos" onclick="window.location.href='laudos.html'">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.2c-1.7 0-2.7.9-2.9 1.8-1.6.1-2.6 1.1-2.6 2.4 0 .4.1.8.3 1.1-.8.4-1.3 1.2-1.3 2.1 0 1 .5 1.8 1.3 2.2-.2.3-.3.7-.3 1.1 0 1.4 1.1 2.4 2.6 2.4.3.9 1.2 1.5 2.9 1.5s2.6-.6 2.9-1.5c1.5 0 2.6-1 2.6-2.4 0-.4-.1-.8-.3-1.1.8-.4 1.3-1.2 1.3-2.2 0-.9-.5-1.7-1.3-2.1.2-.3.3-.7.3-1.1 0-1.3-1-2.3-2.6-2.4-.2-.9-1.2-1.8-2.9-1.8Z"/><path d="M12 10.6V19"/></svg></span> Avaliação
+    </div>
+
+    <div class="nav-section">Financeiro</div>
     <div class="nav-item" onclick="showPage('financeiro')">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Financeiro
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Visão do mês
     </div>
     <div class="nav-item" onclick="showPage('relatorio-mensal')">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Relatório Mensal
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Relatório mensal
     </div>
     <div class="nav-item" onclick="showPage('relatorios')">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> Relatórios
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> Relatórios
     </div>
+    <div class="nav-item" onclick="showPage('rendas')">
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg></span> Rendas fixas
+    </div>
+
+    <div class="nav-section">Outros</div>
     <div class="nav-item" onclick="showPage('testes')">
-      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v11m0 0H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4m-6 0h6"/></svg></span> Testes
+      <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v11m0 0H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4m-6 0h6"/></svg></span> Testes
     </div>
   </div>
   <div class="sidebar-bottom">
@@ -915,16 +939,14 @@
     <button class="sb-btn" id="admin-nav" style="display:none;background:rgba(247,201,72,.1);border-color:rgba(247,201,72,.3);color:var(--accent3);" onclick="abrirAdmin()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Gerenciar Clientes
     </button>
-    <button class="sb-btn" style="background:rgba(86,212,200,.1);border-color:rgba(86,212,200,.3);color:var(--accent2);" onclick="voltarModulos()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> ← Ir ao PsiControl
-    </button>
+    <button class="sb-btn" style="background:rgba(46,110,151,.10);border-color:rgba(46,110,151,.28);color:var(--accent);" onclick="abrirConfSenha()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Alterar Senha
     </button>
     <button class="sb-btn" style="background:rgba(247,92,92,.08);border-color:rgba(247,92,92,.2);color:var(--danger);" onclick="fazerLogout()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sair
     </button>
     <button class="sb-btn" style="background:rgba(100,100,100,.08);border-color:rgba(100,100,100,.2);color:var(--text2);" onclick="limparCache()">
-      🔄 Limpar Cache
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.2-6.9"/><polyline points="21 3 21 9 15 9"/></svg> Limpar Cache
     </button>
     <div class="last-save" id="last-save-txt">Nenhum salvamento</div>
   </div>
@@ -946,12 +968,13 @@
     <div id="ini-pendencias"></div>
 
     <div class="ini-sec">
-      <h3>Clínicas</h3>
+      <h3>Clínicas <span class="ini-acao" onclick="openModal('modal-clinica')">+ nova clínica</span></h3>
       <div class="ini-clinicas" id="ini-clinicas"></div>
     </div>
 
     <div class="ini-sec">
-      <h3>Pacientes <span class="ini-cont" id="ini-contador"></span></h3>
+      <h3>Pacientes <span class="ini-cont" id="ini-contador"></span>
+        <span class="ini-acao" onclick="abrirNovoPaciente()">+ novo paciente</span></h3>
       <div class="ini-pacs" id="ini-pacientes"></div>
     </div>
   </div>
@@ -999,7 +1022,7 @@
       <div style="display:flex;gap:8px;">
         <button class="btn btn-outline btn-sm" onclick="editClinica()">✏️ Editar</button>
         <button class="btn btn-danger btn-sm" onclick="deleteClinica()">🗑 Excluir</button>
-        <button class="btn btn-primary" onclick="openModal('modal-paciente')">+ Novo Paciente</button>
+        <button class="btn btn-primary" onclick="abrirNovoPaciente()">+ Novo Paciente</button>
       </div>
     </div>
     <div class="search-bar"><span>🔍</span><input type="text" id="search-paciente" placeholder="Buscar paciente..." oninput="renderPacientes()"></div>
@@ -1113,8 +1136,17 @@
     </div>
     <h3 style="font-family:'DM Serif Display',serif;margin-bottom:14px;font-size:1.1rem;" id="pac-sessoes-titulo">Sessões do Mês</h3>
     <div id="lista-sessoes"></div>
-  </div>
     </div>
+  </div>
+
+  <!-- RENDAS FIXAS (lista) -->
+  <div id="page-rendas" class="page">
+    <div class="fin-abas" id="fin-abas-rendas"></div>
+    <div class="page-header">
+      <div><h2>Rendas fixas</h2><p>Entradas que se repetem todo mês</p></div>
+      <button class="btn btn-primary" onclick="openModal('modal-renda-fixa')">+ Nova renda fixa</button>
+    </div>
+    <div class="ini-pacs" id="lista-rendas"></div>
   </div>
 
   <!-- RENDA FIXA -->
@@ -1145,6 +1177,7 @@
 
   <!-- FINANCEIRO -->
   <div id="page-financeiro" class="page">
+    <div class="fin-abas" id="fin-abas-financeiro"></div>
     <div class="page-header">
       <div><h2>Financeiro</h2><p id="fin-subtitulo">Mês atual</p></div>
       <div style="display:flex;gap:8px;">
@@ -1166,6 +1199,7 @@
 
   <!-- RELATÓRIO MENSAL -->
   <div id="page-relatorio-mensal" class="page">
+    <div class="fin-abas" id="fin-abas-relatorio-mensal"></div>
     <div class="page-header">
       <div><h2>Relatório Mensal</h2><p>Resumo financeiro por mês e fonte</p></div>
     </div>
@@ -1219,6 +1253,7 @@
 
   <!-- RELATÓRIOS -->
   <div id="page-relatorios" class="page">
+    <div class="fin-abas" id="fin-abas-relatorios"></div>
     <div id="relatorios-pastas-view">
       <div class="page-header">
         <div><h2>Relatórios</h2><p>Pastas por paciente</p></div>
@@ -1286,6 +1321,9 @@
     <div class="form-row cols-2">
       <div class="field"><label>Nome Completo</label><input id="pac-nome" type="text"></div>
       <div class="field"><label>Data de Nascimento</label><input id="pac-nasc" type="date"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Clínica</label><select id="pac-clinica"></select></div>
     </div>
     <div class="form-row cols-2">
       <div class="field"><label>Telefone</label><input id="pac-tel" type="text" placeholder="(82) 99999-9999"></div>
@@ -1716,7 +1754,8 @@ function showPage(page,id) {
     renderPacientePage();
     renderFichaPaciente();
   }
-  else if(page==='financeiro'){document.getElementById('page-financeiro').classList.add('active');finIrHoje();}
+  else if(page==='financeiro'){document.getElementById('page-financeiro').classList.add('active');renderAbasFinanceiro('financeiro');finIrHoje();}
+  else if(page==='rendas'){document.getElementById('page-rendas').classList.add('active');renderAbasFinanceiro('rendas');renderRendas();}
   else if(page==='renda-fixa'){
     currentRendaId=id;
     const hoje=new Date();
@@ -1724,7 +1763,7 @@ function showPage(page,id) {
     document.getElementById('page-renda-fixa').classList.add('active');
     renderRendaFixaPage();
   }
-  else if(page==='relatorio-mensal'){document.getElementById('page-relatorio-mensal').classList.add('active');relMensalFiltro='todos';renderRelatorioMensal();}
+  else if(page==='relatorio-mensal'){document.getElementById('page-relatorio-mensal').classList.add('active');renderAbasFinanceiro('relatorio-mensal');relMensalFiltro='todos';renderRelatorioMensal();}
   else if(page==='renda-fixa'){currentRendaId=id;document.getElementById('page-renda-fixa').classList.add('active');rendaIrHoje();}
   else if(page==='relatorios'){document.getElementById('page-relatorios').classList.add('active');showRelatoriosPastas();renderRelatoriosPastas();}
   else if(page==='testes'){document.getElementById('page-testes').classList.add('active');renderTestes();}
@@ -1743,7 +1782,9 @@ function getSessoesDoPaciente(pid){return state.sessoes.filter(s=>s.pacienteId==
 
 // SIDEBAR
 function renderSidebarClinics(){
-  document.getElementById('clinicas-nav').innerHTML=state.clinicas.map(c=>`
+  const _nav=document.getElementById('clinicas-nav');
+  if(!_nav) return;
+  _nav.innerHTML=state.clinicas.map(c=>`
     <div class="clinica-nav">
       <div class="clinica-header ${currentClinicaId===c.id?'open':''}" onclick="toggleClinicaNav('nav-${c.id}',this);showPage('clinica','${c.id}')">
         <span class="dot" style="background:${c.cor||'#7c6af7'}"></span>
@@ -2259,7 +2300,7 @@ function salvarPaciente(){
     modal.querySelector('h3').textContent='Novo Paciente';
     closeModals();renderPacientePage();renderSidebarClinics();saveAll();showToast('✅ Paciente atualizado!');
   } else {
-    state.pacientes.push({id:uid(),clinicaId:currentClinicaId,...dados});
+    state.pacientes.push({id:uid(),clinicaId:(document.getElementById('pac-clinica')?.value||currentClinicaId||''),...dados});
     ['pac-nome','pac-nasc','pac-tel','pac-email','pac-responsavel','pac-diag','pac-valor','pac-valor-anam','pac-valor-aval','pac-valor-pacote','pac-obs'].forEach(id=>document.getElementById(id).value='');
     closeModals();renderPacientes();renderSidebarClinics();saveAll();showToast('✅ Paciente adicionado!');
   }
@@ -2276,6 +2317,7 @@ function editPaciente(){
   document.getElementById('pac-tel').value=p.tel||'';
   document.getElementById('pac-email').value=p.email||'';
   document.getElementById('pac-responsavel').value=p.responsavel||'';
+  preencherSelectClinicas(p.clinicaId);
   document.getElementById('pac-diag').value=p.diag||'';
   document.getElementById('pac-valor').value=p.valor||'';
   document.getElementById('pac-valor-anam').value=p.valorAnam||'';
@@ -2342,6 +2384,68 @@ function irParaModuloPaciente(modulo){
           + (p.nasc ? `&nasc=${encodeURIComponent(p.nasc)}` : '')
           + (modulo === 'prontuario' ? '&acao=nova' : '');
   window.location.href = arq + q;
+}
+
+const FIN_ABAS = [
+  ['financeiro','Visão do mês'],
+  ['relatorio-mensal','Relatório mensal'],
+  ['relatorios','Relatórios'],
+  ['rendas','Rendas fixas'],
+];
+function renderAbasFinanceiro(ativa){
+  const html = FIN_ABAS.map(([id,rotulo])=>
+    `<button class="fin-aba${id===ativa?' on':''}" type="button" onclick="showPage('${id}')">${rotulo}</button>`
+  ).join('');
+  FIN_ABAS.forEach(([id])=>{
+    const el = document.getElementById('fin-abas-'+id);
+    if(el) el.innerHTML = html;
+  });
+}
+
+function renderRendas(){
+  const alvo = document.getElementById('lista-rendas');
+  if(!alvo) return;
+  const rendas = state.rendasFixas || [];
+  if(!rendas.length){
+    alvo.innerHTML = '<div class="ini-nada">Nenhuma renda fixa cadastrada ainda.</div>';
+    return;
+  }
+  const rotulos = {emprego:'Emprego', docencia:'Docência'};
+  alvo.innerHTML = rendas.map(r=>`
+    <button class="ini-pac" type="button" onclick="showPage('renda-fixa','${r.id}')">
+      <span class="ini-nome">${fxEsc(r.nome)}</span>
+      <span class="ini-sub">${formatMoney(r.valor)} por mês${r.dia?' · todo dia '+r.dia:''}</span>
+      ${r.tipo?`<span class="ini-chips"><span class="ini-chip">${fxEsc(rotulos[r.tipo]||r.tipo)}</span></span>`:''}
+    </button>`).join('');
+}
+
+function preencherSelectClinicas(selecionada){
+  const sel=document.getElementById('pac-clinica');
+  if(!sel) return;
+  sel.innerHTML = state.clinicas.map(c=>
+    `<option value="${c.id}">${fxEsc(c.nome)}</option>`).join('')
+    || '<option value="">Cadastre uma clínica primeiro</option>';
+  const alvo = selecionada || currentClinicaId ||
+    (iniClinicaFiltro!=='todas' ? iniClinicaFiltro : '') ||
+    (state.clinicas[0] ? state.clinicas[0].id : '');
+  if(alvo) sel.value = alvo;
+}
+
+function abrirNovoPaciente(){
+  if(!state.clinicas.length){
+    showToast('⚠️ Cadastre uma clínica antes');
+    openModal('modal-clinica');
+    return;
+  }
+  const modal=document.getElementById('modal-paciente');
+  delete modal.dataset.editing;
+  modal.querySelector('h3').textContent='Novo Paciente';
+  ['pac-nome','pac-nasc','pac-tel','pac-email','pac-responsavel','pac-diag','pac-valor','pac-valor-anam','pac-valor-aval','pac-valor-pacote','pac-obs'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const st=document.getElementById('pac-status'); if(st) st.value='ativo';
+  preencherSelectClinicas();
+  openModal('modal-paciente');
 }
 
 function abrirAbaFicha(aba){
@@ -3341,10 +3445,11 @@ async function fazerLogin() {
     const adminNav = document.getElementById('admin-nav');
     if (adminNav) adminNav.style.display = usuarioLogado.isAdmin ? '' : 'none';
 
-    // Mostrar tela de seleção de módulo
-    document.getElementById('modulo-nome-usuario').textContent = user.nome.split(' ')[0];
-    document.getElementById('modulo-screen').classList.add('open');
+    // Entra direto na tela inicial de pacientes
+    sessionStorage.setItem('psi_modulo','psicontrol');
     aplicarAcessoLaudos();
+    await carregarDadosNuvem();
+    showPage('home');
 
     showToast(`☁️ Bem-vindo, ${user.nome}!`);
   } catch(e) {
@@ -3356,15 +3461,17 @@ async function fazerLogin() {
 }
 
 async function aplicarAcessoLaudos() {
-  const card = document.getElementById('card-laudos');
-  if (!card || !usuarioLogado) return;
-  if (usuarioLogado.isAdmin) { card.style.display = ''; return; }
+  if (!usuarioLogado) return;
+  const alvos = [document.getElementById('card-laudos'), document.getElementById('nav-laudos')].filter(Boolean);
+  if (!alvos.length) return;
+  const mostrar = v => alvos.forEach(el => { el.style.display = v ? '' : 'none'; });
+  if (usuarioLogado.isAdmin) { mostrar(true); return; }
   try {
     const rows = await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=dados`);
     const acesso = rows && rows[0] && rows[0].dados && rows[0].dados.acesso_laudos;
-    card.style.display = acesso ? '' : 'none';
+    mostrar(!!acesso);
   } catch (e) {
-    card.style.display = 'none';
+    mostrar(false);
   }
 }
 
@@ -3413,16 +3520,9 @@ function verificarSessao() {
       document.getElementById('sidebar-username').textContent = usuarioLogado.nome;
       const adminNav = document.getElementById('admin-nav');
       if (adminNav) adminNav.style.display = usuarioLogado.isAdmin ? '' : 'none';
-      // Verifica se já escolheu módulo nesta sessão
-      const moduloEscolhido = sessionStorage.getItem('psi_modulo');
-      if (moduloEscolhido === 'psicontrol') {
-        carregarDadosNuvem().then(()=>{ renderSidebarClinics(); renderSidebarRendas(); renderHome(); });
-      } else {
-        // Mostra seleção de módulo
-        document.getElementById('modulo-nome-usuario').textContent = usuarioLogado.nome.split(' ')[0];
-        document.getElementById('modulo-screen').classList.add('open');
-        aplicarAcessoLaudos();
-      }
+      sessionStorage.setItem('psi_modulo','psicontrol');
+      aplicarAcessoLaudos();
+      carregarDadosNuvem().then(()=>{ showPage('home'); });
       return;
     } catch(e) {}
   }
@@ -3629,10 +3729,7 @@ async function deletarUsuario(id) {
 }
 
 function voltarModulos(){
-  sessionStorage.removeItem('psi_modulo');
-  document.getElementById('modulo-nome-usuario').textContent = usuarioLogado?.nome?.split(' ')[0]||'';
-  document.getElementById('modulo-screen').classList.add('open');
-  aplicarAcessoLaudos();
+  showPage('home');
 }
 
 // INIT

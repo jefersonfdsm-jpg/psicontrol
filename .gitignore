@@ -1,0 +1,18 @@
+# Tudo que está nesta pasta é publicado como arquivo público do site.
+# O que estiver listado aqui fica só no seu computador.
+
+# Cache e estado local do wrangler (criado ao rodar "npx wrangler dev")
+.wrangler/
+
+# Pasta de trabalho com capturas de tela e scripts auxiliares
+Claude outputs/
+
+# Anotações com senha — nunca deve ir para o site
+Console.txt
+
+# Backups de dados, caso algum dia caiam aqui dentro
+PsiControl-backup_*/
+*.json.bak
+
+# Dependências, se algum dia forem instaladas aqui
+node_modules/
