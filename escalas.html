@@ -59,6 +59,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .cards-row{display:grid;gap:16px;margin-bottom:24px;}
 .cards-row.cols-3{grid-template-columns:repeat(3,1fr);}
 .cards-row.cols-2{grid-template-columns:repeat(2,1fr);}
+.cards-row.cols-4{grid-template-columns:repeat(4,1fr);}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;}
 .stat-card .label{font-size:.73rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
 .stat-card .value{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--text);}
@@ -154,6 +155,7 @@ tbody tr:hover td{background:rgba(46,110,151,.05);color:var(--text);}
   #sidebar.open{transform:translateX(0);}
   #main{margin-left:0 !important;padding-top:calc(70px + env(safe-area-inset-top));padding-bottom:24px;padding-left:16px;padding-right:16px;height:100vh;overflow-y:auto;}
   .cards-row.cols-3{grid-template-columns:1fr 1fr;}
+  .cards-row.cols-4{grid-template-columns:1fr 1fr;}
   .cards-row.cols-2{grid-template-columns:1fr;}
   .escalas-grid{grid-template-columns:1fr;}
   .snap-header-row,.snap-item{grid-template-columns:1fr repeat(4,50px);}
@@ -170,6 +172,7 @@ tbody tr:hover td{background:rgba(46,110,151,.05);color:var(--text);}
 }
 @media(max-width:420px){
   .cards-row.cols-3{grid-template-columns:1fr;}
+  .cards-row.cols-4{grid-template-columns:1fr;}
   .snap-header-row,.snap-item{grid-template-columns:1fr repeat(4,40px);}
 }
 
@@ -289,6 +292,13 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="nav-item" onclick="window.location.href='cbcl.html'">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> CBCL 6-18
     </div>
+    <div class="nav-section">Adultos</div>
+    <div class="nav-item" onclick="showPage('gad7')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> GAD-7
+    </div>
+    <div class="nav-item" onclick="showPage('dass21')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> DASS-21
+    </div>
     <div class="nav-section">Histórico</div>
     <div class="nav-item" onclick="showPage('historico')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Aplicações Salvas
@@ -313,7 +323,7 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
   <!-- HOME -->
   <div id="page-home" class="page active">
     <div class="page-header"><div><h2>Escalas de Rastreio</h2><p>Aplique e registre instrumentos de rastreio clínico</p></div></div>
-    <div class="cards-row cols-3" id="home-stats"></div>
+    <div class="cards-row cols-4" id="home-stats"></div>
     <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:16px;">Escalas Disponíveis</h3>
     <div class="escalas-grid">
       <div class="escala-card" onclick="showPage('mchat')">
@@ -389,6 +399,36 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
         <div class="escala-actions">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location.href='cbcl.html'">▶ Aplicar</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();window.location.href='cbcl.html'">Histórico</button>
+        </div>
+      </div>
+      <div class="escala-card" onclick="showPage('gad7')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(46,110,151,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="escala-badge" style="background:rgba(46,110,151,.15);color:var(--accent);">Ansiedade · Adultos</div>
+        </div>
+        <h3>GAD-7</h3>
+        <p>Generalized Anxiety Disorder 7. Rastreio de ansiedade generalizada por autorrelato, referente às últimas 2 semanas.</p>
+        <div class="escala-info"><span>7 itens</span><span>Escala 0–3</span><span>~3 min</span></div>
+        <div class="escala-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('gad7')">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('gad7')">Histórico</button>
+        </div>
+      </div>
+      <div class="escala-card" onclick="showPage('dass21')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(47,122,99,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="escala-badge" style="background:rgba(47,122,99,.15);color:var(--success);">Depressão · Ansiedade · Estresse</div>
+        </div>
+        <h3>DASS-21</h3>
+        <p>Escala de Depressão, Ansiedade e Estresse. Três subescalas de 7 itens cada, referentes à última semana.</p>
+        <div class="escala-info"><span>21 itens</span><span>Escala 0–3</span><span>~7 min</span></div>
+        <div class="escala-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('dass21')">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('dass21')">Histórico</button>
         </div>
       </div>
     </div>
@@ -608,6 +648,101 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div id="irdi-resultado-detalhe"></div>
   </div>
 
+  <!-- GAD-7 -->
+  <div id="page-gad7" class="page">
+    <div class="page-header"><div><h2>GAD-7</h2><p>Rastreio de ansiedade generalizada · 7 itens</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('gad7')">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="gad7-stats"></div>
+    <div id="gad7-historico"></div>
+  </div>
+
+  <!-- APLICAÇÃO GAD-7 -->
+  <div id="page-aplicacao-gad7" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('gad7')">GAD-7</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>GAD-7 — <span id="gad7-pac-nome"></span></h3><p id="gad7-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('gad7')">Cancelar</button>
+        <button class="btn btn-primary" onclick="finalizarGad7()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="gad7-progress-txt">0 de 7 respondidas</span><span id="gad7-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="gad7-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent);line-height:1.6;">
+      ℹ️ Responda pensando nas <strong>últimas 2 semanas</strong>. É um instrumento de <strong>autorrelato para adultos</strong>: quem responde é a própria pessoa avaliada.
+    </div>
+    <div class="snap-header-row">
+      <span>Item</span><span>Nenhuma<br>vez</span><span>Vários<br>dias</span><span>Mais da<br>metade</span><span>Quase<br>todos</span>
+    </div>
+    <div id="gad7-questoes"></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:18px;">
+      <div class="field"><label>Item 8 — O quanto esses problemas dificultaram sua vida? <span style="color:var(--text3);text-transform:none;letter-spacing:0;">(registro clínico, não entra na pontuação)</span></label>
+        <select id="gad7-dificuldade" style="width:100%;">
+          <option value="">Não respondido</option>
+          <option value="Nenhuma dificuldade">Nenhuma dificuldade</option>
+          <option value="Alguma dificuldade">Alguma dificuldade</option>
+          <option value="Muita dificuldade">Muita dificuldade</option>
+          <option value="Extrema dificuldade">Extrema dificuldade</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO GAD-7 -->
+  <div id="page-resultado-gad7" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('gad7')">GAD-7</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="gad7-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfGad7()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('gad7')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao('gad7')">Nova Aplicação</button>
+    </div>
+    <div id="gad7-resultado-detalhe"></div>
+  </div>
+
+  <!-- DASS-21 -->
+  <div id="page-dass21" class="page">
+    <div class="page-header"><div><h2>DASS-21</h2><p>Depressão, Ansiedade e Estresse · 21 itens</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('dass21')">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="dass21-stats"></div>
+    <div id="dass21-historico"></div>
+  </div>
+
+  <!-- APLICAÇÃO DASS-21 -->
+  <div id="page-aplicacao-dass21" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('dass21')">DASS-21</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>DASS-21 — <span id="dass21-pac-nome"></span></h3><p id="dass21-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('dass21')">Cancelar</button>
+        <button class="btn btn-primary" onclick="finalizarDass21()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="dass21-progress-txt">0 de 21 respondidas</span><span id="dass21-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="dass21-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent);line-height:1.6;">
+      ℹ️ Responda pensando na <strong>última semana</strong>. É um instrumento de <strong>autorrelato</strong> (adultos e adolescentes a partir de 14 anos): quem responde é a própria pessoa avaliada.
+    </div>
+    <div class="snap-header-row">
+      <span>Item</span><span>Não se<br>aplicou</span><span>Um<br>pouco</span><span>Bastante</span><span>Muito</span>
+    </div>
+    <div id="dass21-questoes"></div>
+  </div>
+
+  <!-- RESULTADO DASS-21 -->
+  <div id="page-resultado-dass21" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('dass21')">DASS-21</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="dass21-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfDass21()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('dass21')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao('dass21')">Nova Aplicação</button>
+    </div>
+    <div id="dass21-resultado-detalhe"></div>
+  </div>
+
 </div>
 
 </div>
@@ -639,7 +774,7 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
       <div class="field"><label>Informante</label>
         <select id="apl-informante">
           <option value="Mae">Mãe</option><option value="Pai">Pai</option>
-          <option value="Responsavel">Responsável</option><option value="Professor">Professor(a)</option><option value="Outro">Outro</option>
+          <option value="Responsavel">Responsável</option><option value="Professor">Professor(a)</option><option value="O proprio paciente">O próprio paciente</option><option value="Outro">Outro</option>
         </select>
       </div>
     </div>
@@ -648,7 +783,7 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
       <div class="field"><label>Informante</label>
         <select id="apl-informante2">
           <option value="Mae">Mãe</option><option value="Pai">Pai</option>
-          <option value="Responsavel">Responsável</option><option value="Professor">Professor(a)</option><option value="Outro">Outro</option>
+          <option value="Responsavel">Responsável</option><option value="Professor">Professor(a)</option><option value="O proprio paciente">O próprio paciente</option><option value="Outro">Outro</option>
         </select>
       </div>
     </div>
@@ -748,6 +883,8 @@ function showPage(p){
   if(p==='snap')renderSnapHistorico();
   if(p==='portage')renderPortageHistorico();
   if(p==='irdi')renderIrdiHistorico();
+  if(p==='gad7')renderGad7Historico();
+  if(p==='dass21')renderDass21Historico();
   if(p==='historico')renderHistoricoGeral();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -765,10 +902,13 @@ function renderHome(){
   const sn=escalasState.aplicacoes.filter(a=>a.tipo==='snap').length;
   const pt=escalasState.aplicacoes.filter(a=>a.tipo==='portage').length;
   const ir=escalasState.aplicacoes.filter(a=>a.tipo==='irdi').length;
+  const ga=escalasState.aplicacoes.filter(a=>a.tipo==='gad7').length;
+  const da=escalasState.aplicacoes.filter(a=>a.tipo==='dass21').length;
   document.getElementById('home-stats').innerHTML=`
     <div class="stat-card"><div class="label">Total Aplicações</div><div class="value">${total}</div><div class="sub">Todas as escalas</div></div>
     <div class="stat-card"><div class="label">M-CHAT-R / SNAP-IV</div><div class="value">${mc+sn}</div><div class="sub">Rastreio</div></div>
-    <div class="stat-card"><div class="label">Portage / IRDI</div><div class="value">${pt+ir}</div><div class="sub">Desenvolvimento</div></div>`;
+    <div class="stat-card"><div class="label">Portage / IRDI</div><div class="value">${pt+ir}</div><div class="sub">Desenvolvimento</div></div>
+    <div class="stat-card"><div class="label">GAD-7 / DASS-21</div><div class="value">${ga+da}</div><div class="sub">Adultos</div></div>`;
   const ult=[...escalasState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
   document.getElementById('home-ultimas').innerHTML=ult.length===0
     ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação realizada ainda</p></div>'
@@ -815,7 +955,7 @@ function getInformante(){
 
 function iniciarAplicacao(tipo){
   tipoAplicacaoAtual=tipo;
-  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI'};
+  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21'};
   document.getElementById('modal-apl-titulo').textContent=`Nova Aplicação — ${labels[tipo]||tipo}`;
   const sel=document.getElementById('apl-paciente');
   sel.innerHTML='<option value="">Selecione o paciente</option>'+
@@ -830,6 +970,9 @@ function iniciarAplicacao(tipo){
   document.getElementById('novo-pac-nasc').value='';
   document.getElementById('apl-nasc-row').style.display='';
   document.getElementById('apl-informante-row').style.display='none';
+  const _inf=(tipo==='gad7'||tipo==='dass21')?'O proprio paciente':'Mae';
+  document.getElementById('apl-informante').value=_inf;
+  document.getElementById('apl-informante2').value=_inf;
   const _alvo=pacienteDaURL();
   if(_alvo && psiState.pacientes.find(p=>p.id===_alvo.id)){ sel.value=_alvo.id; try{ toggleNovoPaciente(); }catch(e){} }
   document.getElementById('modal-aplicacao').classList.add('open');
@@ -882,6 +1025,8 @@ async function confirmarAplicacao(){
   else if(tipoAplicacaoAtual==='snap')abrirSnap();
   else if(tipoAplicacaoAtual==='portage')abrirPortage();
   else if(tipoAplicacaoAtual==='irdi')abrirIrdi();
+  else if(tipoAplicacaoAtual==='gad7')abrirGad7();
+  else if(tipoAplicacaoAtual==='dass21')abrirDass21();
 }
 
 // M-CHAT-R
@@ -1858,6 +2003,25 @@ function renderHistoricoItem(a){
       <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${risco?'badge-alto':'badge-baixo'}">${risco?'⚠️ Atenção':'✓ Normal'}</span></div>
       ${btnDel}
     </div>`;
+  } else if(a.tipo==='gad7'){
+    const f=faixaGad7(a.pontos||0);
+    const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+    return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+      <div style="flex-shrink:0;"><div style="font-size:.68rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">GAD-7</div></div>
+      <div class="historico-info"><h4>${a.pacienteNome}</h4><p>${f.nivel} · Informante: ${a.informante}${a.dificuldade?' · '+a.dificuldade:''}</p></div>
+      <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[f.cor]}">${a.pontos>=10?'⚠️ Rastreio +':'✓ Abaixo do corte'}</span><div class="pontos">${a.pontos}/21</div></div>
+      ${btnDel}
+    </div>`;
+  } else if(a.tipo==='dass21'){
+    const s=a.scores||{d:0,a:0,e:0};
+    const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+    const pior=['d','a','e'].map(k=>faixaDass(k,s[k])).reduce((x,y)=>(ORDEM_DASS[y.nivel]>ORDEM_DASS[x.nivel]?y:x));
+    return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+      <div style="flex-shrink:0;"><div style="font-size:.68rem;color:var(--success);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">DASS-21</div></div>
+      <div class="historico-info"><h4>${a.pacienteNome}</h4><p>D:${s.d} · A:${s.a} · E:${s.e} · Informante: ${a.informante}</p></div>
+      <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[pior.cor]}">${pior.nivel}</span></div>
+      ${btnDel}
+    </div>`;
   } else if(a.tipo==='portage'){
     const totalR=Object.keys(a.respostas||{}).length;
     const sim=Object.values(a.respostas||{}).filter(r=>r==='S').length;
@@ -1885,9 +2049,15 @@ function renderHistoricoGeral(){
     ?`<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3)">Nenhuma aplicação registrada</td></tr>`
     :aps.map(a=>{
       let res='';
-      if(a.tipo==='mchat')res=`<span class="badge ${a.cor==='baixo'?'badge-baixo':a.cor==='medio'?'badge-medio':'badge-alto'}">${a.nivel} (${a.pontos}/20)</span>`;
-      else{const{d,h,t}=a.scores||{};res=`<span class="badge ${(d>=6||h>=6||t>=4)?'badge-alto':'badge-baixo'}">D:${d} H:${h} TOD:${t}</span>`;}
-      return`<tr><td><strong style="color:var(--accent)">${a.tipo==='mchat'?'M-CHAT-R':'SNAP-IV'}</strong></td>
+      const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+      if(a.tipo==='mchat')res=`<span class="badge ${cm[a.cor]||'badge-baixo'}">${a.nivel} (${a.pontos}/20)</span>`;
+      else if(a.tipo==='snap'){const{d,h,t}=a.scores||{};res=`<span class="badge ${(d>=6||h>=6||t>=4)?'badge-alto':'badge-baixo'}">D:${d} H:${h} TOD:${t}</span>`;}
+      else if(a.tipo==='gad7'){const f=faixaGad7(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/21)</span>`;}
+      else if(a.tipo==='dass21'){const s=a.scores||{d:0,a:0,e:0};res=`<span class="badge ${cm[faixaDass('d',s.d).cor]}">D:${s.d} · A:${s.a} · E:${s.e}</span>`;}
+      else if(a.tipo==='portage'){res=`<span class="badge badge-baixo">${Object.keys(a.respostas||{}).length} itens</span>`;}
+      else if(a.tipo==='irdi'){const aus=a.totalAusencias!==undefined?a.totalAusencias:Object.values(a.respostas||{}).filter(r=>r==='A').length;res=`<span class="badge ${aus===0?'badge-baixo':aus===1?'badge-medio':'badge-alto'}">${aus} ausência(s)</span>`;}
+      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21'};
+      return`<tr><td><strong style="color:var(--accent)">${NOMES[a.tipo]||a.tipo}</strong></td>
         <td>${a.pacienteNome}</td><td>${formatDate(a.data)}</td><td>${res}</td>
         <td><button class="btn btn-outline btn-sm" onclick="verAplicacao('${a.id}')">Ver</button> <button class="btn btn-danger btn-sm" onclick="deletarAplicacao('${a.id}')">🗑</button></td></tr>`;
     }).join('');
@@ -1895,6 +2065,8 @@ function renderHistoricoGeral(){
 function verAplicacao(id){
   const a=escalasState.aplicacoes.find(x=>x.id===id);
   if(!a)return;
+  if(a.tipo==='gad7')return mostrarResultadoGad7(a);
+  if(a.tipo==='dass21')return mostrarResultadoDass21(a);
   if(a.tipo==='mchat')mostrarResultadoMchat(a);
   else if(a.tipo==='snap')mostrarResultadoSnap(a);
   else if(a.tipo==='portage')mostrarResultadoPortage(a);
@@ -1911,6 +2083,8 @@ function deletarAplicacao(id){
   else if(tipo==='snap')renderSnapHistorico();
   else if(tipo==='portage')renderPortageHistorico();
   else if(tipo==='irdi')renderIrdiHistorico();
+  else if(tipo==='gad7')renderGad7Historico();
+  else if(tipo==='dass21')renderDass21Historico();
   renderHistoricoGeral();
   showToast('🗑 Aplicação removida');
 }
@@ -3056,6 +3230,341 @@ if('serviceWorker' in navigator){
     }).catch(e=>console.log('SW erro:',e));
   });
 }
+
+/* ==================================================================
+   GAD-7  —  Generalized Anxiety Disorder 7 (Spitzer, Kroenke,
+   Williams & Löwe, 2006).  Autorrelato, adultos, últimas 2 semanas.
+   Pontos de corte: 0–4 mínima · 5–9 leve · 10–14 moderada · 15–21 grave.
+   Rastreio positivo a partir de 10.
+   ================================================================== */
+const GAD7=[
+  {n:1,texto:'Sentir-se nervoso(a), ansioso(a) ou muito tenso(a)'},
+  {n:2,texto:'Não ser capaz de impedir ou de controlar as preocupações'},
+  {n:3,texto:'Preocupar-se muito com diversas coisas'},
+  {n:4,texto:'Dificuldade para relaxar'},
+  {n:5,texto:'Ficar tão agitado(a) que se torna difícil permanecer sentado(a)'},
+  {n:6,texto:'Ficar facilmente incomodado(a) ou irritado(a)'},
+  {n:7,texto:'Sentir medo como se algo horrível fosse acontecer'},
+];
+const GAD7_OPTS=['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias'];
+
+function faixaGad7(t){
+  if(t>=15)return{nivel:'Ansiedade grave',cor:'alto'};
+  if(t>=10)return{nivel:'Ansiedade moderada',cor:'alto'};
+  if(t>=5) return{nivel:'Ansiedade leve',cor:'medio'};
+  return{nivel:'Ansiedade mínima',cor:'baixo'};
+}
+function calcGad7(res){let t=0;GAD7.forEach(q=>{t+=(res[q.n]||0);});return t;}
+
+function abrirGad7(){
+  document.getElementById('gad7-pac-nome').textContent=aplicacaoAtual.pacienteNome;
+  document.getElementById('gad7-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
+  aplicacaoAtual.respostas={};
+  document.getElementById('gad7-dificuldade').value='';
+  renderGad7Questoes();
+  showPage('aplicacao-gad7');
+  window.scrollTo(0,0);
+}
+function renderGad7Questoes(){
+  const resp=Object.keys(aplicacaoAtual.respostas).length;
+  const pct=Math.round(resp/7*100);
+  document.getElementById('gad7-progress-txt').textContent=`${resp} de 7 respondidas`;
+  document.getElementById('gad7-pct').textContent=pct+'%';
+  document.getElementById('gad7-bar').style.width=pct+'%';
+  document.getElementById('gad7-questoes').innerHTML=GAD7.map(q=>{
+    const r=aplicacaoAtual.respostas[q.n];
+    return`<div class="snap-item ${r!==undefined?'respondido':''}" id="gq-${q.n}">
+      <div class="snap-texto">${q.n}. ${q.texto}</div>
+      ${[0,1,2,3].map(v=>`<div class="snap-opcao"><div class="snap-radio ${r===v?'sel':''}" onclick="respGad7(${q.n},${v})"></div></div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function respGad7(n,v){
+  aplicacaoAtual.respostas[n]=v;
+  renderGad7Questoes();
+  const prox=GAD7.find(q=>aplicacaoAtual.respostas[q.n]===undefined);
+  if(prox){const el=document.getElementById('gq-'+prox.n);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
+}
+function finalizarGad7(){
+  const n=Object.keys(aplicacaoAtual.respostas).length;
+  if(n<7){showToast(`⚠️ Responda todos os itens (${7-n} faltando)`);return;}
+  const pontos=calcGad7(aplicacaoAtual.respostas);
+  const f=faixaGad7(pontos);
+  const ap={id:uid(),tipo:'gad7',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
+    nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
+    obs:aplicacaoAtual.obs,dificuldade:document.getElementById('gad7-dificuldade').value,
+    data:new Date().toISOString().slice(0,10),pontos,nivel:f.nivel,cor:f.cor,
+    respostas:{...aplicacaoAtual.respostas}};
+  escalasState.aplicacoes.push(ap);
+  salvarEscalas();
+  mostrarResultadoGad7(ap);
+}
+function mostrarResultadoGad7(ap){
+  const f=faixaGad7(ap.pontos);
+  const positivo=ap.pontos>=10;
+  document.getElementById('page-resultado-gad7').dataset.apId=ap.id;
+  document.getElementById('gad7-resultado-box').innerHTML=`
+    <div class="resultado-box ${f.cor}">
+      <div class="resultado-titulo">${f.nivel}</div>
+      <div class="resultado-pontuacao">${ap.pontos}<span style="font-size:1.4rem;opacity:.5">/21</span></div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:10px;">Paciente: <strong>${ap.pacienteNome}</strong> · ${formatDate(ap.data)} · Informante: ${ap.informante}</div>
+      <div style="font-size:.95rem;font-weight:600;">${positivo?'⚠️ Rastreio positivo (≥ 10) — investigação clínica indicada':'✓ Abaixo do ponto de corte de rastreio (10)'}</div>
+      ${ap.dificuldade?`<div style="font-size:.85rem;color:var(--text2);margin-top:10px;">Dificuldade relatada no dia a dia: <strong>${ap.dificuldade}</strong></div>`:''}
+    </div>
+    <div class="cards-row cols-4" style="margin-bottom:20px;">
+      <div class="stat-card"><div class="label">Mínima</div><div class="value" style="font-size:1.1rem;">0 – 4</div><div class="sub">${ap.pontos<=4?'◀ resultado aqui':'&nbsp;'}</div></div>
+      <div class="stat-card"><div class="label">Leve</div><div class="value" style="font-size:1.1rem;">5 – 9</div><div class="sub">${ap.pontos>=5&&ap.pontos<=9?'◀ resultado aqui':'&nbsp;'}</div></div>
+      <div class="stat-card"><div class="label">Moderada</div><div class="value" style="font-size:1.1rem;">10 – 14</div><div class="sub">${ap.pontos>=10&&ap.pontos<=14?'◀ resultado aqui':'&nbsp;'}</div></div>
+      <div class="stat-card"><div class="label">Grave</div><div class="value" style="font-size:1.1rem;">15 – 21</div><div class="sub">${ap.pontos>=15?'◀ resultado aqui':'&nbsp;'}</div></div>
+    </div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+      ℹ️ GAD-7 — Spitzer, Kroenke, Williams &amp; Löwe (2006). Instrumento de <strong>rastreio</strong>, não de diagnóstico: no corte de 10 a sensibilidade é de 89% e a especificidade de 82% para transtorno de ansiedade generalizada. O escore também é usado como medida de gravidade e de acompanhamento ao longo do tratamento.
+    </div>`;
+  document.getElementById('gad7-resultado-detalhe').innerHTML=`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Respostas Detalhadas</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Nº</th><th>Item</th><th>Pontuação</th></tr></thead>
+      <tbody>${GAD7.map(q=>{
+        const r=ap.respostas[q.n]||0;
+        return`<tr><td>${q.n}</td><td style="font-size:.82rem;">${q.texto}</td>
+          <td style="text-align:center;font-weight:700;">${r} — ${GAD7_OPTS[r]}</td></tr>`;
+      }).join('')}
+      <tr><td></td><td style="text-align:right;font-weight:700;">Total</td><td style="text-align:center;font-weight:700;">${ap.pontos}/21</td></tr>
+      </tbody></table></div>`;
+  showPage('resultado-gad7');
+}
+function renderGad7Historico(){
+  const aps=escalasState.aplicacoes.filter(a=>a.tipo==='gad7').sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const pos=aps.filter(a=>(a.pontos||0)>=10).length;
+  const media=aps.length?Math.round(aps.reduce((x,a)=>x+(a.pontos||0),0)/aps.length):0;
+  document.getElementById('gad7-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">Rastreio positivo (≥10)</div><div class="value" style="color:var(--danger)">${pos}</div></div>
+    <div class="stat-card"><div class="label">Escore médio</div><div class="value">${media}<span style="font-size:1rem;opacity:.5">/21</span></div></div>`;
+  document.getElementById('gad7-historico').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação do GAD-7 ainda</p></div>'
+    :aps.map(a=>renderHistoricoItem(a)).join('');
+}
+function gerarPdfGad7(){
+  const id=document.getElementById('page-resultado-gad7')?.dataset?.apId;
+  let ap=escalasState.aplicacoes.find(a=>a.id===id);
+  if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='gad7');ap=aps[aps.length-1];}
+  if(!ap)return;
+  const f=faixaGad7(ap.pontos);
+  const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>GAD-7 — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <body><h1>GAD-7 — Resultado de Aplicação</h1>
+  <p style="text-align:center;color:#666;font-size:11px;">Generalized Anxiety Disorder 7 · Spitzer, Kroenke, Williams &amp; Löwe (2006)</p>
+  <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
+  <div style="background:${cc[f.cor]}20;border:2px solid ${cc[f.cor]};border-radius:8px;padding:14px;text-align:center;margin-bottom:16px;">
+    <div style="font-size:20px;font-weight:bold;color:${cc[f.cor]};margin:4px 0;">${f.nivel}</div>
+    <div style="font-size:15px;margin:4px 0;"><b>Pontuação total: ${ap.pontos}/21</b></div>
+    <div style="font-size:11px;color:#555;margin-top:8px;">${ap.pontos>=10?'Rastreio positivo (ponto de corte 10) — investigação clínica indicada.':'Abaixo do ponto de corte de rastreio (10).'}</div>
+    ${ap.dificuldade?`<div style="font-size:11px;color:#555;margin-top:6px;">Dificuldade no dia a dia: <b>${ap.dificuldade}</b></div>`:''}
+  </div>
+  <p style="font-size:11px;color:#555;">Referência das últimas 2 semanas. Faixas: 0–4 mínima · 5–9 leve · 10–14 moderada · 15–21 grave.</p>
+  <table><thead><tr><th>Nº</th><th>Item</th><th>Resposta</th><th>Pontos</th></tr></thead><tbody>
+  ${GAD7.map(q=>{const r=ap.respostas[q.n]||0;
+    return`<tr><td>${q.n}</td><td>${q.texto}</td><td>${GAD7_OPTS[r]}</td><td style="text-align:center;font-weight:bold;">${r}</td></tr>`;
+  }).join('')}
+  <tr><td colspan="3" style="text-align:right;font-weight:bold;">Total</td><td style="text-align:center;font-weight:bold;">${ap.pontos}</td></tr>
+  </tbody></table>
+  ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
+  <p style="margin-top:14px;font-size:10px;color:#666;">Instrumento de rastreio; não substitui avaliação clínica.</p>
+  <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);win.document.close();
+}
+
+/* ==================================================================
+   DASS-21  —  Depression Anxiety Stress Scales, versão de 21 itens
+   (Lovibond & Lovibond, 1995).  Versão brasileira: Vignola & Tucci
+   (2014).  Autorrelato, última semana.  Cada subescala tem 7 itens;
+   a soma bruta é multiplicada por 2 para comparar com o DASS-42.
+   ================================================================== */
+const DASS21=[
+  {n:1, sub:'e', texto:'Achei difícil me acalmar'},
+  {n:2, sub:'a', texto:'Senti minha boca seca'},
+  {n:3, sub:'d', texto:'Não consegui vivenciar nenhum sentimento positivo'},
+  {n:4, sub:'a', texto:'Tive dificuldade em respirar em alguns momentos (ex.: respiração ofegante ou falta de ar, sem ter feito esforço físico)'},
+  {n:5, sub:'d', texto:'Achei difícil ter iniciativa para fazer as coisas'},
+  {n:6, sub:'e', texto:'Tive a tendência de reagir de forma exagerada às situações'},
+  {n:7, sub:'a', texto:'Senti tremores (ex.: nas mãos)'},
+  {n:8, sub:'e', texto:'Senti que estava sempre nervoso(a)'},
+  {n:9, sub:'a', texto:'Preocupei-me com situações em que eu pudesse entrar em pânico e parecer ridículo(a)'},
+  {n:10,sub:'d', texto:'Senti que não tinha nada a desejar'},
+  {n:11,sub:'e', texto:'Senti-me agitado(a)'},
+  {n:12,sub:'e', texto:'Achei difícil relaxar'},
+  {n:13,sub:'d', texto:'Senti-me depressivo(a) e sem ânimo'},
+  {n:14,sub:'e', texto:'Fui intolerante com as coisas que me impediam de continuar o que eu estava fazendo'},
+  {n:15,sub:'a', texto:'Senti que ia entrar em pânico'},
+  {n:16,sub:'d', texto:'Não consegui me entusiasmar com nada'},
+  {n:17,sub:'d', texto:'Senti que não tinha valor como pessoa'},
+  {n:18,sub:'e', texto:'Senti que estava um pouco emotivo(a) / sensível demais'},
+  {n:19,sub:'a', texto:'Senti alterações no meu coração sem ter feito esforço físico (ex.: aumento da frequência cardíaca, perda de um batimento)'},
+  {n:20,sub:'a', texto:'Senti medo sem motivo'},
+  {n:21,sub:'d', texto:'Senti que a vida não tinha sentido'},
+];
+const DASS21_OPTS=[
+  'Não se aplicou de maneira alguma',
+  'Aplicou-se em algum grau, ou por pouco tempo',
+  'Aplicou-se em um grau considerável, ou por boa parte do tempo',
+  'Aplicou-se muito, ou na maioria do tempo'
+];
+const DASS_NOMES={d:'Depressão',a:'Ansiedade',e:'Estresse'};
+const DASS_FAIXAS={
+  d:[[9,'Normal','baixo'],[13,'Leve','medio'],[20,'Moderado','medio'],[27,'Severo','alto'],[999,'Extremamente severo','alto']],
+  a:[[7,'Normal','baixo'],[9,'Leve','medio'],[14,'Moderado','medio'],[19,'Severo','alto'],[999,'Extremamente severo','alto']],
+  e:[[14,'Normal','baixo'],[18,'Leve','medio'],[25,'Moderado','medio'],[33,'Severo','alto'],[999,'Extremamente severo','alto']]
+};
+const ORDEM_DASS={'Normal':0,'Leve':1,'Moderado':2,'Severo':3,'Extremamente severo':4};
+
+function faixaDass(k,v){
+  const fs=DASS_FAIXAS[k]||DASS_FAIXAS.d;
+  for(let i=0;i<fs.length;i++){ if(v<=fs[i][0]) return {nivel:fs[i][1],cor:fs[i][2]}; }
+  return {nivel:fs[fs.length-1][1],cor:fs[fs.length-1][2]};
+}
+function calcDass21(res){
+  const s={d:0,a:0,e:0};
+  DASS21.forEach(q=>{ s[q.sub]+=(res[q.n]||0); });
+  return {d:s.d*2,a:s.a*2,e:s.e*2};
+}
+function limiteDass(k){return DASS_FAIXAS[k][3][0];}
+
+function abrirDass21(){
+  document.getElementById('dass21-pac-nome').textContent=aplicacaoAtual.pacienteNome;
+  document.getElementById('dass21-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
+  aplicacaoAtual.respostas={};
+  renderDass21Questoes();
+  showPage('aplicacao-dass21');
+  window.scrollTo(0,0);
+}
+function renderDass21Questoes(){
+  const resp=Object.keys(aplicacaoAtual.respostas).length;
+  const pct=Math.round(resp/21*100);
+  document.getElementById('dass21-progress-txt').textContent=`${resp} de 21 respondidas`;
+  document.getElementById('dass21-pct').textContent=pct+'%';
+  document.getElementById('dass21-bar').style.width=pct+'%';
+  document.getElementById('dass21-questoes').innerHTML=DASS21.map(q=>{
+    const r=aplicacaoAtual.respostas[q.n];
+    return`<div class="snap-item ${r!==undefined?'respondido':''}" id="dq-${q.n}">
+      <div class="snap-texto">${q.n}. ${q.texto}</div>
+      ${[0,1,2,3].map(v=>`<div class="snap-opcao"><div class="snap-radio ${r===v?'sel':''}" onclick="respDass21(${q.n},${v})"></div></div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function respDass21(n,v){
+  aplicacaoAtual.respostas[n]=v;
+  renderDass21Questoes();
+  const prox=DASS21.find(q=>aplicacaoAtual.respostas[q.n]===undefined);
+  if(prox){const el=document.getElementById('dq-'+prox.n);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
+}
+function finalizarDass21(){
+  const n=Object.keys(aplicacaoAtual.respostas).length;
+  if(n<21){showToast(`⚠️ Responda todos os itens (${21-n} faltando)`);return;}
+  const scores=calcDass21(aplicacaoAtual.respostas);
+  const ap={id:uid(),tipo:'dass21',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
+    nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
+    obs:aplicacaoAtual.obs,data:new Date().toISOString().slice(0,10),scores,
+    respostas:{...aplicacaoAtual.respostas}};
+  escalasState.aplicacoes.push(ap);
+  salvarEscalas();
+  mostrarResultadoDass21(ap);
+}
+function mostrarResultadoDass21(ap){
+  const s=ap.scores||{d:0,a:0,e:0};
+  const fs={d:faixaDass('d',s.d),a:faixaDass('a',s.a),e:faixaDass('e',s.e)};
+  const pior=['d','a','e'].map(k=>fs[k]).reduce((x,y)=>(ORDEM_DASS[y.nivel]>ORDEM_DASS[x.nivel]?y:x));
+  document.getElementById('page-resultado-dass21').dataset.apId=ap.id;
+  const cores={baixo:'var(--success)',medio:'var(--accent3)',alto:'var(--danger)'};
+  const bordas={baixo:'rgba(47,122,99,.3)',medio:'rgba(169,113,26,.4)',alto:'rgba(179,38,30,.4)'};
+  document.getElementById('dass21-resultado-box').innerHTML=`
+    <div class="resultado-box ${pior.cor}">
+      <div class="resultado-titulo">Resultado DASS-21</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:12px;">Paciente: <strong>${ap.pacienteNome}</strong> · ${formatDate(ap.data)} · Informante: ${ap.informante}</div>
+      <div style="font-size:1rem;font-weight:600;">Classificação mais alta entre as subescalas: ${pior.nivel}</div>
+    </div>
+    <div class="cards-row cols-3" style="margin-bottom:20px;">
+      ${['d','a','e'].map(k=>`
+      <div class="stat-card" style="border-color:${bordas[fs[k].cor]};">
+        <div class="label">${DASS_NOMES[k]}</div>
+        <div class="value" style="color:${cores[fs[k].cor]}">${s[k]}</div>
+        <div class="sub">soma dos 7 itens × 2</div>
+        <div style="margin-top:8px;"><span class="badge badge-${fs[k].cor}">${fs[k].nivel}</span></div>
+      </div>`).join('')}
+    </div>
+    <div class="table-wrap" style="margin-bottom:20px;"><table>
+      <thead><tr><th>Faixa</th><th>Depressão</th><th>Ansiedade</th><th>Estresse</th></tr></thead>
+      <tbody>
+        <tr><td>Normal</td><td>0 – 9</td><td>0 – 7</td><td>0 – 14</td></tr>
+        <tr><td>Leve</td><td>10 – 13</td><td>8 – 9</td><td>15 – 18</td></tr>
+        <tr><td>Moderado</td><td>14 – 20</td><td>10 – 14</td><td>19 – 25</td></tr>
+        <tr><td>Severo</td><td>21 – 27</td><td>15 – 19</td><td>26 – 33</td></tr>
+        <tr><td>Extremamente severo</td><td>28 +</td><td>20 +</td><td>34 +</td></tr>
+      </tbody></table></div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+      ℹ️ DASS-21 — Lovibond &amp; Lovibond (1995); versão brasileira de Vignola &amp; Tucci (2014). As faixas são as do DASS-42, por isso a soma de cada subescala é multiplicada por 2. Os rótulos descrevem a <strong>intensidade dos sintomas na última semana</strong> em relação à população geral, e não um diagnóstico.
+    </div>`;
+  document.getElementById('dass21-resultado-detalhe').innerHTML=`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Respostas Detalhadas</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Nº</th><th>Subescala</th><th>Item</th><th>Pontuação</th></tr></thead>
+      <tbody>${DASS21.map(q=>{
+        const r=ap.respostas[q.n]||0;
+        return`<tr><td>${q.n}</td><td style="font-size:.78rem;">${DASS_NOMES[q.sub]}</td>
+          <td style="font-size:.82rem;">${q.texto}</td>
+          <td style="text-align:center;font-weight:700;">${r}</td></tr>`;
+      }).join('')}</tbody></table></div>`;
+  showPage('resultado-dass21');
+}
+function renderDass21Historico(){
+  const aps=escalasState.aplicacoes.filter(a=>a.tipo==='dass21').sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const acima=k=>aps.filter(a=>ORDEM_DASS[faixaDass(k,(a.scores||{})[k]||0).nivel]>=2).length;
+  document.getElementById('dass21-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">Depressão ≥ moderada</div><div class="value" style="color:var(--accent3)">${acima('d')}</div></div>
+    <div class="stat-card"><div class="label">Ansiedade ≥ moderada</div><div class="value" style="color:var(--accent3)">${acima('a')}</div></div>`;
+  document.getElementById('dass21-historico').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação do DASS-21 ainda</p></div>'
+    :aps.map(a=>renderHistoricoItem(a)).join('');
+}
+function gerarPdfDass21(){
+  const id=document.getElementById('page-resultado-dass21')?.dataset?.apId;
+  let ap=escalasState.aplicacoes.find(a=>a.id===id);
+  if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='dass21');ap=aps[aps.length-1];}
+  if(!ap)return;
+  const s=ap.scores||{d:0,a:0,e:0};
+  const fs={d:faixaDass('d',s.d),a:faixaDass('a',s.a),e:faixaDass('e',s.e)};
+  const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>DASS-21 — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <body><h1>DASS-21 — Resultado de Aplicação</h1>
+  <p style="text-align:center;color:#666;font-size:11px;">Escala de Depressão, Ansiedade e Estresse · Lovibond &amp; Lovibond (1995) · versão brasileira de Vignola &amp; Tucci (2014)</p>
+  <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
+  <table style="margin-bottom:16px;"><thead><tr><th>Subescala</th><th>Pontuação (×2)</th><th>Classificação</th></tr></thead><tbody>
+  ${['d','a','e'].map(k=>`<tr><td><b>${DASS_NOMES[k]}</b></td><td style="text-align:center;font-weight:bold;">${s[k]}</td><td style="color:${cc[fs[k].cor]};font-weight:bold;">${fs[k].nivel}</td></tr>`).join('')}
+  </tbody></table>
+  <table style="margin-bottom:16px;"><thead><tr><th>Faixa</th><th>Depressão</th><th>Ansiedade</th><th>Estresse</th></tr></thead><tbody>
+    <tr><td>Normal</td><td>0–9</td><td>0–7</td><td>0–14</td></tr>
+    <tr><td>Leve</td><td>10–13</td><td>8–9</td><td>15–18</td></tr>
+    <tr><td>Moderado</td><td>14–20</td><td>10–14</td><td>19–25</td></tr>
+    <tr><td>Severo</td><td>21–27</td><td>15–19</td><td>26–33</td></tr>
+    <tr><td>Extremamente severo</td><td>28+</td><td>20+</td><td>34+</td></tr>
+  </tbody></table>
+  <table><thead><tr><th>Nº</th><th>Subescala</th><th>Item</th><th>Resposta</th><th>Pontos</th></tr></thead><tbody>
+  ${DASS21.map(q=>{const r=ap.respostas[q.n]||0;
+    return`<tr><td>${q.n}</td><td>${DASS_NOMES[q.sub]}</td><td>${q.texto}</td><td>${DASS21_OPTS[r]}</td><td style="text-align:center;font-weight:bold;">${r}</td></tr>`;
+  }).join('')}</tbody></table>
+  ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
+  <p style="margin-top:14px;font-size:10px;color:#666;">Referência: última semana. As faixas descrevem intensidade de sintomas, não diagnóstico.</p>
+  <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);win.document.close();
+}
+
 </script>
 </body>
 </html>
