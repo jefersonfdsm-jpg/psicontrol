@@ -95,6 +95,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .snap-texto{font-size:.87rem;color:var(--text);line-height:1.4;}
 .snap-opcao{display:flex;align-items:center;justify-content:center;}
 .snap-header-row.c3,.snap-item.c3{grid-template-columns:1fr repeat(3,96px);}
+.cdr-dominio{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+.cdr-dominio.respondido{border-color:rgba(46,110,151,.35);}
+.cdr-dom-titulo{font-size:.78rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
+.cdr-opcoes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch;}
+.cdr-opcoes.c4{grid-template-columns:repeat(4,1fr);}
+.cdr-opcao{border:1px solid var(--border);border-radius:8px;padding:10px 11px;cursor:pointer;background:var(--surface2);transition:.15s;}
+.cdr-opcao:hover{border-color:var(--accent);}
+.cdr-opcao.sel{border-color:var(--accent);background:rgba(46,110,151,.12);box-shadow:inset 0 0 0 1px var(--accent);}
+.cdr-nivel{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.cdr-desc{font-size:.78rem;color:var(--text2);line-height:1.4;}
+.cdr-opcao.sel .cdr-desc{color:var(--text);}
+@media(max-width:900px){.cdr-opcoes,.cdr-opcoes.c4{grid-template-columns:1fr;}}
 .snap-radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .snap-radio:hover{border-color:var(--accent);}
 .snap-radio.sel{border-color:var(--accent);background:var(--accent);}
@@ -303,6 +315,9 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="nav-item" onclick="showPage('lawton')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> Lawton (AIVD)
     </div>
+    <div class="nav-item" onclick="showPage('cdr')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> CDR
+    </div>
     <div class="nav-section">Histórico</div>
     <div class="nav-item" onclick="showPage('historico')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Aplicações Salvas
@@ -448,6 +463,21 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
         <div class="escala-actions">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('lawton')">▶ Aplicar</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('lawton')">Histórico</button>
+        </div>
+      </div>
+      <div class="escala-card" onclick="showPage('cdr')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(109,91,168,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6D5BA8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="escala-badge" style="background:rgba(109,91,168,.15);color:#6D5BA8;">Demência · Estadiamento</div>
+        </div>
+        <h3>CDR</h3>
+        <p>Clinical Dementia Rating. Estadiamento da demência em seis domínios, com CDR global e soma das caixas (CDR-SOB).</p>
+        <div class="escala-info"><span>6 domínios</span><span>0 a 3</span><span>Pós-entrevista</span></div>
+        <div class="escala-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('cdr')">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('cdr')">Histórico</button>
         </div>
       </div>
     </div>
@@ -804,6 +834,45 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div id="lawton-resultado-detalhe"></div>
   </div>
 
+  <!-- CDR -->
+  <div id="page-cdr" class="page">
+    <div class="page-header"><div><h2>CDR — Clinical Dementia Rating</h2><p>Escala de Avaliação Clínica da Demência · 6 domínios</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('cdr')">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="cdr-stats"></div>
+    <div id="cdr-historico"></div>
+  </div>
+
+  <!-- APLICAÇÃO CDR -->
+  <div id="page-aplicacao-cdr" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('cdr')">CDR</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>CDR — <span id="cdr-pac-nome"></span></h3><p id="cdr-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('cdr')">Cancelar</button>
+        <button class="btn btn-primary" onclick="finalizarCdr()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="cdr-progress-txt">0 de 6 domínios</span><span id="cdr-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="cdr-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(109,91,168,.07);border:1px solid rgba(109,91,168,.25);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:#5A4A92;line-height:1.6;">
+      ℹ️ Esta tela registra a <strong>pontuação final de cada domínio</strong>, depois da entrevista semiestruturada com o paciente e com o informante. Ela não substitui a entrevista. Pontue cada domínio pelo <strong>declínio em relação ao desempenho anterior da própria pessoa</strong>, e não por limitações de escolaridade ou por outras causas (déficit visual, sequela motora, depressão).
+    </div>
+    <div id="cdr-dominios"></div>
+  </div>
+
+  <!-- RESULTADO CDR -->
+  <div id="page-resultado-cdr" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('cdr')">CDR</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="cdr-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfCdr()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('cdr')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao('cdr')">Nova Aplicação</button>
+    </div>
+    <div id="cdr-resultado-detalhe"></div>
+  </div>
+
 </div>
 
 </div>
@@ -947,6 +1016,7 @@ function showPage(p){
   if(p==='gad7')renderGad7Historico();
   if(p==='dass21')renderDass21Historico();
   if(p==='lawton')renderLawtonHistorico();
+  if(p==='cdr')renderCdrHistorico();
   if(p==='historico')renderHistoricoGeral();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -967,11 +1037,12 @@ function renderHome(){
   const ga=escalasState.aplicacoes.filter(a=>a.tipo==='gad7').length;
   const da=escalasState.aplicacoes.filter(a=>a.tipo==='dass21').length;
   const lw=escalasState.aplicacoes.filter(a=>a.tipo==='lawton').length;
+  const cd=escalasState.aplicacoes.filter(a=>a.tipo==='cdr').length;
   document.getElementById('home-stats').innerHTML=`
     <div class="stat-card"><div class="label">Total Aplicações</div><div class="value">${total}</div><div class="sub">Todas as escalas</div></div>
     <div class="stat-card"><div class="label">M-CHAT-R / SNAP-IV</div><div class="value">${mc+sn}</div><div class="sub">Rastreio</div></div>
     <div class="stat-card"><div class="label">Portage / IRDI</div><div class="value">${pt+ir}</div><div class="sub">Desenvolvimento</div></div>
-    <div class="stat-card"><div class="label">GAD-7 / DASS-21 / Lawton</div><div class="value">${ga+da+lw}</div><div class="sub">Adultos e idosos</div></div>`;
+    <div class="stat-card"><div class="label">GAD-7 / DASS-21 / Lawton / CDR</div><div class="value">${ga+da+lw+cd}</div><div class="sub">Adultos e idosos</div></div>`;
   const ult=[...escalasState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
   document.getElementById('home-ultimas').innerHTML=ult.length===0
     ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação realizada ainda</p></div>'
@@ -1018,7 +1089,7 @@ function getInformante(){
 
 function iniciarAplicacao(tipo){
   tipoAplicacaoAtual=tipo;
-  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'Lawton e Brody (AIVD)'};
+  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'Lawton e Brody (AIVD)',cdr:'CDR'};
   document.getElementById('modal-apl-titulo').textContent=`Nova Aplicação — ${labels[tipo]||tipo}`;
   const sel=document.getElementById('apl-paciente');
   sel.innerHTML='<option value="">Selecione o paciente</option>'+
@@ -1033,7 +1104,7 @@ function iniciarAplicacao(tipo){
   document.getElementById('novo-pac-nasc').value='';
   document.getElementById('apl-nasc-row').style.display='';
   document.getElementById('apl-informante-row').style.display='none';
-  const _inf=(tipo==='gad7'||tipo==='dass21'||tipo==='lawton')?'O proprio paciente':'Mae';
+  const _inf=(tipo==='gad7'||tipo==='dass21'||tipo==='lawton')?'O proprio paciente':(tipo==='cdr'?'Responsavel':'Mae');
   document.getElementById('apl-informante').value=_inf;
   document.getElementById('apl-informante2').value=_inf;
   const _alvo=pacienteDaURL();
@@ -1091,6 +1162,7 @@ async function confirmarAplicacao(){
   else if(tipoAplicacaoAtual==='gad7')abrirGad7();
   else if(tipoAplicacaoAtual==='dass21')abrirDass21();
   else if(tipoAplicacaoAtual==='lawton')abrirLawton();
+  else if(tipoAplicacaoAtual==='cdr')abrirCdr();
 }
 
 // M-CHAT-R
@@ -2086,6 +2158,15 @@ function renderHistoricoItem(a){
       <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[pior.cor]}">${pior.nivel}</span></div>
       ${btnDel}
     </div>`;
+  } else if(a.tipo==='cdr'){
+    const f=faixaCdr(a.global);
+    const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+    return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+      <div style="flex-shrink:0;"><div style="font-size:.68rem;color:#6D5BA8;font-weight:700;text-transform:uppercase;letter-spacing:.5px;">CDR</div></div>
+      <div class="historico-info"><h4>${a.pacienteNome}</h4><p>Soma das caixas: ${numCdr(a.soma)} · Informante: ${a.informante}</p></div>
+      <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[f.cor]}">${f.nivel}</span><div class="pontos">CDR ${numCdr(a.global)}</div></div>
+      ${btnDel}
+    </div>`;
   } else if(a.tipo==='lawton'){
     const f=faixaLawton(a.pontos||0);
     const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
@@ -2128,9 +2209,10 @@ function renderHistoricoGeral(){
       else if(a.tipo==='gad7'){const f=faixaGad7(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/21)</span>`;}
       else if(a.tipo==='dass21'){const s=a.scores||{d:0,a:0,e:0};res=`<span class="badge ${cm[faixaDass('d',s.d).cor]}">D:${s.d} · A:${s.a} · E:${s.e}</span>`;}
       else if(a.tipo==='lawton'){const f=faixaLawton(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/27)</span>`;}
+      else if(a.tipo==='cdr'){const f=faixaCdr(a.global);res=`<span class="badge ${cm[f.cor]}">CDR ${numCdr(a.global)} — ${f.nivel} (SOB ${numCdr(a.soma)})</span>`;}
       else if(a.tipo==='portage'){res=`<span class="badge badge-baixo">${Object.keys(a.respostas||{}).length} itens</span>`;}
       else if(a.tipo==='irdi'){const aus=a.totalAusencias!==undefined?a.totalAusencias:Object.values(a.respostas||{}).filter(r=>r==='A').length;res=`<span class="badge ${aus===0?'badge-baixo':aus===1?'badge-medio':'badge-alto'}">${aus} ausência(s)</span>`;}
-      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'LAWTON'};
+      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'LAWTON',cdr:'CDR'};
       return`<tr><td><strong style="color:var(--accent)">${NOMES[a.tipo]||a.tipo}</strong></td>
         <td>${a.pacienteNome}</td><td>${formatDate(a.data)}</td><td>${res}</td>
         <td><button class="btn btn-outline btn-sm" onclick="verAplicacao('${a.id}')">Ver</button> <button class="btn btn-danger btn-sm" onclick="deletarAplicacao('${a.id}')">🗑</button></td></tr>`;
@@ -2139,6 +2221,7 @@ function renderHistoricoGeral(){
 function verAplicacao(id){
   const a=escalasState.aplicacoes.find(x=>x.id===id);
   if(!a)return;
+  if(a.tipo==='cdr')return mostrarResultadoCdr(a);
   if(a.tipo==='lawton')return mostrarResultadoLawton(a);
   if(a.tipo==='gad7')return mostrarResultadoGad7(a);
   if(a.tipo==='dass21')return mostrarResultadoDass21(a);
@@ -2161,6 +2244,7 @@ function deletarAplicacao(id){
   else if(tipo==='gad7')renderGad7Historico();
   else if(tipo==='dass21')renderDass21Historico();
   else if(tipo==='lawton')renderLawtonHistorico();
+  else if(tipo==='cdr')renderCdrHistorico();
   renderHistoricoGeral();
   showToast('🗑 Aplicação removida');
 }
@@ -3798,6 +3882,230 @@ function gerarPdfLawton(){
   </tbody></table>
   ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
   <p style="margin-top:14px;font-size:10px;color:#666;">Sem ajuda = 3 · Com ajuda parcial = 2 · Não consegue = 1. A escala avalia funcionalidade e não substitui avaliação clínica.</p>
+  <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);win.document.close();
+}
+
+
+/* ==================================================================
+   CDR — Clinical Dementia Rating (Hughes et al., 1982; Morris, 1993).
+   Versão brasileira do HCPA / Serviço de Neurologia (2006).
+   Seis domínios pontuados em 0, 0,5, 1, 2 e 3 — Cuidados Pessoais
+   não tem o nível 0,5.
+   O CDR global vem do algoritmo de Washington University, em que a
+   Memória é a categoria primária; a soma das caixas (CDR-SOB) é a
+   soma simples dos seis domínios, de 0 a 18.
+   ================================================================== */
+const CDR_DOMINIOS=[
+  {k:'memoria', nome:'Memória', meio:true, opts:{
+    0:'Sem perda de memória, ou apenas esquecimento discreto e inconsistente',
+    0.5:'Esquecimento leve e consistente; lembrança parcial de eventos; "esquecimento benigno"',
+    1:'Perda de memória moderada, mais acentuada para fatos recentes; o déficit interfere com atividades do dia a dia',
+    2:'Perda de memória grave; apenas material muito aprendido é retido; materiais novos são rapidamente perdidos',
+    3:'Perda de memória grave; apenas fragmentos permanecem'}},
+  {k:'orientacao', nome:'Orientação', meio:true, opts:{
+    0:'Plenamente orientado',
+    0.5:'Plenamente orientado',
+    1:'Dificuldade moderada com as relações de tempo; orientado no espaço no exame, mas pode ter desorientação geográfica em outros locais',
+    2:'Geralmente desorientado',
+    3:'Orientação pessoal apenas'}},
+  {k:'julgamento', nome:'Julgamento e solução de problemas', meio:true, opts:{
+    0:'Resolve bem problemas do dia a dia, juízo crítico é bom em relação ao desempenho passado',
+    0.5:'Leve comprometimento na solução de problemas, semelhanças e diferenças',
+    1:'Dificuldade moderada na solução de problemas, semelhanças e diferenças; julgamento social geralmente mantido',
+    2:'Gravemente comprometido para solução de problemas, semelhanças e diferenças. Juízo social geralmente comprometido',
+    3:'Incapaz de resolver problemas ou de ter qualquer juízo crítico'}},
+  {k:'comunidade', nome:'Assuntos na comunidade', meio:true, opts:{
+    0:'Função independente na função habitual de trabalho, compras, negócios, finanças e grupos sociais',
+    0.5:'Leve dificuldade nestas atividades',
+    1:'Incapaz de funcionar independentemente nestas atividades embora ainda possa desempenhar algumas; pode parecer normal à avaliação superficial',
+    2:'Sem possibilidade de desempenho fora de casa. Parece suficientemente bem para ser levado a atividades fora de casa',
+    3:'Sem possibilidade de desempenho fora de casa. Parece muito doente para ser levado a atividades fora de casa'}},
+  {k:'lar', nome:'Lar e passatempos', meio:true, opts:{
+    0:'Vida em casa, passatempos e interesses intelectuais mantidos',
+    0.5:'Vida em casa, passatempos e interesses intelectuais levemente afetados',
+    1:'Comprometimento leve mas evidente em casa; abandono das tarefas mais difíceis; passatempos e interesses mais complicados são também abandonados',
+    2:'Só realiza as tarefas mais simples. Interesses muito limitados e pouco mantidos',
+    3:'Sem qualquer atividade significativa em casa'}},
+  {k:'cuidados', nome:'Cuidados pessoais', meio:false, opts:{
+    0:'Plenamente capaz',
+    1:'Necessita assistência ocasional',
+    2:'Requer assistência no vestir e na higiene',
+    3:'Requer muito auxílio nos cuidados pessoais. Geralmente incontinente'}},
+];
+const CDR_SECUNDARIAS=['orientacao','julgamento','comunidade','lar','cuidados'];
+
+function numCdr(v){
+  if(v===undefined||v===null||isNaN(v))return '-';
+  return String(v).replace('.',',');
+}
+function faixaCdr(g){
+  if(g>=3)return{nivel:'Demência grave',cor:'alto'};
+  if(g>=2)return{nivel:'Demência moderada',cor:'alto'};
+  if(g>=1)return{nivel:'Demência leve',cor:'medio'};
+  if(g>=0.5)return{nivel:'Demência questionável',cor:'medio'};
+  return{nivel:'Saudável',cor:'baixo'};
+}
+
+/* Algoritmo de Washington University (Morris, 1993) */
+function calcCdrGlobal(b){
+  const M=b.memoria;
+  const S=CDR_SECUNDARIAS.map(k=>b[k]);
+  if(M===0){
+    return (S.filter(s=>s>=0.5).length>=2) ? 0.5 : 0;
+  }
+  if(M===0.5){
+    return (S.filter(s=>s>=1).length>=3) ? 1 : 0.5;
+  }
+  const acima=S.filter(s=>s>M), abaixo=S.filter(s=>s<M), iguais=S.filter(s=>s===M);
+  let r;
+  if(iguais.length>=3) r=M;
+  else if(acima.length===3&&abaixo.length===2) r=M;          // 3 de um lado, 2 do outro
+  else if(abaixo.length===3&&acima.length===2) r=M;
+  else if(acima.length>=3) r=maioriaCdr(acima,M);
+  else if(abaixo.length>=3) r=maioriaCdr(abaixo,M);
+  else r=M;                                                   // 1 ou 2 iguais, no maximo 2 de cada lado
+  if(M>=1&&r===0) r=0.5;                                      // com M>=1 o CDR nunca e 0
+  return r;
+}
+/* valor mais frequente do lado; empate resolve pelo mais proximo de M */
+function maioriaCdr(lista,M){
+  const cont={};
+  lista.forEach(v=>{cont[v]=(cont[v]||0)+1;});
+  let melhor=null,n=-1;
+  Object.keys(cont).forEach(kk=>{
+    const v=parseFloat(kk), c=cont[kk];
+    if(c>n || (c===n && Math.abs(v-M)<Math.abs(melhor-M))){melhor=v;n=c;}
+  });
+  return melhor;
+}
+function calcCdrSoma(b){
+  return CDR_DOMINIOS.reduce((t,d)=>t+(b[d.k]||0),0);
+}
+
+function abrirCdr(){
+  document.getElementById('cdr-pac-nome').textContent=aplicacaoAtual.pacienteNome;
+  document.getElementById('cdr-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
+  aplicacaoAtual.respostas={};
+  renderCdrDominios();
+  showPage('aplicacao-cdr');
+  window.scrollTo(0,0);
+}
+function renderCdrDominios(){
+  const resp=CDR_DOMINIOS.filter(d=>aplicacaoAtual.respostas[d.k]!==undefined).length;
+  const pct=Math.round(resp/6*100);
+  document.getElementById('cdr-progress-txt').textContent=`${resp} de 6 domínios`;
+  document.getElementById('cdr-pct').textContent=pct+'%';
+  document.getElementById('cdr-bar').style.width=pct+'%';
+  document.getElementById('cdr-dominios').innerHTML=CDR_DOMINIOS.map(d=>{
+    const atual=aplicacaoAtual.respostas[d.k];
+    const niveis=d.meio?[0,0.5,1,2,3]:[0,1,2,3];
+    return`<div class="cdr-dominio ${atual!==undefined?'respondido':''}" id="cd-${d.k}">
+      <div class="cdr-dom-titulo">${d.nome}</div>
+      <div class="cdr-opcoes ${d.meio?'':'c4'}">
+        ${niveis.map(v=>`<div class="cdr-opcao ${atual===v?'sel':''}" onclick="respCdr('${d.k}',${v})">
+          <div class="cdr-nivel">CDR ${numCdr(v)}</div>
+          <div class="cdr-desc">${d.opts[v]}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function respCdr(k,v){
+  aplicacaoAtual.respostas[k]=v;
+  renderCdrDominios();
+  const prox=CDR_DOMINIOS.find(d=>aplicacaoAtual.respostas[d.k]===undefined);
+  if(prox){const el=document.getElementById('cd-'+prox.k);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
+}
+function finalizarCdr(){
+  const falta=CDR_DOMINIOS.filter(d=>aplicacaoAtual.respostas[d.k]===undefined);
+  if(falta.length){showToast(`⚠️ Falta pontuar: ${falta.map(d=>d.nome).join(', ')}`);return;}
+  const boxes={};CDR_DOMINIOS.forEach(d=>{boxes[d.k]=aplicacaoAtual.respostas[d.k];});
+  const global=calcCdrGlobal(boxes), soma=calcCdrSoma(boxes), f=faixaCdr(global);
+  const ap={id:uid(),tipo:'cdr',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
+    nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
+    obs:aplicacaoAtual.obs,data:new Date().toISOString().slice(0,10),
+    boxes,global,soma,nivel:f.nivel,cor:f.cor,respostas:{...boxes}};
+  escalasState.aplicacoes.push(ap);
+  salvarEscalas();
+  mostrarResultadoCdr(ap);
+}
+function mostrarResultadoCdr(ap){
+  const b=ap.boxes||ap.respostas||{};
+  const f=faixaCdr(ap.global);
+  document.getElementById('page-resultado-cdr').dataset.apId=ap.id;
+  document.getElementById('cdr-resultado-box').innerHTML=`
+    <div class="resultado-box ${f.cor}">
+      <div class="resultado-titulo">${f.nivel}</div>
+      <div class="resultado-pontuacao">CDR ${numCdr(ap.global)}</div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:10px;">Paciente: <strong>${ap.pacienteNome}</strong> · ${formatDate(ap.data)} · Informante: ${ap.informante}</div>
+      <div style="font-size:.95rem;font-weight:600;">Soma das caixas (CDR-SOB): ${numCdr(ap.soma)} de 18</div>
+    </div>
+    <div class="table-wrap" style="margin-bottom:20px;"><table>
+      <thead><tr><th>Domínio</th><th>Pontuação</th><th>Descrição registrada</th></tr></thead>
+      <tbody>${CDR_DOMINIOS.map(d=>`<tr>
+        <td><strong>${d.nome}</strong>${d.k==='memoria'?' <span style="color:var(--text3);font-weight:400;">(primária)</span>':''}</td>
+        <td style="text-align:center;font-weight:700;">${numCdr(b[d.k])}</td>
+        <td style="font-size:.8rem;">${d.opts[b[d.k]]||'-'}</td></tr>`).join('')}
+      <tr><td colspan="2" style="text-align:right;font-weight:700;">Soma das caixas</td><td style="font-weight:700;">${numCdr(ap.soma)} / 18</td></tr>
+      </tbody></table></div>
+    <div style="background:rgba(109,91,168,.07);border:1px solid rgba(109,91,168,.25);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+      ℹ️ CDR — Hughes et al. (1982); regras de pontuação de Morris (1993). O <strong>CDR global</strong> é calculado pelo algoritmo de Washington University, em que a memória é a categoria primária e os outros cinco domínios são secundários. A <strong>soma das caixas</strong> é a soma simples dos seis domínios e é mais sensível para acompanhar mudanças ao longo do tempo. O julgamento clínico prevalece sobre o algoritmo: se o CDR global calculado não corresponder ao quadro, registre a divergência nas observações.
+    </div>`;
+  const faixaTxt=[[0,'Saudável'],[0.5,'Demência questionável'],[1,'Demência leve'],[2,'Demência moderada'],[3,'Demência grave']];
+  document.getElementById('cdr-resultado-detalhe').innerHTML=`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Escala global</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>CDR</th><th>Estágio</th><th></th></tr></thead>
+      <tbody>${faixaTxt.map(([v,t])=>`<tr><td>${numCdr(v)}</td><td>${t}</td><td>${ap.global===v?'◀ resultado':''}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+  showPage('resultado-cdr');
+}
+function renderCdrHistorico(){
+  const aps=escalasState.aplicacoes.filter(a=>a.tipo==='cdr').sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const comDem=aps.filter(a=>(a.global||0)>=1).length;
+  const mediaSob=aps.length?(aps.reduce((x,a)=>x+(a.soma||0),0)/aps.length).toFixed(1).replace('.',','):'0';
+  document.getElementById('cdr-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">CDR ≥ 1</div><div class="value" style="color:var(--accent3)">${comDem}</div></div>
+    <div class="stat-card"><div class="label">Soma das caixas (média)</div><div class="value">${mediaSob}<span style="font-size:1rem;opacity:.5">/18</span></div></div>`;
+  document.getElementById('cdr-historico').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação da CDR ainda</p></div>'
+    :aps.map(a=>renderHistoricoItem(a)).join('');
+}
+function gerarPdfCdr(){
+  const id=document.getElementById('page-resultado-cdr')?.dataset?.apId;
+  let ap=escalasState.aplicacoes.find(a=>a.id===id);
+  if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='cdr');ap=aps[aps.length-1];}
+  if(!ap)return;
+  const b=ap.boxes||ap.respostas||{};
+  const f=faixaCdr(ap.global);
+  const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CDR — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <body><h1>Avaliação Clínica da Demência — CDR</h1>
+  <p style="text-align:center;color:#666;font-size:11px;">Clinical Dementia Rating · Hughes et al. (1982); regras de pontuação de Morris, J.C. (1993), Neurology 43(11)</p>
+  <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
+  <div style="background:${cc[f.cor]}20;border:2px solid ${cc[f.cor]};border-radius:8px;padding:14px;text-align:center;margin-bottom:16px;">
+    <div style="font-size:22px;font-weight:bold;color:${cc[f.cor]};margin:4px 0;">CDR ${numCdr(ap.global)}</div>
+    <div style="font-size:15px;margin:4px 0;"><b>${f.nivel}</b></div>
+    <div style="font-size:12px;color:#555;margin-top:8px;">Soma das caixas (CDR-SOB): ${numCdr(ap.soma)} de 18</div>
+  </div>
+  <table><thead><tr><th>Domínio</th><th>Pontuação</th><th>Descrição</th></tr></thead><tbody>
+  ${CDR_DOMINIOS.map(d=>`<tr><td><b>${d.nome}</b></td><td style="text-align:center;font-weight:bold;">${numCdr(b[d.k])}</td><td>${d.opts[b[d.k]]||'-'}</td></tr>`).join('')}
+  <tr><td colspan="2" style="text-align:right;font-weight:bold;">Soma das caixas</td><td style="font-weight:bold;">${numCdr(ap.soma)} / 18</td></tr>
+  </tbody></table>
+  <table style="margin-top:14px;"><thead><tr><th>CDR</th><th>Estágio</th></tr></thead><tbody>
+    <tr><td>0</td><td>Saudável</td></tr>
+    <tr><td>0,5</td><td>Demência questionável</td></tr>
+    <tr><td>1</td><td>Demência leve</td></tr>
+    <tr><td>2</td><td>Demência moderada</td></tr>
+    <tr><td>3</td><td>Demência grave</td></tr>
+  </tbody></table>
+  ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
+  <p style="margin-top:14px;font-size:10px;color:#666;">O CDR global resulta do algoritmo de Washington University, com a memória como categoria primária. Instrumento de estadiamento, não de diagnóstico; o julgamento clínico prevalece.</p>
   <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
   <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();

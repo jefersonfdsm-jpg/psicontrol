@@ -2589,7 +2589,7 @@ function fxRenderEscalas(p){
 
   document.getElementById('fx-n-escalas').textContent = minhas.length || '';
 
-  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18', gad7:'GAD-7', dass21:'DASS-21', lawton:'Lawton (AIVD)' };
+  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18', gad7:'GAD-7', dass21:'DASS-21', lawton:'Lawton (AIVD)', cdr:'CDR' };
   function linha(a){
     let detalhe = '';
     if(a.tipo === 'mchat' && a.nivel) detalhe = `risco ${fxEsc(a.nivel)}`;
@@ -2599,6 +2599,7 @@ function fxRenderEscalas(p){
     else if(a.tipo === 'gad7') detalhe = `${fxEsc(a.pontos)}/21${a.nivel ? ' — ' + fxEsc(a.nivel) : ''}`;
     else if(a.tipo === 'dass21' && a.scores) detalhe = `depressão ${fxEsc(a.scores.d)} · ansiedade ${fxEsc(a.scores.a)} · estresse ${fxEsc(a.scores.e)}`;
     else if(a.tipo === 'lawton') detalhe = `${fxEsc(a.pontos)}/27${a.nivel ? ' — ' + fxEsc(a.nivel) : ''}`;
+    else if(a.tipo === 'cdr') detalhe = `CDR ${fxEsc(String(a.global).replace('.',','))}${a.nivel ? ' — ' + fxEsc(a.nivel) : ''} · soma das caixas ${fxEsc(a.soma)}`;
     return `<div class="fx-item"><span class="fx-data">${fxData(a.data)}</span>
       <span class="fx-txt"><b>${fxEsc(nomes[a.tipo] || a.tipo)}</b>${detalhe ? ' — ' + detalhe : ''}</span></div>`;
   }
