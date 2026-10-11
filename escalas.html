@@ -100,13 +100,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .cdr-dom-titulo{font-size:.78rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;}
 .cdr-opcoes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch;}
 .cdr-opcoes.c4{grid-template-columns:repeat(4,1fr);}
+.cdr-opcoes.c3{grid-template-columns:repeat(3,1fr);}
+.cdr-dom-nota{font-size:.75rem;color:var(--text3);line-height:1.45;margin:-4px 0 10px;}
+.cdr-tag{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:6px;}
+.cdr-tag.ind{background:rgba(47,122,99,.15);color:var(--success);}
+.cdr-tag.dep{background:rgba(179,38,30,.13);color:var(--danger);}
 .cdr-opcao{border:1px solid var(--border);border-radius:8px;padding:10px 11px;cursor:pointer;background:var(--surface2);transition:.15s;}
 .cdr-opcao:hover{border-color:var(--accent);}
 .cdr-opcao.sel{border-color:var(--accent);background:rgba(46,110,151,.12);box-shadow:inset 0 0 0 1px var(--accent);}
 .cdr-nivel{font-size:.7rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
 .cdr-desc{font-size:.78rem;color:var(--text2);line-height:1.4;}
 .cdr-opcao.sel .cdr-desc{color:var(--text);}
-@media(max-width:900px){.cdr-opcoes,.cdr-opcoes.c4{grid-template-columns:1fr;}}
+@media(max-width:900px){.cdr-opcoes,.cdr-opcoes.c4,.cdr-opcoes.c3{grid-template-columns:1fr;}}
 .snap-radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .snap-radio:hover{border-color:var(--accent);}
 .snap-radio.sel{border-color:var(--accent);background:var(--accent);}
@@ -318,6 +323,9 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="nav-item" onclick="showPage('cdr')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> CDR
     </div>
+    <div class="nav-item" onclick="showPage('katz')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> Katz (ABVD)
+    </div>
     <div class="nav-section">Histórico</div>
     <div class="nav-item" onclick="showPage('historico')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Aplicações Salvas
@@ -478,6 +486,21 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
         <div class="escala-actions">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('cdr')">▶ Aplicar</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('cdr')">Histórico</button>
+        </div>
+      </div>
+      <div class="escala-card" onclick="showPage('katz')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(47,122,99,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="escala-badge" style="background:rgba(47,122,99,.15);color:var(--success);">Funcionalidade · Idosos</div>
+        </div>
+        <h3>Índice de Katz</h3>
+        <p>Atividades Básicas de Vida Diária (ABVD). Banho, vestir, banheiro, transferência, continência e alimentação.</p>
+        <div class="escala-info"><span>6 funções</span><span>Independente / Dependente</span><span>~5 min</span></div>
+        <div class="escala-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('katz')">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('katz')">Histórico</button>
         </div>
       </div>
     </div>
@@ -873,6 +896,45 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div id="cdr-resultado-detalhe"></div>
   </div>
 
+  <!-- KATZ -->
+  <div id="page-katz" class="page">
+    <div class="page-header"><div><h2>Índice de Katz — ABVD</h2><p>Atividades Básicas de Vida Diária · 6 funções</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('katz')">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="katz-stats"></div>
+    <div id="katz-historico"></div>
+  </div>
+
+  <!-- APLICAÇÃO KATZ -->
+  <div id="page-aplicacao-katz" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('katz')">Katz (ABVD)</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>Índice de Katz — <span id="katz-pac-nome"></span></h3><p id="katz-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('katz')">Cancelar</button>
+        <button class="btn btn-primary" onclick="finalizarKatz()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="katz-progress-txt">0 de 6 funções</span><span id="katz-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="katz-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(47,122,99,.07);border:1px solid rgba(47,122,99,.22);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:var(--success);line-height:1.6;">
+      ℹ️ Em cada função, marque a alternativa que mais se aproxima da condição atual da pessoa. "Assistência" quer dizer supervisão ou ajuda direta de outra pessoa. <strong>A pontuação é o número de funções com dependência</strong>: 0 é independente em todas as seis e 6 é dependente em todas.
+    </div>
+    <div id="katz-funcoes"></div>
+  </div>
+
+  <!-- RESULTADO KATZ -->
+  <div id="page-resultado-katz" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('katz')">Katz (ABVD)</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="katz-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfKatz()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('katz')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao('katz')">Nova Aplicação</button>
+    </div>
+    <div id="katz-resultado-detalhe"></div>
+  </div>
+
 </div>
 
 </div>
@@ -1017,6 +1079,7 @@ function showPage(p){
   if(p==='dass21')renderDass21Historico();
   if(p==='lawton')renderLawtonHistorico();
   if(p==='cdr')renderCdrHistorico();
+  if(p==='katz')renderKatzHistorico();
   if(p==='historico')renderHistoricoGeral();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -1038,11 +1101,12 @@ function renderHome(){
   const da=escalasState.aplicacoes.filter(a=>a.tipo==='dass21').length;
   const lw=escalasState.aplicacoes.filter(a=>a.tipo==='lawton').length;
   const cd=escalasState.aplicacoes.filter(a=>a.tipo==='cdr').length;
+  const kz=escalasState.aplicacoes.filter(a=>a.tipo==='katz').length;
   document.getElementById('home-stats').innerHTML=`
     <div class="stat-card"><div class="label">Total Aplicações</div><div class="value">${total}</div><div class="sub">Todas as escalas</div></div>
     <div class="stat-card"><div class="label">M-CHAT-R / SNAP-IV</div><div class="value">${mc+sn}</div><div class="sub">Rastreio</div></div>
     <div class="stat-card"><div class="label">Portage / IRDI</div><div class="value">${pt+ir}</div><div class="sub">Desenvolvimento</div></div>
-    <div class="stat-card"><div class="label">GAD-7 / DASS-21 / Lawton / CDR</div><div class="value">${ga+da+lw+cd}</div><div class="sub">Adultos e idosos</div></div>`;
+    <div class="stat-card"><div class="label">Adultos e idosos</div><div class="value">${ga+da+lw+cd+kz}</div><div class="sub">GAD-7 · DASS-21 · Lawton · CDR · Katz</div></div>`;
   const ult=[...escalasState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
   document.getElementById('home-ultimas').innerHTML=ult.length===0
     ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação realizada ainda</p></div>'
@@ -1089,7 +1153,7 @@ function getInformante(){
 
 function iniciarAplicacao(tipo){
   tipoAplicacaoAtual=tipo;
-  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'Lawton e Brody (AIVD)',cdr:'CDR'};
+  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'Lawton e Brody (AIVD)',cdr:'CDR',katz:'Índice de Katz (ABVD)'};
   document.getElementById('modal-apl-titulo').textContent=`Nova Aplicação — ${labels[tipo]||tipo}`;
   const sel=document.getElementById('apl-paciente');
   sel.innerHTML='<option value="">Selecione o paciente</option>'+
@@ -1104,7 +1168,7 @@ function iniciarAplicacao(tipo){
   document.getElementById('novo-pac-nasc').value='';
   document.getElementById('apl-nasc-row').style.display='';
   document.getElementById('apl-informante-row').style.display='none';
-  const _inf=(tipo==='gad7'||tipo==='dass21'||tipo==='lawton')?'O proprio paciente':(tipo==='cdr'?'Responsavel':'Mae');
+  const _inf=(tipo==='gad7'||tipo==='dass21'||tipo==='lawton'||tipo==='katz')?'O proprio paciente':(tipo==='cdr'?'Responsavel':'Mae');
   document.getElementById('apl-informante').value=_inf;
   document.getElementById('apl-informante2').value=_inf;
   const _alvo=pacienteDaURL();
@@ -1163,6 +1227,7 @@ async function confirmarAplicacao(){
   else if(tipoAplicacaoAtual==='dass21')abrirDass21();
   else if(tipoAplicacaoAtual==='lawton')abrirLawton();
   else if(tipoAplicacaoAtual==='cdr')abrirCdr();
+  else if(tipoAplicacaoAtual==='katz')abrirKatz();
 }
 
 // M-CHAT-R
@@ -2158,6 +2223,15 @@ function renderHistoricoItem(a){
       <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[pior.cor]}">${pior.nivel}</span></div>
       ${btnDel}
     </div>`;
+  } else if(a.tipo==='katz'){
+    const f=faixaKatz(a.pontos||0);
+    const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+    return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+      <div style="flex-shrink:0;"><div style="font-size:.68rem;color:var(--success);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">KATZ</div></div>
+      <div class="historico-info"><h4>${a.pacienteNome}</h4><p>Independente em ${6-(a.pontos||0)} de 6 funções · Informante: ${a.informante}</p></div>
+      <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[f.cor]}">${f.nivel}</span><div class="pontos">${a.pontos}/6</div></div>
+      ${btnDel}
+    </div>`;
   } else if(a.tipo==='cdr'){
     const f=faixaCdr(a.global);
     const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
@@ -2210,9 +2284,10 @@ function renderHistoricoGeral(){
       else if(a.tipo==='dass21'){const s=a.scores||{d:0,a:0,e:0};res=`<span class="badge ${cm[faixaDass('d',s.d).cor]}">D:${s.d} · A:${s.a} · E:${s.e}</span>`;}
       else if(a.tipo==='lawton'){const f=faixaLawton(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/27)</span>`;}
       else if(a.tipo==='cdr'){const f=faixaCdr(a.global);res=`<span class="badge ${cm[f.cor]}">CDR ${numCdr(a.global)} — ${f.nivel} (SOB ${numCdr(a.soma)})</span>`;}
+      else if(a.tipo==='katz'){const f=faixaKatz(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/6 dependências)</span>`;}
       else if(a.tipo==='portage'){res=`<span class="badge badge-baixo">${Object.keys(a.respostas||{}).length} itens</span>`;}
       else if(a.tipo==='irdi'){const aus=a.totalAusencias!==undefined?a.totalAusencias:Object.values(a.respostas||{}).filter(r=>r==='A').length;res=`<span class="badge ${aus===0?'badge-baixo':aus===1?'badge-medio':'badge-alto'}">${aus} ausência(s)</span>`;}
-      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'LAWTON',cdr:'CDR'};
+      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'LAWTON',cdr:'CDR',katz:'KATZ'};
       return`<tr><td><strong style="color:var(--accent)">${NOMES[a.tipo]||a.tipo}</strong></td>
         <td>${a.pacienteNome}</td><td>${formatDate(a.data)}</td><td>${res}</td>
         <td><button class="btn btn-outline btn-sm" onclick="verAplicacao('${a.id}')">Ver</button> <button class="btn btn-danger btn-sm" onclick="deletarAplicacao('${a.id}')">🗑</button></td></tr>`;
@@ -2221,6 +2296,7 @@ function renderHistoricoGeral(){
 function verAplicacao(id){
   const a=escalasState.aplicacoes.find(x=>x.id===id);
   if(!a)return;
+  if(a.tipo==='katz')return mostrarResultadoKatz(a);
   if(a.tipo==='cdr')return mostrarResultadoCdr(a);
   if(a.tipo==='lawton')return mostrarResultadoLawton(a);
   if(a.tipo==='gad7')return mostrarResultadoGad7(a);
@@ -2245,6 +2321,7 @@ function deletarAplicacao(id){
   else if(tipo==='dass21')renderDass21Historico();
   else if(tipo==='lawton')renderLawtonHistorico();
   else if(tipo==='cdr')renderCdrHistorico();
+  else if(tipo==='katz')renderKatzHistorico();
   renderHistoricoGeral();
   showToast('🗑 Aplicação removida');
 }
@@ -4106,6 +4183,191 @@ function gerarPdfCdr(){
   </tbody></table>
   ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
   <p style="margin-top:14px;font-size:10px;color:#666;">O CDR global resulta do algoritmo de Washington University, com a memória como categoria primária. Instrumento de estadiamento, não de diagnóstico; o julgamento clínico prevalece.</p>
+  <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);win.document.close();
+}
+
+
+/* ==================================================================
+   ÍNDICE DE KATZ — Atividades Básicas de Vida Diária (ABVD)
+   Katz, S. et al. (1963).  Formulário da SMS-Rio, atualizado em
+   abril de 2024.  Seis funções, três alternativas cada, marcadas
+   como (I) independente ou (D) dependente.
+   A PONTUAÇÃO É O NÚMERO DE FUNÇÕES COM DEPENDÊNCIA: 0 = independente
+   em todas as seis; 6 = dependente em todas.  (Existe na literatura
+   a convenção inversa, que conta as independências — por isso o
+   resultado mostra sempre as duas leituras.)
+   ================================================================== */
+const KATZ=[
+  {k:'banho', nome:'Banho', nota:'Uso do chuveiro ou da banheira e o ato de esfregar-se. Quem recebe ajuda apenas para uma parte do corpo é considerado independente.', opts:[
+    {dep:false, t:'Não recebe assistência (entra e sai do banheiro sozinho, se essa é a forma usualmente utilizada para o banho).'},
+    {dep:false, t:'Recebe assistência no banho somente para uma parte do corpo (como costas ou uma perna).'},
+    {dep:true,  t:'Recebe assistência no banho em mais de uma parte do corpo.'}]},
+  {k:'vestir', nome:'Vestir', nota:'Pegar as roupas no armário e vestir-se, incluindo roupas íntimas, externas, fechos e cintos. Calçar sapatos está excluído.', opts:[
+    {dep:false, t:'Pega as roupas e se veste completamente sem assistência.'},
+    {dep:false, t:'Pega as roupas e se veste sem assistência, exceto para amarrar os sapatos.'},
+    {dep:true,  t:'Recebe assistência para pegar as roupas ou para vestir-se, ou permanece parcial ou totalmente despido.'}]},
+  {k:'banheiro', nome:'Banheiro', nota:'Ir ao banheiro para as eliminações, higienizar-se e arrumar as próprias roupas. Equipamentos de apoio não alteram a classificação; quem usa comadre ou papagaio durante o dia é dependente.', opts:[
+    {dep:false, t:'Vai ao banheiro, higieniza-se e se veste após as eliminações sem assistência (pode usar bengala, andador, barras de apoio ou cadeira de rodas, e pode usar comadre ou urinol à noite, esvaziando por si mesmo pela manhã).'},
+    {dep:true,  t:'Recebe assistência para ir ao banheiro, ou para higienizar-se, ou para vestir-se após as eliminações, ou para usar o urinol ou comadre à noite.'},
+    {dep:true,  t:'Não vai ao banheiro para urinar ou evacuar.'}]},
+  {k:'transferencia', nome:'Transferência', nota:'Sair da cama e sentar-se em uma cadeira, e vice-versa. O uso de equipamento de apoio não altera a classificação de independência.', opts:[
+    {dep:false, t:'Deita-se e levanta-se da cama ou da cadeira sem assistência (pode utilizar um objeto de apoio, como bengala ou andador).'},
+    {dep:true,  t:'Deita-se e levanta-se da cama ou da cadeira com auxílio.'},
+    {dep:true,  t:'Não sai da cama.'}]},
+  {k:'continencia', nome:'Continência', nota:'Controle inteiramente autocontrolado de urinar e evacuar. Qualquer controle externo — enemas, cateterização, uso regular de fraldas — classifica como dependente.', opts:[
+    {dep:false, t:'Controla inteiramente as funções de urinar e evacuar.'},
+    {dep:true,  t:'Tem "acidentes" ocasionais: perdas urinárias ou fecais.'},
+    {dep:true,  t:'Precisa de ajuda para manter o controle da micção e da evacuação; usa cateter ou é incontinente.'}]},
+  {k:'alimentacao', nome:'Alimentação', nota:'Levar a comida do prato à boca. Cortar ou preparar os alimentos está excluído. Quem se alimenta por sonda é dependente.', opts:[
+    {dep:false, t:'Alimenta-se sem ajuda.'},
+    {dep:false, t:'Alimenta-se sozinho, mas recebe ajuda para cortar carne ou passar manteiga no pão.'},
+    {dep:true,  t:'Recebe ajuda para alimentar-se, ou é alimentado parcial ou completamente por sonda ou fluidos intravenosos.'}]},
+];
+
+function faixaKatz(p){
+  if(p===0)return{nivel:'Independente',cor:'baixo'};
+  if(p>=6) return{nivel:'Dependente nas 6 funções',cor:'alto'};
+  if(p>=3) return{nivel:`Dependente em ${p} funções`,cor:'alto'};
+  return{nivel:`Dependente em ${p} ${p===1?'função':'funções'}`,cor:'medio'};
+}
+function calcKatz(res){
+  return KATZ.filter(f=>res[f.k]!==undefined && f.opts[res[f.k]].dep).length;
+}
+
+function abrirKatz(){
+  document.getElementById('katz-pac-nome').textContent=aplicacaoAtual.pacienteNome;
+  document.getElementById('katz-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
+  aplicacaoAtual.respostas={};
+  renderKatzFuncoes();
+  showPage('aplicacao-katz');
+  window.scrollTo(0,0);
+}
+function renderKatzFuncoes(){
+  const resp=KATZ.filter(f=>aplicacaoAtual.respostas[f.k]!==undefined).length;
+  const pct=Math.round(resp/6*100);
+  document.getElementById('katz-progress-txt').textContent=`${resp} de 6 funções`;
+  document.getElementById('katz-pct').textContent=pct+'%';
+  document.getElementById('katz-bar').style.width=pct+'%';
+  document.getElementById('katz-funcoes').innerHTML=KATZ.map(f=>{
+    const atual=aplicacaoAtual.respostas[f.k];
+    return`<div class="cdr-dominio ${atual!==undefined?'respondido':''}" id="kz-${f.k}">
+      <div class="cdr-dom-titulo">${f.nome}</div>
+      <div class="cdr-dom-nota">${f.nota}</div>
+      <div class="cdr-opcoes c3">
+        ${f.opts.map((o,i)=>`<div class="cdr-opcao ${atual===i?'sel':''}" onclick="respKatz('${f.k}',${i})">
+          <span class="cdr-tag ${o.dep?'dep':'ind'}">${o.dep?'Dependente':'Independente'}</span>
+          <div class="cdr-desc">${o.t}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function respKatz(k,i){
+  aplicacaoAtual.respostas[k]=i;
+  renderKatzFuncoes();
+  const prox=KATZ.find(f=>aplicacaoAtual.respostas[f.k]===undefined);
+  if(prox){const el=document.getElementById('kz-'+prox.k);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
+}
+function finalizarKatz(){
+  const falta=KATZ.filter(f=>aplicacaoAtual.respostas[f.k]===undefined);
+  if(falta.length){showToast(`⚠️ Falta marcar: ${falta.map(f=>f.nome).join(', ')}`);return;}
+  const pontos=calcKatz(aplicacaoAtual.respostas);
+  const f=faixaKatz(pontos);
+  const ap={id:uid(),tipo:'katz',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
+    nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
+    obs:aplicacaoAtual.obs,data:new Date().toISOString().slice(0,10),
+    pontos,independentes:6-pontos,nivel:f.nivel,cor:f.cor,respostas:{...aplicacaoAtual.respostas}};
+  escalasState.aplicacoes.push(ap);
+  salvarEscalas();
+  mostrarResultadoKatz(ap);
+}
+function mostrarResultadoKatz(ap){
+  const f=faixaKatz(ap.pontos);
+  const ind=ap.independentes!==undefined?ap.independentes:6-ap.pontos;
+  document.getElementById('page-resultado-katz').dataset.apId=ap.id;
+  document.getElementById('katz-resultado-box').innerHTML=`
+    <div class="resultado-box ${f.cor}">
+      <div class="resultado-titulo">${f.nivel}</div>
+      <div class="resultado-pontuacao">${ap.pontos}<span style="font-size:1.4rem;opacity:.5">/6</span></div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:10px;">Paciente: <strong>${ap.pacienteNome}</strong> · ${formatDate(ap.data)} · Informante: ${ap.informante}</div>
+      <div style="font-size:.95rem;font-weight:600;">Independente em ${ind} de 6 funções · dependente em ${ap.pontos}</div>
+    </div>
+    <div class="table-wrap" style="margin-bottom:20px;"><table>
+      <thead><tr><th>Função</th><th>Classificação</th><th>Alternativa marcada</th></tr></thead>
+      <tbody>${KATZ.map(fn=>{
+        const i=ap.respostas[fn.k];
+        const o=i!==undefined?fn.opts[i]:null;
+        return`<tr><td><strong>${fn.nome}</strong></td>
+          <td>${o?`<span class="badge ${o.dep?'badge-alto':'badge-baixo'}">${o.dep?'Dependente':'Independente'}</span>`:'-'}</td>
+          <td style="font-size:.8rem;">${o?o.t:'-'}</td></tr>`;
+      }).join('')}
+      <tr><td colspan="2" style="text-align:right;font-weight:700;">Funções com dependência</td><td style="font-weight:700;">${ap.pontos} de 6</td></tr>
+      </tbody></table></div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+      ℹ️ Índice de Katz — Katz, S. et al. (1963); formulário da SMS-Rio, abril de 2024. Aqui a pontuação <strong>conta as dependências</strong>: 0 significa independente nas seis funções e 6, dependente em todas. Parte da literatura usa a convenção inversa, contando as independências, em que 6 é o melhor resultado — por isso o número bruto só deve ser comparado entre avaliações feitas pela mesma convenção.
+    </div>`;
+  const leitura=[[0,'Independente em todas as seis funções'],[1,'Independente em cinco funções e dependente em uma'],
+                 [2,'Independente em quatro funções e dependente em duas'],[3,'Independente em três funções e dependente em três'],
+                 [4,'Independente em duas funções e dependente em quatro'],[5,'Independente em uma função e dependente em cinco'],
+                 [6,'Dependente em todas as seis funções']];
+  document.getElementById('katz-resultado-detalhe').innerHTML=`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Interpretação do escore</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Pontos</th><th>Significado</th><th></th></tr></thead>
+      <tbody>${leitura.map(([v,t])=>`<tr><td>${v}</td><td>${t}</td><td>${ap.pontos===v?'◀ resultado':''}</td></tr>`).join('')}</tbody>
+    </table></div>`;
+  showPage('resultado-katz');
+}
+function renderKatzHistorico(){
+  const aps=escalasState.aplicacoes.filter(a=>a.tipo==='katz').sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const indep=aps.filter(a=>(a.pontos||0)===0).length;
+  const media=aps.length?(aps.reduce((x,a)=>x+(a.pontos||0),0)/aps.length).toFixed(1).replace('.',','):'0';
+  document.getElementById('katz-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">Independentes (0)</div><div class="value" style="color:var(--success)">${indep}</div></div>
+    <div class="stat-card"><div class="label">Dependências (média)</div><div class="value">${media}<span style="font-size:1rem;opacity:.5">/6</span></div></div>`;
+  document.getElementById('katz-historico').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação do Índice de Katz ainda</p></div>'
+    :aps.map(a=>renderHistoricoItem(a)).join('');
+}
+function gerarPdfKatz(){
+  const id=document.getElementById('page-resultado-katz')?.dataset?.apId;
+  let ap=escalasState.aplicacoes.find(a=>a.id===id);
+  if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='katz');ap=aps[aps.length-1];}
+  if(!ap)return;
+  const f=faixaKatz(ap.pontos);
+  const ind=ap.independentes!==undefined?ap.independentes:6-ap.pontos;
+  const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Índice de Katz — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <body><h1>Índice de Katz — Atividades Básicas de Vida Diária</h1>
+  <p style="text-align:center;color:#666;font-size:11px;">Katz, S. et al. (1963) · formulário da Secretaria Municipal de Saúde do Rio de Janeiro, abril de 2024</p>
+  <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
+  <div style="background:${cc[f.cor]}20;border:2px solid ${cc[f.cor]};border-radius:8px;padding:14px;text-align:center;margin-bottom:16px;">
+    <div style="font-size:20px;font-weight:bold;color:${cc[f.cor]};margin:4px 0;">${f.nivel}</div>
+    <div style="font-size:15px;margin:4px 0;"><b>Pontuação total: ${ap.pontos} de 6</b></div>
+    <div style="font-size:11px;color:#555;margin-top:8px;">Independente em ${ind} de 6 funções; dependente em ${ap.pontos}.</div>
+  </div>
+  <table><thead><tr><th>Função</th><th>Classificação</th><th>Alternativa marcada</th></tr></thead><tbody>
+  ${KATZ.map(fn=>{const i=ap.respostas[fn.k];const o=i!==undefined?fn.opts[i]:null;
+    return`<tr><td><b>${fn.nome}</b></td><td style="color:${o&&o.dep?'#B3261E':'#2F7A63'};font-weight:bold;">${o?(o.dep?'Dependente':'Independente'):'-'}</td><td>${o?o.t:'-'}</td></tr>`;
+  }).join('')}
+  <tr><td colspan="2" style="text-align:right;font-weight:bold;">Funções com dependência</td><td style="font-weight:bold;">${ap.pontos} de 6</td></tr>
+  </tbody></table>
+  <table style="margin-top:14px;"><thead><tr><th>Pontos</th><th>Interpretação</th></tr></thead><tbody>
+    <tr><td>0</td><td>Independente em todas as seis funções</td></tr>
+    <tr><td>1</td><td>Independente em cinco funções e dependente em uma</td></tr>
+    <tr><td>2</td><td>Independente em quatro funções e dependente em duas</td></tr>
+    <tr><td>3</td><td>Independente em três funções e dependente em três</td></tr>
+    <tr><td>4</td><td>Independente em duas funções e dependente em quatro</td></tr>
+    <tr><td>5</td><td>Independente em uma função e dependente em cinco</td></tr>
+    <tr><td>6</td><td>Dependente em todas as seis funções</td></tr>
+  </tbody></table>
+  ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
+  <p style="margin-top:14px;font-size:10px;color:#666;">A pontuação conta as funções com dependência. "Assistência" significa supervisão ou ajuda direta de outra pessoa.</p>
   <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
   <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
