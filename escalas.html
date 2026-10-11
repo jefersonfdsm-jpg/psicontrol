@@ -94,6 +94,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .snap-item.respondido{border-color:rgba(46,110,151,.3);}
 .snap-texto{font-size:.87rem;color:var(--text);line-height:1.4;}
 .snap-opcao{display:flex;align-items:center;justify-content:center;}
+.snap-header-row.c3,.snap-item.c3{grid-template-columns:1fr repeat(3,96px);}
 .snap-radio{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .snap-radio:hover{border-color:var(--accent);}
 .snap-radio.sel{border-color:var(--accent);background:var(--accent);}
@@ -292,12 +293,15 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="nav-item" onclick="window.location.href='cbcl.html'">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> CBCL 6-18
     </div>
-    <div class="nav-section">Adultos</div>
+    <div class="nav-section">Adultos e Idosos</div>
     <div class="nav-item" onclick="showPage('gad7')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> GAD-7
     </div>
     <div class="nav-item" onclick="showPage('dass21')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> DASS-21
+    </div>
+    <div class="nav-item" onclick="showPage('lawton')">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> Lawton (AIVD)
     </div>
     <div class="nav-section">Histórico</div>
     <div class="nav-item" onclick="showPage('historico')">
@@ -429,6 +433,21 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
         <div class="escala-actions">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('dass21')">▶ Aplicar</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('dass21')">Histórico</button>
+        </div>
+      </div>
+      <div class="escala-card" onclick="showPage('lawton')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(169,113,26,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="escala-badge" style="background:rgba(169,113,26,.15);color:var(--accent3);">Funcionalidade · Idosos</div>
+        </div>
+        <h3>Lawton e Brody</h3>
+        <p>Atividades Instrumentais de Vida Diária (AIVD). Avalia o grau de independência do idoso em nove atividades do dia a dia.</p>
+        <div class="escala-info"><span>9 itens</span><span>1 a 3 pontos</span><span>~5 min</span></div>
+        <div class="escala-actions">
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('lawton')">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('lawton')">Histórico</button>
         </div>
       </div>
     </div>
@@ -743,6 +762,48 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div id="dass21-resultado-detalhe"></div>
   </div>
 
+  <!-- LAWTON -->
+  <div id="page-lawton" class="page">
+    <div class="page-header"><div><h2>Lawton e Brody — AIVD</h2><p>Atividades Instrumentais de Vida Diária · 9 itens</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('lawton')">▶ Nova Aplicação</button></div>
+    <div class="cards-row cols-3" id="lawton-stats"></div>
+    <div id="lawton-historico"></div>
+  </div>
+
+  <!-- APLICAÇÃO LAWTON -->
+  <div id="page-aplicacao-lawton" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('lawton')">Lawton (AIVD)</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="aplicacao-header">
+      <div class="aplicacao-info"><h3>Lawton e Brody — <span id="lawton-pac-nome"></span></h3><p id="lawton-pac-info"></p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="showPage('lawton')">Cancelar</button>
+        <button class="btn btn-primary" onclick="finalizarLawton()">Finalizar e Ver Resultado</button>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar-label"><span id="lawton-progress-txt">0 de 9 respondidas</span><span id="lawton-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="lawton-bar" style="width:0%"></div></div>
+    </div>
+    <div style="background:rgba(169,113,26,.07);border:1px solid rgba(169,113,26,.2);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent3);line-height:1.6;">
+      ℹ️ Pergunte sobre o que a pessoa <strong>consegue fazer hoje</strong>, não sobre o que costumava fazer. Itens que ela nunca realizou por hábito de vida devem ser registrados em Observações, porque a escala não prevê opção "não se aplica".
+    </div>
+    <div class="snap-header-row c3">
+      <span>Atividade</span><span>Sem<br>ajuda</span><span>Com ajuda<br>parcial</span><span>Não<br>consegue</span>
+    </div>
+    <div id="lawton-questoes"></div>
+  </div>
+
+  <!-- RESULTADO LAWTON -->
+  <div id="page-resultado-lawton" class="page">
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('lawton')">Lawton (AIVD)</span><span>›</span><span style="color:var(--text2)">Resultado</span></div>
+    <div id="lawton-resultado-box"></div>
+    <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="gerarPdfLawton()">⬇ Exportar PDF</button>
+      <button class="btn btn-outline" onclick="showPage('lawton')">Ver Histórico</button>
+      <button class="btn btn-outline" onclick="iniciarAplicacao('lawton')">Nova Aplicação</button>
+    </div>
+    <div id="lawton-resultado-detalhe"></div>
+  </div>
+
 </div>
 
 </div>
@@ -885,6 +946,7 @@ function showPage(p){
   if(p==='irdi')renderIrdiHistorico();
   if(p==='gad7')renderGad7Historico();
   if(p==='dass21')renderDass21Historico();
+  if(p==='lawton')renderLawtonHistorico();
   if(p==='historico')renderHistoricoGeral();
 }
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebar-overlay').classList.toggle('open');}
@@ -904,11 +966,12 @@ function renderHome(){
   const ir=escalasState.aplicacoes.filter(a=>a.tipo==='irdi').length;
   const ga=escalasState.aplicacoes.filter(a=>a.tipo==='gad7').length;
   const da=escalasState.aplicacoes.filter(a=>a.tipo==='dass21').length;
+  const lw=escalasState.aplicacoes.filter(a=>a.tipo==='lawton').length;
   document.getElementById('home-stats').innerHTML=`
     <div class="stat-card"><div class="label">Total Aplicações</div><div class="value">${total}</div><div class="sub">Todas as escalas</div></div>
     <div class="stat-card"><div class="label">M-CHAT-R / SNAP-IV</div><div class="value">${mc+sn}</div><div class="sub">Rastreio</div></div>
     <div class="stat-card"><div class="label">Portage / IRDI</div><div class="value">${pt+ir}</div><div class="sub">Desenvolvimento</div></div>
-    <div class="stat-card"><div class="label">GAD-7 / DASS-21</div><div class="value">${ga+da}</div><div class="sub">Adultos</div></div>`;
+    <div class="stat-card"><div class="label">GAD-7 / DASS-21 / Lawton</div><div class="value">${ga+da+lw}</div><div class="sub">Adultos e idosos</div></div>`;
   const ult=[...escalasState.aplicacoes].sort((a,b)=>new Date(b.data)-new Date(a.data)).slice(0,5);
   document.getElementById('home-ultimas').innerHTML=ult.length===0
     ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação realizada ainda</p></div>'
@@ -955,7 +1018,7 @@ function getInformante(){
 
 function iniciarAplicacao(tipo){
   tipoAplicacaoAtual=tipo;
-  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21'};
+  const labels={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'Guia Portage',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'Lawton e Brody (AIVD)'};
   document.getElementById('modal-apl-titulo').textContent=`Nova Aplicação — ${labels[tipo]||tipo}`;
   const sel=document.getElementById('apl-paciente');
   sel.innerHTML='<option value="">Selecione o paciente</option>'+
@@ -970,7 +1033,7 @@ function iniciarAplicacao(tipo){
   document.getElementById('novo-pac-nasc').value='';
   document.getElementById('apl-nasc-row').style.display='';
   document.getElementById('apl-informante-row').style.display='none';
-  const _inf=(tipo==='gad7'||tipo==='dass21')?'O proprio paciente':'Mae';
+  const _inf=(tipo==='gad7'||tipo==='dass21'||tipo==='lawton')?'O proprio paciente':'Mae';
   document.getElementById('apl-informante').value=_inf;
   document.getElementById('apl-informante2').value=_inf;
   const _alvo=pacienteDaURL();
@@ -1027,6 +1090,7 @@ async function confirmarAplicacao(){
   else if(tipoAplicacaoAtual==='irdi')abrirIrdi();
   else if(tipoAplicacaoAtual==='gad7')abrirGad7();
   else if(tipoAplicacaoAtual==='dass21')abrirDass21();
+  else if(tipoAplicacaoAtual==='lawton')abrirLawton();
 }
 
 // M-CHAT-R
@@ -2022,6 +2086,15 @@ function renderHistoricoItem(a){
       <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[pior.cor]}">${pior.nivel}</span></div>
       ${btnDel}
     </div>`;
+  } else if(a.tipo==='lawton'){
+    const f=faixaLawton(a.pontos||0);
+    const cm={baixo:'badge-baixo',medio:'badge-medio',alto:'badge-alto'};
+    return`<div class="historico-item" onclick="verAplicacao('${a.id}')">
+      <div style="flex-shrink:0;"><div style="font-size:.68rem;color:var(--accent3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">LAWTON</div></div>
+      <div class="historico-info"><h4>${a.pacienteNome}</h4><p>${a.dependentes} atividade(s) com dependência · Informante: ${a.informante}</p></div>
+      <div class="historico-data"><div class="data">${formatDate(a.data)}</div><span class="badge ${cm[f.cor]}">${f.nivel}</span><div class="pontos">${a.pontos}/27</div></div>
+      ${btnDel}
+    </div>`;
   } else if(a.tipo==='portage'){
     const totalR=Object.keys(a.respostas||{}).length;
     const sim=Object.values(a.respostas||{}).filter(r=>r==='S').length;
@@ -2054,9 +2127,10 @@ function renderHistoricoGeral(){
       else if(a.tipo==='snap'){const{d,h,t}=a.scores||{};res=`<span class="badge ${(d>=6||h>=6||t>=4)?'badge-alto':'badge-baixo'}">D:${d} H:${h} TOD:${t}</span>`;}
       else if(a.tipo==='gad7'){const f=faixaGad7(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/21)</span>`;}
       else if(a.tipo==='dass21'){const s=a.scores||{d:0,a:0,e:0};res=`<span class="badge ${cm[faixaDass('d',s.d).cor]}">D:${s.d} · A:${s.a} · E:${s.e}</span>`;}
+      else if(a.tipo==='lawton'){const f=faixaLawton(a.pontos||0);res=`<span class="badge ${cm[f.cor]}">${f.nivel} (${a.pontos}/27)</span>`;}
       else if(a.tipo==='portage'){res=`<span class="badge badge-baixo">${Object.keys(a.respostas||{}).length} itens</span>`;}
       else if(a.tipo==='irdi'){const aus=a.totalAusencias!==undefined?a.totalAusencias:Object.values(a.respostas||{}).filter(r=>r==='A').length;res=`<span class="badge ${aus===0?'badge-baixo':aus===1?'badge-medio':'badge-alto'}">${aus} ausência(s)</span>`;}
-      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21'};
+      const NOMES={mchat:'M-CHAT-R',snap:'SNAP-IV',portage:'PORTAGE',irdi:'IRDI',gad7:'GAD-7',dass21:'DASS-21',lawton:'LAWTON'};
       return`<tr><td><strong style="color:var(--accent)">${NOMES[a.tipo]||a.tipo}</strong></td>
         <td>${a.pacienteNome}</td><td>${formatDate(a.data)}</td><td>${res}</td>
         <td><button class="btn btn-outline btn-sm" onclick="verAplicacao('${a.id}')">Ver</button> <button class="btn btn-danger btn-sm" onclick="deletarAplicacao('${a.id}')">🗑</button></td></tr>`;
@@ -2065,6 +2139,7 @@ function renderHistoricoGeral(){
 function verAplicacao(id){
   const a=escalasState.aplicacoes.find(x=>x.id===id);
   if(!a)return;
+  if(a.tipo==='lawton')return mostrarResultadoLawton(a);
   if(a.tipo==='gad7')return mostrarResultadoGad7(a);
   if(a.tipo==='dass21')return mostrarResultadoDass21(a);
   if(a.tipo==='mchat')mostrarResultadoMchat(a);
@@ -2085,6 +2160,7 @@ function deletarAplicacao(id){
   else if(tipo==='irdi')renderIrdiHistorico();
   else if(tipo==='gad7')renderGad7Historico();
   else if(tipo==='dass21')renderDass21Historico();
+  else if(tipo==='lawton')renderLawtonHistorico();
   renderHistoricoGeral();
   showToast('🗑 Aplicação removida');
 }
@@ -3560,6 +3636,168 @@ function gerarPdfDass21(){
   }).join('')}</tbody></table>
   ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
   <p style="margin-top:14px;font-size:10px;color:#666;">Referência: última semana. As faixas descrevem intensidade de sintomas, não diagnóstico.</p>
+  <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  </body></html>`);win.document.close();
+}
+
+
+/* ==================================================================
+   ESCALA DE LAWTON E BRODY — Atividades Instrumentais de Vida Diária
+   Lawton, M.P. & Brody, E.M. (1969).  Versão brasileira de 9 itens,
+   com 3 níveis por item: sem ajuda (3), com ajuda parcial (2),
+   não consegue (1).  Total de 9 a 27 pontos.
+   Faixas: 9 totalmente dependente · 10–15 grave · 16–20 moderada ·
+   21–25 leve · 26–27 independente.
+   ================================================================== */
+const LAWTON=[
+  {n:1,texto:'Consegue usar o telefone?'},
+  {n:2,texto:'Consegue ir a locais distantes, usando algum transporte, sem necessidade de planejamentos especiais?'},
+  {n:3,texto:'Consegue fazer compras?'},
+  {n:4,texto:'Consegue preparar as próprias refeições?'},
+  {n:5,texto:'Consegue fazer o trabalho doméstico?'},
+  {n:6,texto:'Consegue fazer trabalhos manuais domésticos, como pequenos reparos?'},
+  {n:7,texto:'Consegue lavar e passar a própria roupa?'},
+  {n:8,texto:'Consegue tomar os remédios na dose e nos horários corretos?'},
+  {n:9,texto:'Consegue cuidar das próprias finanças?'},
+];
+const LAWTON_OPTS={3:'Sem ajuda',2:'Com ajuda parcial',1:'Não consegue'};
+
+function faixaLawton(t){
+  if(t>=26)return{nivel:'Independente',cor:'baixo'};
+  if(t>=21)return{nivel:'Dependência leve',cor:'medio'};
+  if(t>=16)return{nivel:'Dependência moderada',cor:'medio'};
+  if(t>=10)return{nivel:'Dependência grave',cor:'alto'};
+  return{nivel:'Totalmente dependente',cor:'alto'};
+}
+function calcLawton(res){let t=0;LAWTON.forEach(q=>{t+=(res[q.n]||0);});return t;}
+function dependentesLawton(res){return LAWTON.filter(q=>res[q.n]!==undefined&&res[q.n]<3).length;}
+
+function abrirLawton(){
+  document.getElementById('lawton-pac-nome').textContent=aplicacaoAtual.pacienteNome;
+  document.getElementById('lawton-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
+  aplicacaoAtual.respostas={};
+  renderLawtonQuestoes();
+  showPage('aplicacao-lawton');
+  window.scrollTo(0,0);
+}
+function renderLawtonQuestoes(){
+  const resp=Object.keys(aplicacaoAtual.respostas).length;
+  const pct=Math.round(resp/9*100);
+  document.getElementById('lawton-progress-txt').textContent=`${resp} de 9 respondidas`;
+  document.getElementById('lawton-pct').textContent=pct+'%';
+  document.getElementById('lawton-bar').style.width=pct+'%';
+  document.getElementById('lawton-questoes').innerHTML=LAWTON.map(q=>{
+    const r=aplicacaoAtual.respostas[q.n];
+    return`<div class="snap-item c3 ${r!==undefined?'respondido':''}" id="lq-${q.n}">
+      <div class="snap-texto">${q.n}. ${q.texto}</div>
+      ${[3,2,1].map(v=>`<div class="snap-opcao"><div class="snap-radio ${r===v?'sel':''}" onclick="respLawton(${q.n},${v})"></div></div>`).join('')}
+    </div>`;
+  }).join('');
+}
+function respLawton(n,v){
+  aplicacaoAtual.respostas[n]=v;
+  renderLawtonQuestoes();
+  const prox=LAWTON.find(q=>aplicacaoAtual.respostas[q.n]===undefined);
+  if(prox){const el=document.getElementById('lq-'+prox.n);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
+}
+function finalizarLawton(){
+  const n=Object.keys(aplicacaoAtual.respostas).length;
+  if(n<9){showToast(`⚠️ Responda todos os itens (${9-n} faltando)`);return;}
+  const pontos=calcLawton(aplicacaoAtual.respostas);
+  const f=faixaLawton(pontos);
+  const ap={id:uid(),tipo:'lawton',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
+    nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
+    obs:aplicacaoAtual.obs,data:new Date().toISOString().slice(0,10),
+    pontos,nivel:f.nivel,cor:f.cor,dependentes:dependentesLawton(aplicacaoAtual.respostas),
+    respostas:{...aplicacaoAtual.respostas}};
+  escalasState.aplicacoes.push(ap);
+  salvarEscalas();
+  mostrarResultadoLawton(ap);
+}
+function mostrarResultadoLawton(ap){
+  const f=faixaLawton(ap.pontos);
+  const dep=ap.dependentes!==undefined?ap.dependentes:dependentesLawton(ap.respostas||{});
+  document.getElementById('page-resultado-lawton').dataset.apId=ap.id;
+  document.getElementById('lawton-resultado-box').innerHTML=`
+    <div class="resultado-box ${f.cor}">
+      <div class="resultado-titulo">${f.nivel}</div>
+      <div class="resultado-pontuacao">${ap.pontos}<span style="font-size:1.4rem;opacity:.5">/27</span></div>
+      <div style="font-size:.85rem;color:var(--text2);margin-bottom:10px;">Paciente: <strong>${ap.pacienteNome}</strong> · ${formatDate(ap.data)} · Informante: ${ap.informante}</div>
+      <div style="font-size:.95rem;font-weight:600;">${dep===0?'Independente em todas as 9 atividades':`Precisa de ajuda em ${dep} de 9 atividades`}</div>
+    </div>
+    <div class="table-wrap" style="margin-bottom:20px;"><table>
+      <thead><tr><th>Faixa</th><th>Pontuação</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Totalmente dependente</td><td>9</td><td>${ap.pontos===9?'◀ resultado':''}</td></tr>
+        <tr><td>Dependência grave</td><td>10 – 15</td><td>${ap.pontos>=10&&ap.pontos<=15?'◀ resultado':''}</td></tr>
+        <tr><td>Dependência moderada</td><td>16 – 20</td><td>${ap.pontos>=16&&ap.pontos<=20?'◀ resultado':''}</td></tr>
+        <tr><td>Dependência leve</td><td>21 – 25</td><td>${ap.pontos>=21&&ap.pontos<=25?'◀ resultado':''}</td></tr>
+        <tr><td>Independente</td><td>26 – 27</td><td>${ap.pontos>=26?'◀ resultado':''}</td></tr>
+      </tbody></table></div>
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
+      ℹ️ Lawton &amp; Brody (1969), versão brasileira de 9 itens. A escala mede <strong>funcionalidade</strong>, não cognição: uma perda recente de independência em atividades que a pessoa fazia sozinha é o dado clinicamente relevante, mais do que o número bruto. Itens que ela nunca realizou por hábito de vida tendem a baixar o escore sem significar perda.
+    </div>`;
+  document.getElementById('lawton-resultado-detalhe').innerHTML=`
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Respostas Detalhadas</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Nº</th><th>Atividade</th><th>Resposta</th><th>Pontos</th></tr></thead>
+      <tbody>${LAWTON.map(q=>{
+        const r=ap.respostas[q.n];
+        return`<tr><td>${q.n}</td><td style="font-size:.82rem;">${q.texto}</td>
+          <td>${LAWTON_OPTS[r]||'-'}</td>
+          <td style="text-align:center;font-weight:700;">${r||'-'}</td></tr>`;
+      }).join('')}
+      <tr><td></td><td colspan="2" style="text-align:right;font-weight:700;">Total</td><td style="text-align:center;font-weight:700;">${ap.pontos}/27</td></tr>
+      </tbody></table></div>`;
+  showPage('resultado-lawton');
+}
+function renderLawtonHistorico(){
+  const aps=escalasState.aplicacoes.filter(a=>a.tipo==='lawton').sort((a,b)=>new Date(b.data)-new Date(a.data));
+  const indep=aps.filter(a=>(a.pontos||0)>=26).length;
+  const media=aps.length?Math.round(aps.reduce((x,a)=>x+(a.pontos||0),0)/aps.length):0;
+  document.getElementById('lawton-stats').innerHTML=`
+    <div class="stat-card"><div class="label">Total</div><div class="value">${aps.length}</div></div>
+    <div class="stat-card"><div class="label">Independentes</div><div class="value" style="color:var(--success)">${indep}</div></div>
+    <div class="stat-card"><div class="label">Escore médio</div><div class="value">${media}<span style="font-size:1rem;opacity:.5">/27</span></div></div>`;
+  document.getElementById('lawton-historico').innerHTML=aps.length===0
+    ?'<div class="empty-state"><div class="empty-icon">📋</div><p>Nenhuma aplicação da escala de Lawton ainda</p></div>'
+    :aps.map(a=>renderHistoricoItem(a)).join('');
+}
+function gerarPdfLawton(){
+  const id=document.getElementById('page-resultado-lawton')?.dataset?.apId;
+  let ap=escalasState.aplicacoes.find(a=>a.id===id);
+  if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='lawton');ap=aps[aps.length-1];}
+  if(!ap)return;
+  const f=faixaLawton(ap.pontos);
+  const dep=ap.dependentes!==undefined?ap.dependentes:dependentesLawton(ap.respostas||{});
+  const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lawton (AIVD) — ${ap.pacienteNome}</title>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <body><h1>Escala de Lawton e Brody — Atividades Instrumentais de Vida Diária</h1>
+  <p style="text-align:center;color:#666;font-size:11px;">Lawton, M.P. &amp; Brody, E.M. Assessment of Older People: Self-maintaining and Instrumental Activities of Daily Living. Gerontologist 1969; 9: 179–186.</p>
+  <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
+  <div style="background:${cc[f.cor]}20;border:2px solid ${cc[f.cor]};border-radius:8px;padding:14px;text-align:center;margin-bottom:16px;">
+    <div style="font-size:20px;font-weight:bold;color:${cc[f.cor]};margin:4px 0;">${f.nivel}</div>
+    <div style="font-size:15px;margin:4px 0;"><b>Total de pontos: ${ap.pontos}/27</b></div>
+    <div style="font-size:11px;color:#555;margin-top:8px;">${dep===0?'Independente em todas as 9 atividades.':`Dependência (parcial ou total) em ${dep} de 9 atividades.`}</div>
+  </div>
+  <table><thead><tr><th>Nº</th><th>Atividade</th><th>Resposta</th><th>Pontos</th></tr></thead><tbody>
+  ${LAWTON.map(q=>{const r=ap.respostas[q.n];
+    return`<tr><td>${q.n}</td><td>${q.texto}</td><td>${LAWTON_OPTS[r]||'-'}</td><td style="text-align:center;font-weight:bold;">${r||'-'}</td></tr>`;
+  }).join('')}
+  <tr><td colspan="3" style="text-align:right;font-weight:bold;">Total</td><td style="text-align:center;font-weight:bold;">${ap.pontos}</td></tr>
+  </tbody></table>
+  <table style="margin-top:14px;"><thead><tr><th>Faixa</th><th>Pontuação</th></tr></thead><tbody>
+    <tr><td>Totalmente dependente</td><td>9</td></tr>
+    <tr><td>Dependência grave</td><td>10 – 15</td></tr>
+    <tr><td>Dependência moderada</td><td>16 – 20</td></tr>
+    <tr><td>Dependência leve</td><td>21 – 25</td></tr>
+    <tr><td>Independente</td><td>26 – 27</td></tr>
+  </tbody></table>
+  ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
+  <p style="margin-top:14px;font-size:10px;color:#666;">Sem ajuda = 3 · Com ajuda parcial = 2 · Não consegue = 1. A escala avalia funcionalidade e não substitui avaliação clínica.</p>
   <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
   <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
