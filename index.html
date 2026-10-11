@@ -684,6 +684,13 @@
 
   /* a tela de login nem chega a ser pintada quando ja existe sessao salva */
   html.sessao-salva #login-screen{ display:none !important; }
+
+  /* iOS: 100vh inclui a barra do navegador e corta o rodape; dvh usa a altura visivel */
+  @supports (height: 100dvh) {
+    body { height: 100dvh; }
+    #main { height: 100dvh; }
+    #mod-frame { height: calc(100dvh - 140px); }
+  }
 </style>
 </head>
 <body>
@@ -2582,13 +2589,15 @@ function fxRenderEscalas(p){
 
   document.getElementById('fx-n-escalas').textContent = minhas.length || '';
 
-  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18' };
+  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18', gad7:'GAD-7', dass21:'DASS-21' };
   function linha(a){
     let detalhe = '';
     if(a.tipo === 'mchat' && a.nivel) detalhe = `risco ${fxEsc(a.nivel)}`;
     else if(a.tipo === 'snap' && a.scores) detalhe = Object.entries(a.scores).map(([k,v])=>`${fxEsc(k)} ${fxEsc(v)}`).join(' · ');
     else if(a.tipo === 'irdi' && a.totalAusencias != null) detalhe = `${a.totalAusencias} indicador(es) ausente(s)`;
     else if(a.tipo === 'portage') detalhe = 'perfil de desenvolvimento';
+    else if(a.tipo === 'gad7') detalhe = `${fxEsc(a.pontos)}/21${a.nivel ? ' — ' + fxEsc(a.nivel) : ''}`;
+    else if(a.tipo === 'dass21' && a.scores) detalhe = `depressão ${fxEsc(a.scores.d)} · ansiedade ${fxEsc(a.scores.a)} · estresse ${fxEsc(a.scores.e)}`;
     return `<div class="fx-item"><span class="fx-data">${fxData(a.data)}</span>
       <span class="fx-txt"><b>${fxEsc(nomes[a.tipo] || a.tipo)}</b>${detalhe ? ' — ' + detalhe : ''}</span></div>`;
   }

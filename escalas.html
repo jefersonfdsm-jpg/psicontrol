@@ -185,6 +185,13 @@ tbody tr:hover td{background:rgba(46,110,151,.05);color:var(--text);}
 
   /* a tela de login nem chega a ser pintada quando ja existe sessao salva */
   html.sessao-salva #login-screen{ display:none !important; }
+
+  /* iOS: 100vh inclui a barra do navegador e corta o rodape; dvh usa a altura visivel */
+  @supports (height: 100dvh) {
+    body { height: 100dvh; }
+    #main { height: 100dvh; }
+    #mod-frame { height: calc(100dvh - 140px); }
+  }
 </style>
 </head>
 <body>
