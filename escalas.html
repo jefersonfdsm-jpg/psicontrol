@@ -101,6 +101,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .cdr-opcoes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:stretch;}
 .cdr-opcoes.c4{grid-template-columns:repeat(4,1fr);}
 .cdr-opcoes.c3{grid-template-columns:repeat(3,1fr);}
+.cdr-opcoes.auto{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));}
+.cdr-passos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+.cdr-passo{font-size:.7rem;padding:5px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text3);cursor:pointer;white-space:nowrap;transition:.15s;}
+.cdr-passo:hover{border-color:var(--accent);color:var(--accent);}
+.cdr-passo.ativo{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;}
+.cdr-passo.feito{border-color:rgba(46,110,151,.4);color:var(--accent);}
+.cdr-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.cdr-nav-info{font-size:.8rem;color:var(--text3);}
+.cdr-campo{margin-bottom:16px;}
+.cdr-perg{font-size:.88rem;color:var(--text);line-height:1.45;margin-bottom:8px;}
+.cdr-sub{font-size:.75rem;color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:22px 0 12px;padding:7px 12px;background:rgba(46,110,151,.07);border-left:3px solid var(--accent2);border-radius:0 6px 6px 0;}
+.cdr-nota{font-size:.78rem;color:var(--text3);line-height:1.5;margin-bottom:14px;font-style:italic;}
+.cdr-in{width:100%;font-family:inherit;font-size:.88rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 11px;outline:none;}
+.cdr-in:focus{border-color:var(--accent);}
+.cdr-chk{display:flex;flex-wrap:wrap;gap:7px;}
+.cdr-chk label{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 11px;cursor:pointer;}
+.cdr-chk input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+.cdr-chk label.on{border-color:var(--accent);color:var(--text);background:rgba(46,110,151,.1);}
+.cdr-tent{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 5px;}
 .cdr-dom-nota{font-size:.75rem;color:var(--text3);line-height:1.45;margin:-4px 0 10px;}
 .cdr-tag{display:inline-block;font-size:.64rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-bottom:6px;}
 .cdr-tag.ind{background:rgba(47,122,99,.15);color:var(--success);}
@@ -481,8 +500,8 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
           <div class="escala-badge" style="background:rgba(109,91,168,.15);color:#6D5BA8;">Demência · Estadiamento</div>
         </div>
         <h3>CDR</h3>
-        <p>Clinical Dementia Rating. Estadiamento da demência em seis domínios, com CDR global e soma das caixas (CDR-SOB).</p>
-        <div class="escala-info"><span>6 domínios</span><span>0 a 3</span><span>Pós-entrevista</span></div>
+        <p>Clinical Dementia Rating. Entrevista semiestruturada em 10 folhas, com informante e paciente, seguida da pontuação das seis categorias.</p>
+        <div class="escala-info"><span>10 folhas + pontuação</span><span>0 a 3</span><span>~40 min</span></div>
         <div class="escala-actions">
           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();iniciarAplicacao('cdr')">▶ Aplicar</button>
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('cdr')">Histórico</button>
@@ -859,14 +878,14 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
 
   <!-- CDR -->
   <div id="page-cdr" class="page">
-    <div class="page-header"><div><h2>CDR — Clinical Dementia Rating</h2><p>Escala de Avaliação Clínica da Demência · 6 domínios</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('cdr')">▶ Nova Aplicação</button></div>
+    <div class="page-header"><div><h2>CDR — Clinical Dementia Rating</h2><p>Escala de Avaliação Clínica da Demência · entrevista semiestruturada</p></div><button class="btn btn-primary" onclick="iniciarAplicacao('cdr')">▶ Nova Aplicação</button></div>
     <div class="cards-row cols-3" id="cdr-stats"></div>
     <div id="cdr-historico"></div>
   </div>
 
   <!-- APLICAÇÃO CDR -->
   <div id="page-aplicacao-cdr" class="page">
-    <div class="breadcrumb"><span class="crumb" onclick="showPage('cdr')">CDR</span><span>›</span><span style="color:var(--text2)">Aplicação</span></div>
+    <div class="breadcrumb"><span class="crumb" onclick="showPage('cdr')">CDR</span><span>›</span><span style="color:var(--text2)">Entrevista</span></div>
     <div class="aplicacao-header">
       <div class="aplicacao-info"><h3>CDR — <span id="cdr-pac-nome"></span></h3><p id="cdr-pac-info"></p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -875,13 +894,16 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
       </div>
     </div>
     <div class="progress-wrap">
-      <div class="progress-bar-label"><span id="cdr-progress-txt">0 de 6 domínios</span><span id="cdr-pct">0%</span></div>
+      <div class="progress-bar-label"><span id="cdr-progress-txt">Folha 1 de 11</span><span id="cdr-pct">0%</span></div>
       <div class="progress-bar"><div class="progress-fill" id="cdr-bar" style="width:0%"></div></div>
     </div>
-    <div style="background:rgba(109,91,168,.07);border:1px solid rgba(109,91,168,.25);border-radius:10px;padding:13px 16px;margin-bottom:20px;font-size:.83rem;color:#5A4A92;line-height:1.6;">
-      ℹ️ Esta tela registra a <strong>pontuação final de cada domínio</strong>, depois da entrevista semiestruturada com o paciente e com o informante. Ela não substitui a entrevista. Pontue cada domínio pelo <strong>declínio em relação ao desempenho anterior da própria pessoa</strong>, e não por limitações de escolaridade ou por outras causas (déficit visual, sequela motora, depressão).
+    <div class="cdr-passos" id="cdr-passos"></div>
+    <div id="cdr-etapa"></div>
+    <div class="cdr-nav">
+      <button class="btn btn-outline" id="cdr-btn-ant" onclick="cdrIrEtapa(cdrEtapa-1)">← Anterior</button>
+      <span class="cdr-nav-info" id="cdr-nav-info"></span>
+      <button class="btn btn-primary" id="cdr-btn-prox" onclick="cdrProxima()">Próxima →</button>
     </div>
-    <div id="cdr-dominios"></div>
   </div>
 
   <!-- RESULTADO CDR -->
@@ -3966,13 +3988,14 @@ function gerarPdfLawton(){
 
 
 /* ==================================================================
-   CDR — Clinical Dementia Rating (Hughes et al., 1982; Morris, 1993).
-   Versão brasileira do HCPA / Serviço de Neurologia (2006).
-   Seis domínios pontuados em 0, 0,5, 1, 2 e 3 — Cuidados Pessoais
-   não tem o nível 0,5.
-   O CDR global vem do algoritmo de Washington University, em que a
-   Memória é a categoria primária; a soma das caixas (CDR-SOB) é a
-   soma simples dos seis domínios, de 0 a 18.
+   CDR — Clinical Dementia Rating (Hughes et al., 1982; regras de
+   pontuacao de Morris, 1993).  Versao brasileira do HCPA / Servico
+   de Neurologia, Ambulatorio de Neuro-Geriatria e Demencias (2006).
+
+   A escala e a entrevista semiestruturada das folhas 1 a 10:
+   seis blocos com o informante, tres com o paciente e o desenho do
+   relogio.  A folha 11 e a tabela de pontuacao (pagina 2 do
+   caderno), de onde saem o CDR global e a soma das caixas.
    ================================================================== */
 const CDR_DOMINIOS=[
   {k:'memoria', nome:'Memória', meio:true, opts:{
@@ -4013,8 +4036,213 @@ const CDR_DOMINIOS=[
 ];
 const CDR_SECUNDARIAS=['orientacao','julgamento','comunidade','lar','cuidados'];
 
+/* ---- folhas da entrevista -------------------------------------- */
+const FREQ=['Geralmente','Algumas vezes','Raramente','NS'];
+const FREQ3=['Geralmente','Às vezes','Raramente'];
+const SIMNAO=['Sim','Não'];
+const SNA=['Sim','Não','Não aplicável'];
+const CI=['Correto','Incorreto'];
+
+const CDR_FOLHAS=[
+ {id:'f1', curto:'1 · Memória', titulo:'Folha 1 — Memória (informante)',
+  intro:'Esta é uma entrevista semiestruturada. Faça todas as perguntas, e qualquer pergunta adicional necessária para determinar o CDR. Anote as informações extras que surgirem.',
+  campos:[
+  {id:'m1',  t:'radio', q:'1. Ele/ela tem problemas de memória ou raciocínio?', o:SIMNAO},
+  {id:'m1a', t:'radio', q:'1a. Se sim, estes são persistentes (constantes, contínuos)?', o:SIMNAO},
+  {id:'m2',  t:'radio', q:'2. É capaz de lembrar uma lista curta (de compras)?', o:FREQ3},
+  {id:'m3',  t:'radio', q:'3. Tem notado perda de memória no último ano?', o:SIMNAO},
+  {id:'m4',  t:'radio', q:'4. É capaz de lembrar acontecimentos recentes?', o:FREQ3},
+  {id:'m5',  t:'radio', q:'5. A perda de memória interfere com as atividades diárias que o doente era capaz de realizar há uns anos atrás?', o:SIMNAO},
+  {id:'m6',  t:'radio', q:'6. Esquece completamente um evento mais importante em poucas semanas? (viagem, aniversário, visita)', o:FREQ3},
+  {id:'m7',  t:'radio', q:'7. Esquece detalhes significativos de um evento mais importante?', o:FREQ3},
+  {id:'m8',  t:'radio', q:'8. Esquece completamente informação importante do passado? (data de nascimento, casamento, emprego)', o:FREQ3},
+  {id:'m9',  t:'area',  q:'9. Conte-me algum acontecimento ocorrido recentemente (último mês) um pouco diferente do habitual (passeio, viagem, festa).',
+             dica:'Será testado depois com o paciente. Obtenha detalhes: local do evento, momento do dia, participantes, quanto durou, quando terminou e como chegaram lá. Obtenha este relato na ausência do paciente.'},
+  {id:'m10', t:'texto', q:'10. Data de nascimento'},
+  {id:'m11', t:'texto', q:'11. Local de nascimento'},
+  {id:'m12a',t:'texto', q:'12. Última escola que frequentou — nome'},
+  {id:'m12b',t:'texto', q:'12. Local da escola'},
+  {id:'m12c',t:'texto', q:'12. Nível de escolaridade'},
+  {id:'m13', t:'texto', q:'13. Principal ocupação ou profissão do doente (ou do cônjuge)'},
+  {id:'m14', t:'texto', q:'14. Último emprego (ou do cônjuge)'},
+  {id:'m15', t:'texto', q:'15. Quando se aposentou (ou o cônjuge) e por quê'},
+ ]},
+
+ {id:'f2', curto:'2 · Orientação', titulo:'Folha 2 — Orientação (informante)',
+  intro:'Com que frequência sabe corretamente:',
+  rodape:'NS — informante não tem condições de responder (não sabe).',
+  campos:[
+  {id:'o1', t:'radio', q:'1. Dia do mês', o:FREQ},
+  {id:'o2', t:'radio', q:'2. Mês', o:FREQ},
+  {id:'o3', t:'radio', q:'3. Ano', o:FREQ},
+  {id:'o4', t:'radio', q:'4. Dia da semana', o:FREQ},
+  {id:'o5', t:'radio', q:'5. Tem dificuldade com as relações temporais (situar os acontecimentos no tempo uns em relação aos outros)?', o:FREQ},
+  {id:'o6', t:'radio', q:'6. Consegue orientar-se em ruas familiares?', o:FREQ},
+  {id:'o7', t:'radio', q:'7. Consegue orientar-se fora da sua vizinhança?', o:FREQ},
+  {id:'o8', t:'radio', q:'8. Consegue orientar-se dentro de casa?', o:FREQ},
+ ]},
+
+ {id:'f3', curto:'3 · Julgamento', titulo:'Folha 3 — Julgamento e solução de problemas (informante)',
+  rodape:'NS — informante não tem condições de responder (não sabe).',
+  campos:[
+  {id:'j1', t:'radio', q:'1. Como considera a capacidade atual do doente para resolver problemas?',
+            o:['Como sempre','Boa, mas não tanto como anteriormente','Suficiente','Má','Sem qualquer capacidade']},
+  {id:'j2', t:'radio', q:'2. E a capacidade para lidar com pequenas somas de dinheiro (trocos, gorjetas)?',
+            o:['Sem perda','Perda moderada','Perda grave']},
+  {id:'j3', t:'radio', q:'3. E a capacidade para lidar com assuntos financeiros mais complexos (pagar contas, usar talão de cheques)?',
+            o:['Sem perda','Perda moderada','Perda grave']},
+  {id:'j4', t:'radio', q:'4. Como lida com um acidente em casa? (pequeno incêndio, cano furado)',
+            o:['Tão bem quanto antes','Pior do que antes, devido às alterações de memória e pensamento','Pior do que antes, devido a outras razões']},
+  {id:'j4b',t:'texto', q:'4a. Se por outras razões, quais?'},
+  {id:'j5', t:'radio', q:'5. Compreende as situações e o que lhe é explicado?', o:FREQ},
+  {id:'j6', t:'radio', q:'6. Comporta-se adequadamente (da maneira como costumava ser) nas situações sociais e na interação com os outros?', o:FREQ},
+ ]},
+
+ {id:'f4', curto:'4 · Comunidade', titulo:'Folha 4 — Atividades na comunidade (informante)',
+  rodape:'Atividades na comunidade: ir à igreja, visitar amigos ou familiares, atividades políticas, organizações profissionais, associações recreativas, voluntariado, programas educativos. NS — informante não sabe responder.',
+  campos:[
+  {id:'c_s1', t:'sub', q:'Ocupação'},
+  {id:'c1', t:'radio', q:'1. Ainda trabalha?', o:SNA},
+  {id:'c2', t:'radio', q:'2. Se não, as alterações de memória interferiram na decisão de se aposentar?', o:SNA},
+  {id:'c3', t:'radio', q:'3. Se sim, tem dificuldades devido às alterações de memória ou de raciocínio?', o:['Geralmente','Algumas vezes','Raramente','Não aplicável']},
+  {id:'c_s2', t:'sub', q:'Atividade social'},
+  {id:'c4',  t:'radio', q:'4. Alguma vez dirigiu automóvel (ou outro veículo)?', o:SNA},
+  {id:'c4b', t:'radio', q:'4a. Se sim, ainda dirige?', o:SNA},
+  {id:'c4c', t:'radio', q:'4b. Se não dirige, é devido às alterações de memória ou raciocínio?', o:SNA},
+  {id:'c5',  t:'radio', q:'5. Se ainda dirige, há problemas ou risco por causa das alterações de memória ou raciocínio?', o:SNA},
+  {id:'c6',  t:'radio', q:'6. É capaz de fazer suas compras sozinho(a)?',
+             o:['Raramente ou nunca — precisa de ajuda em qualquer compra','Algumas vezes — compra algumas coisas, mas traz duplo ou esquece outros','Geralmente','NS']},
+  {id:'c7',  t:'radio', q:'7. É capaz de realizar, de forma independente, alguma atividade fora de casa?',
+             o:['Raramente ou nunca — precisa de ajuda em qualquer atividade','Algumas vezes — limitada e/ou de rotina (igreja, cabeleireiro)','Geralmente','NS']},
+  {id:'c8',  t:'radio', q:'8. É levado(a) a atividades sociais fora da casa da família?', o:SIMNAO},
+  {id:'c8b', t:'texto', q:'8a. Se não, por quê?'},
+  {id:'c9',  t:'radio', q:'9. Um observador ocasional perceberia que se trata de uma pessoa doente por causa do comportamento?', o:['Sim','Não','NS']},
+  {id:'c10', t:'radio', q:'10. Se institucionalizado, participa de atividades sociais?', o:SNA},
+  {id:'c11', t:'area',  q:'Há informação suficiente para graduar o comprometimento nas atividades na comunidade? Se não, explore mais e anote aqui.'},
+ ]},
+
+ {id:'f5', curto:'5 · Lar e lazer', titulo:'Folha 5 — Lar e lazer, casa e passatempos (informante)',
+  campos:[
+  {id:'l1a', t:'area', q:'1a. Tendo em mente apenas a perda cognitiva, que mudanças ocorreram no desempenho das atividades domésticas?'},
+  {id:'l1b', t:'area', q:'1b. Que tarefas ainda consegue realizar corretamente?'},
+  {id:'l2a', t:'area', q:'2a. Tendo em mente apenas a perda cognitiva, que mudanças ocorreram na realização dos passatempos (hobbies)?'},
+  {id:'l2b', t:'area', q:'2b. Que passatempos ainda consegue realizar corretamente?'},
+  {id:'l3',  t:'area', q:'3. Se institucionalizado, que atividades domésticas e passatempos ainda consegue realizar corretamente?'},
+  {id:'l_s1',t:'sub',  q:'Atividades do dia a dia'},
+  {id:'l4',  t:'radio',q:'4. Capacidade para realizar tarefas domésticas', o:['Sem perda','Perda moderada','Perda grave']},
+  {id:'l5',  t:'radio',q:'5. A que nível é capaz de realizar tarefas domésticas simples e rotineiras?',
+             o:['a. Sem atividade significativa — executa atividades simples, como fazer a cama, mas com muita supervisão',
+                'b. Limitado a algumas tarefas simples — com alguma supervisão lava louça, põe a mesa',
+                'Não se aplica']},
+ ]},
+
+ {id:'f6', curto:'6 · Cuidados', titulo:'Folha 6 — Cuidados pessoais (informante)',
+  intro:'Cada item vale de 0 a 3. O maior valor entre os quatro costuma orientar a pontuação da caixa Cuidados Pessoais, mas quem decide é o julgamento clínico.',
+  campos:[
+  {id:'p_vestir', t:'radio', q:'A. Vestir', o:[
+    {t:'Normal, sem ajuda', v:0},{t:'Pequena ajuda, ocasional, ou botões mal colocados', v:1},
+    {t:'Sequência errada e com esquecimento de peças', v:2},{t:'Incapaz de se vestir', v:3}]},
+  {id:'p_higiene', t:'radio', q:'B. Higiene e aparência', o:[
+    {t:'Normal, sem ajuda', v:0},{t:'Tem que se chamar a atenção', v:1},
+    {t:'Algumas vezes necessita ajuda', v:2},{t:'Ajuda sempre ou quase sempre', v:3}]},
+  {id:'p_alim', t:'radio', q:'C. Alimentação', o:[
+    {t:'Limpo, utiliza corretamente os utensílios', v:0},{t:'Suja tudo e utiliza apenas a colher', v:1},
+    {t:'Sem ajuda só consegue comer sólidos simples', v:2},{t:'Precisa ser alimentado', v:3}]},
+  {id:'p_esf', t:'radio', q:'D. Controle esfincteriano', o:[
+    {t:'Normal, controle total', v:0},{t:'Ocasionalmente urina na cama', v:1},
+    {t:'Frequentemente urina na cama', v:2},{t:'Totalmente incontinente', v:3}]},
+ ]},
+
+ {id:'f7', curto:'7 · Memória (pac.)', titulo:'Folha 7 — Memória: questionário para o paciente',
+  campos:[
+  {id:'pm1', t:'radio', q:'1. Tem problemas de memória ou de raciocínio?', o:SIMNAO},
+  {id:'pm2', t:'radio', q:'2. "Há pouco o seu (marido, mulher...) me contou um acontecimento importante que ocorreu recentemente com o Sr(a). Poderia me contar o que aconteceu?"',
+             dica:'Incentive detalhes como datas, local e pessoas envolvidas. Se necessário, identifique o acontecimento.',
+             o:['Correto','Parcialmente correto','Incorreto']},
+  {id:'pm3', t:'registro', q:'3. "Vou lhe dizer o nome e o endereço de uma pessoa. Procure decorar, pois vou lhe pedir para repetir mais adiante."',
+             dica:'Até o máximo de 3 tentativas. Marque os elementos repetidos corretamente em cada tentativa.'},
+  {id:'pm4', t:'texto', q:'4. Qual a sua data de nascimento?'},
+  {id:'pm5', t:'texto', q:'5. Onde nasceu?'},
+  {id:'pm6a',t:'texto', q:'6. Qual o nome do colégio em que estudou por último?'},
+  {id:'pm6b',t:'texto', q:'6. Lugar'},
+  {id:'pm6c',t:'texto', q:'6. Grau'},
+  {id:'pm7', t:'evocacao', q:'7. "Pode repetir o nome e o endereço que lhe disse agora há pouco?"',
+             dica:'Marque os itens evocados corretamente.'},
+  {id:'pm8', t:'area',  q:'8. Observações'},
+ ]},
+
+ {id:'f8', curto:'8 · Orientação (pac.)', titulo:'Folha 8 — Orientação: questionário para o paciente',
+  campos:[
+  {id:'po1', t:'radio', q:'Que dia é hoje?', o:CI},
+  {id:'po2', t:'radio', q:'Qual é o dia da semana?', o:CI},
+  {id:'po3', t:'radio', q:'Em que mês estamos?', o:CI},
+  {id:'po4', t:'radio', q:'E o ano?', o:CI},
+  {id:'po5', t:'radio', q:'Que lugar é este aqui?', o:CI},
+  {id:'po6', t:'radio', q:'Qual o nome desta cidade?', o:CI},
+  {id:'po7', t:'radio', q:'Sem olhar para o relógio, sabe me dizer que horas são agora?', dica:'Aceitar diferença de até 1 hora.', o:CI},
+  {id:'po7a',t:'texto', q:'Hora verdadeira'},
+  {id:'po7b',t:'texto', q:'Hora referida pelo sujeito'},
+  {id:'po8', t:'radio', q:'O sujeito sabe quem é o informante (em seu julgamento)?', o:CI},
+ ]},
+
+ {id:'f9', curto:'9 · Juízo (pac.)', titulo:'Folha 9 — Juízo crítico e solução de problemas: questionário para o paciente',
+  intro:'Se a primeira resposta não merecer pontuação máxima, insista até compreender bem a capacidade do doente na compreensão do problema. Pontue a resposta mais aproximada.',
+  campos:[
+  {id:'js_s1', t:'sub', q:'Semelhanças'},
+  {id:'js_n1', t:'nota', q:'"Se eu lhe perguntar qual a semelhança entre uma banana e uma laranja, uma resposta certa é dizer que as duas são frutas. Diga-me agora em que são semelhantes..."'},
+  {id:'js1', t:'radio', q:'1. Cachorro e leão', o:[
+    {t:'Animais, mamíferos, carnívoros — qualquer elemento abstrato de categoria', v:0},
+    {t:'Resposta concreta (têm 4 patas, rabo, pelo)', v:1},
+    {t:'Resposta errada ou sem sentido, ou não sabe', v:2}]},
+  {id:'js2', t:'radio', q:'2. Mesa e cadeira', o:[
+    {t:'Mobília, móveis', v:0},
+    {t:'Resposta concreta (de madeira, com pés, servem para a cozinha)', v:1},
+    {t:'Resposta errada ou sem sentido, ou não sabe', v:2}]},
+  {id:'js_s2', t:'sub', q:'Diferenças'},
+  {id:'js_n2', t:'nota', q:'"Se eu lhe perguntar qual a diferença entre uma colher e uma pá, uma resposta certa é dizer que a colher é um utensílio para pegar alimentos e a pá serve para tirar ou botar terra, abrir um buraco no chão. Diga-me agora em que são diferentes..."'},
+  {id:'js3', t:'radio', q:'1. Açúcar e vinagre', o:[
+    {t:'Doce e ácido ou azedo', v:0},
+    {t:'Concreto (um para colocar no café e outro na salada)', v:1},
+    {t:'Errado ou sem sentido, ou não sabe', v:2}]},
+  {id:'js4', t:'radio', q:'2. Roubo e engano', o:[
+    {t:'Intencional e não intencional', v:0},
+    {t:'Só explica um', v:1},
+    {t:'Errado ou sem sentido, ou não sabe', v:2}]},
+  {id:'js_s3', t:'sub', q:'Cálculos'},
+  {id:'js5', t:'radio', q:'3. Quantas moedas de 50 centavos são necessárias para R$ 2,00?', o:CI},
+  {id:'js6', t:'radio', q:'4. Quantas notas de R$ 5,00 são necessárias para ter uma nota de R$ 20,00?', o:CI},
+  {id:'js7', t:'radio', q:'5. Subtraia 3 de 20 e siga subtraindo 3 a partir de cada resultado', dica:'Sequência esperada: 20 — 17 — 14 — 11 — 8 — 5 — 2.', o:CI},
+  {id:'js7b',t:'texto', q:'5a. Sequência dada pelo paciente'},
+  {id:'js_s4', t:'sub', q:'Crítica'},
+  {id:'js8', t:'radio', q:'6. Se chegasse numa cidade desconhecida e quisesse localizar um amigo, como faria?', o:[
+    {t:'Consultava lista telefônica, telefonava para um conhecido em comum', v:0},
+    {t:'Telefonava para a polícia', v:1},
+    {t:'Resposta sem sentido ou não sabe', v:2}]},
+  {id:'js9', t:'radio', q:'7. O que faria se visse fumaça saindo da janela do vizinho?', o:[
+    {t:'Chamava os bombeiros, avisava as pessoas e/ou ajudava', v:0},
+    {t:'Dá apenas uma alternativa correta', v:1},
+    {t:'Resposta sem sentido ou não sabe', v:2}]},
+  {id:'js10', t:'radio', q:'8. Autocrítica: por que veio ao médico? Qual é seu estado de saúde? (insight)', o:['Bom','Razoável','Ruim']},
+  {id:'js10b',t:'area', q:'8a. Registro da resposta'},
+ ]},
+
+ {id:'f10', curto:'10 · Relógio', titulo:'Folha 10 — Desenho do relógio',
+  intro:'Peça para desenhar um relógio redondo, colocar todas as horas e os ponteiros, e marcar a hora 2:45.',
+  campos:[
+  {id:'rel', t:'radio', q:'Pontuação do desenho', o:[
+    {t:'0 — Mau: desenho não reconhecível ou distorção grosseira', v:0},
+    {t:'1 — Suficiente: contém um dos seguintes — face aproximadamente circular, números de 1 a 12', v:1},
+    {t:'2 — Bom: contém dois dos seguintes — face circular, números de 1 a 12, números simétricos', v:2},
+    {t:'3 — Excelente: representação perfeita ou quase perfeita', v:3}]},
+  {id:'rel_obs', t:'area', q:'Observações sobre o desenho'},
+ ]},
+];
+const CDR_REG_ITENS=['Maria','da Silva','Rua da Praia','54','Centro'];
+const CDR_TOTAL_ETAPAS=CDR_FOLHAS.length+1;   // +1 = folha de pontuacao
+let cdrEtapa=0;
+
 function numCdr(v){
-  if(v===undefined||v===null||isNaN(v))return '-';
+  if(v===undefined||v===null||v==='' ||(typeof v==='number'&&isNaN(v)))return '-';
   return String(v).replace('.',',');
 }
 function faixaCdr(g){
@@ -4025,28 +4253,23 @@ function faixaCdr(g){
   return{nivel:'Saudável',cor:'baixo'};
 }
 
-/* Algoritmo de Washington University (Morris, 1993) */
+/* ---- algoritmo de Washington University (Morris, 1993) --------- */
 function calcCdrGlobal(b){
   const M=b.memoria;
   const S=CDR_SECUNDARIAS.map(k=>b[k]);
-  if(M===0){
-    return (S.filter(s=>s>=0.5).length>=2) ? 0.5 : 0;
-  }
-  if(M===0.5){
-    return (S.filter(s=>s>=1).length>=3) ? 1 : 0.5;
-  }
+  if(M===0) return (S.filter(s=>s>=0.5).length>=2) ? 0.5 : 0;
+  if(M===0.5) return (S.filter(s=>s>=1).length>=3) ? 1 : 0.5;
   const acima=S.filter(s=>s>M), abaixo=S.filter(s=>s<M), iguais=S.filter(s=>s===M);
   let r;
   if(iguais.length>=3) r=M;
-  else if(acima.length===3&&abaixo.length===2) r=M;          // 3 de um lado, 2 do outro
+  else if(acima.length===3&&abaixo.length===2) r=M;
   else if(abaixo.length===3&&acima.length===2) r=M;
   else if(acima.length>=3) r=maioriaCdr(acima,M);
   else if(abaixo.length>=3) r=maioriaCdr(abaixo,M);
-  else r=M;                                                   // 1 ou 2 iguais, no maximo 2 de cada lado
-  if(M>=1&&r===0) r=0.5;                                      // com M>=1 o CDR nunca e 0
+  else r=M;
+  if(M>=1&&r===0) r=0.5;
   return r;
 }
-/* valor mais frequente do lado; empate resolve pelo mais proximo de M */
 function maioriaCdr(lista,M){
   const cont={};
   lista.forEach(v=>{cont[v]=(cont[v]||0)+1;});
@@ -4057,56 +4280,214 @@ function maioriaCdr(lista,M){
   });
   return melhor;
 }
-function calcCdrSoma(b){
-  return CDR_DOMINIOS.reduce((t,d)=>t+(b[d.k]||0),0);
-}
+function calcCdrSoma(b){ return CDR_DOMINIOS.reduce((t,d)=>t+(b[d.k]||0),0); }
 
+/* ---- entrevista ------------------------------------------------ */
 function abrirCdr(){
   document.getElementById('cdr-pac-nome').textContent=aplicacaoAtual.pacienteNome;
   document.getElementById('cdr-pac-info').textContent=`Informante: ${aplicacaoAtual.informante}${aplicacaoAtual.obs?' · '+aplicacaoAtual.obs:''}`;
   aplicacaoAtual.respostas={};
-  renderCdrDominios();
+  aplicacaoAtual.entrevista={};
+  cdrEtapa=0;
+  renderCdrEtapa();
   showPage('aplicacao-cdr');
   window.scrollTo(0,0);
 }
-function renderCdrDominios(){
-  const resp=CDR_DOMINIOS.filter(d=>aplicacaoAtual.respostas[d.k]!==undefined).length;
-  const pct=Math.round(resp/6*100);
-  document.getElementById('cdr-progress-txt').textContent=`${resp} de 6 domínios`;
+function cdrIrEtapa(i){
+  if(i<0||i>=CDR_TOTAL_ETAPAS)return;
+  cdrEtapa=i;
+  renderCdrEtapa();
+  window.scrollTo(0,0);
+}
+function cdrProxima(){
+  if(cdrEtapa>=CDR_TOTAL_ETAPAS-1){ finalizarCdr(); return; }
+  cdrIrEtapa(cdrEtapa+1);
+}
+function cdrFolhaCompleta(i){
+  if(i===CDR_FOLHAS.length) return CDR_DOMINIOS.every(d=>aplicacaoAtual.respostas[d.k]!==undefined);
+  const f=CDR_FOLHAS[i];
+  return f.campos.some(c=>['sub','nota'].indexOf(c.t)<0 && cdrTemResposta(c));
+}
+function cdrTemResposta(c){
+  const v=aplicacaoAtual.entrevista[c.id];
+  if(v===undefined||v===null)return false;
+  if(Array.isArray(v))return v.some(x=>Array.isArray(x)?x.some(Boolean):Boolean(x));
+  return String(v).trim()!=='';
+}
+function renderCdrEtapa(){
+  const ult=cdrEtapa===CDR_TOTAL_ETAPAS-1;
+  const pct=Math.round((cdrEtapa)/(CDR_TOTAL_ETAPAS-1)*100);
+  document.getElementById('cdr-progress-txt').textContent=`Folha ${cdrEtapa+1} de ${CDR_TOTAL_ETAPAS}`;
   document.getElementById('cdr-pct').textContent=pct+'%';
   document.getElementById('cdr-bar').style.width=pct+'%';
-  document.getElementById('cdr-dominios').innerHTML=CDR_DOMINIOS.map(d=>{
-    const atual=aplicacaoAtual.respostas[d.k];
-    const niveis=d.meio?[0,0.5,1,2,3]:[0,1,2,3];
-    return`<div class="cdr-dominio ${atual!==undefined?'respondido':''}" id="cd-${d.k}">
-      <div class="cdr-dom-titulo">${d.nome}</div>
-      <div class="cdr-opcoes ${d.meio?'':'c4'}">
-        ${niveis.map(v=>`<div class="cdr-opcao ${atual===v?'sel':''}" onclick="respCdr('${d.k}',${v})">
-          <div class="cdr-nivel">CDR ${numCdr(v)}</div>
-          <div class="cdr-desc">${d.opts[v]}</div>
-        </div>`).join('')}
-      </div>
+
+  document.getElementById('cdr-passos').innerHTML=
+    CDR_FOLHAS.map((f,i)=>`<div class="cdr-passo ${i===cdrEtapa?'ativo':(cdrFolhaCompleta(i)?'feito':'')}" onclick="cdrIrEtapa(${i})">${f.curto}</div>`).join('')
+    +`<div class="cdr-passo ${ult?'ativo':(cdrFolhaCompleta(CDR_FOLHAS.length)?'feito':'')}" onclick="cdrIrEtapa(${CDR_FOLHAS.length})">11 · Pontuação</div>`;
+
+  document.getElementById('cdr-etapa').innerHTML = ult ? cdrHtmlPontuacao() : cdrHtmlFolha(CDR_FOLHAS[cdrEtapa]);
+  document.getElementById('cdr-btn-ant').style.visibility = cdrEtapa===0 ? 'hidden' : 'visible';
+  document.getElementById('cdr-btn-prox').textContent = ult ? 'Finalizar e Ver Resultado' : 'Próxima →';
+  document.getElementById('cdr-nav-info').textContent = ult ? 'Última folha' : `${CDR_TOTAL_ETAPAS-cdrEtapa-1} folha(s) restante(s)`;
+}
+function cdrHtmlFolha(f){
+  return`<div class="cdr-dominio">
+    <div class="cdr-dom-titulo">${f.titulo}</div>
+    ${f.intro?`<div class="cdr-dom-nota">${f.intro}</div>`:''}
+    ${f.campos.map(c=>cdrHtmlCampo(c)).join('')}
+    ${f.rodape?`<div class="cdr-nota" style="margin-top:14px;">${f.rodape}</div>`:''}
+  </div>`;
+}
+function cdrHtmlCampo(c){
+  const v=aplicacaoAtual.entrevista[c.id];
+  if(c.t==='sub')  return`<div class="cdr-sub">${c.q}</div>`;
+  if(c.t==='nota') return`<div class="cdr-nota">${c.q}</div>`;
+  const cab=`<div class="cdr-perg">${c.q}</div>${c.dica?`<div class="cdr-nota" style="margin-bottom:8px;">${c.dica}</div>`:''}`;
+  if(c.t==='texto') return`<div class="cdr-campo">${cab}
+    <input class="cdr-in" type="text" value="${(v||'').replace(/"/g,'&quot;')}" oninput="cdrSet('${c.id}',this.value)"></div>`;
+  if(c.t==='area') return`<div class="cdr-campo">${cab}
+    <textarea class="cdr-in" rows="3" oninput="cdrSet('${c.id}',this.value)">${v||''}</textarea></div>`;
+  if(c.t==='registro'){
+    const m=v||[[],[],[]];
+    return`<div class="cdr-campo">${cab}
+      ${[0,1,2].map(t=>`<div class="cdr-tent">Tentativa ${t+1}</div>
+        <div class="cdr-chk">${CDR_REG_ITENS.map((it,i)=>{
+          const on=m[t]&&m[t][i];
+          return`<label class="${on?'on':''}"><input type="checkbox" ${on?'checked':''} onchange="cdrSetReg('${c.id}',${t},${i},this.checked)">${it}</label>`;
+        }).join('')}</div>`).join('')}
     </div>`;
-  }).join('');
+  }
+  if(c.t==='evocacao'){
+    const m=v||[];
+    return`<div class="cdr-campo">${cab}
+      <div class="cdr-chk">${CDR_REG_ITENS.map((it,i)=>{
+        const on=m[i];
+        return`<label class="${on?'on':''}"><input type="checkbox" ${on?'checked':''} onchange="cdrSetEvo('${c.id}',${i},this.checked)">${it}</label>`;
+      }).join('')}</div>
+      <div class="cdr-nota" style="margin-top:7px;">Evocados corretamente: <strong>${m.filter(Boolean).length} de 5</strong></div>
+    </div>`;
+  }
+  // radio
+  return`<div class="cdr-campo">${cab}
+    <div class="cdr-opcoes auto">
+      ${c.o.map(op=>{
+        const txt=(typeof op==='string')?op:op.t;
+        const val=(typeof op==='string')?op:op.t;
+        return`<div class="cdr-opcao ${v===val?'sel':''}" onclick="cdrSet('${c.id}',${JSON.stringify(val)})">
+          <div class="cdr-desc">${txt}</div></div>`;
+      }).join('')}
+    </div></div>`;
+}
+function cdrSet(id,val){
+  const antes=aplicacaoAtual.entrevista[id];
+  aplicacaoAtual.entrevista[id]=val;
+  const campo=cdrAcharCampo(id);
+  if(campo&&(campo.t==='texto'||campo.t==='area'))return;   // nao re-renderiza enquanto digita
+  if(antes!==val)renderCdrEtapa();
+}
+function cdrAcharCampo(id){
+  for(const f of CDR_FOLHAS){ const c=f.campos.find(x=>x.id===id); if(c)return c; }
+  return null;
+}
+function cdrSetReg(id,tent,item,on){
+  const m=aplicacaoAtual.entrevista[id]||[[],[],[]];
+  if(!m[tent])m[tent]=[];
+  m[tent][item]=on;
+  aplicacaoAtual.entrevista[id]=m;
+  renderCdrEtapa();
+}
+function cdrSetEvo(id,item,on){
+  const m=aplicacaoAtual.entrevista[id]||[];
+  m[item]=on;
+  aplicacaoAtual.entrevista[id]=m;
+  renderCdrEtapa();
+}
+function cdrValorNum(id){
+  const v=aplicacaoAtual.entrevista[id];
+  const c=cdrAcharCampo(id);
+  if(!c||!c.o)return null;
+  const op=c.o.find(x=>typeof x!=='string'&&x.t===v);
+  return op?op.v:null;
+}
+function cdrHtmlPontuacao(){
+  const vs=['p_vestir','p_higiene','p_alim','p_esf'].map(cdrValorNum).filter(x=>x!==null);
+  const dica=vs.length?`<div class="cdr-nota">Registrado na folha 6: ${['Vestir','Higiene','Alimentação','Esfíncteres'].map((n,i)=>{
+      const v=cdrValorNum(['p_vestir','p_higiene','p_alim','p_esf'][i]);
+      return v===null?null:`${n} ${v}`;
+    }).filter(Boolean).join(' · ')} — maior valor: <strong>${Math.max.apply(null,vs)}</strong>. Serve de orientação para a caixa Cuidados Pessoais; quem decide é o julgamento clínico.</div>`:'';
+  return`<div style="background:rgba(109,91,168,.07);border:1px solid rgba(109,91,168,.25);border-radius:10px;padding:13px 16px;margin-bottom:18px;font-size:.82rem;color:#5A4A92;line-height:1.6;">
+      <strong>Regras de pontuação.</strong> Use todas as informações disponíveis para fazer o melhor julgamento possível. Pontue cada categoria da forma mais independente possível das outras, e sempre o <strong>grau de perda em relação ao desempenho anterior</strong> da própria pessoa. Pontue apenas a incapacidade devida à perda cognitiva, não a provocada por alteração motora, depressão ou perturbação da personalidade. Marque uma única pontuação por categoria; <strong>na dúvida entre duas, escolha a que corresponde à maior incapacidade</strong>. A afasia deve ser considerada na avaliação das funções verbais e não verbais; se a afasia for maior do que o grau de demência, pontue de acordo com a demência global.
+    </div>
+    ${dica}
+    <div id="cdr-dominios">${CDR_DOMINIOS.map(d=>{
+      const atual=aplicacaoAtual.respostas[d.k];
+      const niveis=d.meio?[0,0.5,1,2,3]:[0,1,2,3];
+      return`<div class="cdr-dominio ${atual!==undefined?'respondido':''}" id="cd-${d.k}">
+        <div class="cdr-dom-titulo">${d.nome}${d.k==='memoria'?' — categoria primária':''}</div>
+        <div class="cdr-opcoes ${d.meio?'':'c4'}">
+          ${niveis.map(v=>`<div class="cdr-opcao ${atual===v?'sel':''}" onclick="respCdr('${d.k}',${v})">
+            <div class="cdr-nivel">CDR ${numCdr(v)}</div>
+            <div class="cdr-desc">${d.opts[v]}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
 }
 function respCdr(k,v){
   aplicacaoAtual.respostas[k]=v;
-  renderCdrDominios();
+  renderCdrEtapa();
   const prox=CDR_DOMINIOS.find(d=>aplicacaoAtual.respostas[d.k]===undefined);
   if(prox){const el=document.getElementById('cd-'+prox.k);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),100);}
 }
 function finalizarCdr(){
   const falta=CDR_DOMINIOS.filter(d=>aplicacaoAtual.respostas[d.k]===undefined);
-  if(falta.length){showToast(`⚠️ Falta pontuar: ${falta.map(d=>d.nome).join(', ')}`);return;}
+  if(falta.length){
+    showToast(`⚠️ Falta pontuar na folha 11: ${falta.map(d=>d.nome).join(', ')}`);
+    if(cdrEtapa!==CDR_TOTAL_ETAPAS-1)cdrIrEtapa(CDR_TOTAL_ETAPAS-1);
+    return;
+  }
   const boxes={};CDR_DOMINIOS.forEach(d=>{boxes[d.k]=aplicacaoAtual.respostas[d.k];});
   const global=calcCdrGlobal(boxes), soma=calcCdrSoma(boxes), f=faixaCdr(global);
   const ap={id:uid(),tipo:'cdr',pacienteId:aplicacaoAtual.pacienteId,pacienteNome:aplicacaoAtual.pacienteNome,
     nascimento:aplicacaoAtual.nascimento,informante:aplicacaoAtual.informante,responsavel:aplicacaoAtual.responsavel,
     obs:aplicacaoAtual.obs,data:new Date().toISOString().slice(0,10),
-    boxes,global,soma,nivel:f.nivel,cor:f.cor,respostas:{...boxes}};
+    boxes,global,soma,nivel:f.nivel,cor:f.cor,respostas:{...boxes},
+    entrevista:{...(aplicacaoAtual.entrevista||{})}};
   escalasState.aplicacoes.push(ap);
   salvarEscalas();
   mostrarResultadoCdr(ap);
+}
+
+/* ---- resultado -------------------------------------------------- */
+function cdrTextoResposta(c,v){
+  if(c.t==='registro'){
+    const m=v||[[],[],[]];
+    return [0,1,2].map(t=>`tentativa ${t+1}: ${(m[t]||[]).filter(Boolean).length}/5`).join(' · ');
+  }
+  if(c.t==='evocacao'){
+    const m=v||[];
+    const certos=CDR_REG_ITENS.filter((it,i)=>m[i]);
+    return `${certos.length} de 5${certos.length?' ('+certos.join(', ')+')':''}`;
+  }
+  return String(v);
+}
+function cdrHtmlEntrevista(ap,comTabela){
+  const e=ap.entrevista||{};
+  const blocos=CDR_FOLHAS.map(f=>{
+    const linhas=f.campos.filter(c=>['sub','nota'].indexOf(c.t)<0 && e[c.id]!==undefined && cdrTemRespostaEm(e,c));
+    if(!linhas.length)return '';
+    return`<h4 style="font-size:.84rem;color:var(--accent2);margin:18px 0 8px;font-weight:700;">${f.titulo}</h4>
+      <div class="table-wrap"><table><tbody>${linhas.map(c=>
+        `<tr><td style="width:46%;font-size:.8rem;">${c.q}</td><td style="font-size:.8rem;">${cdrTextoResposta(c,e[c.id])}</td></tr>`
+      ).join('')}</tbody></table></div>`;
+  }).filter(Boolean).join('');
+  return blocos||'<div class="cdr-nota">Nenhuma resposta da entrevista foi registrada nesta aplicação.</div>';
+}
+function cdrTemRespostaEm(e,c){
+  const v=e[c.id];
+  if(v===undefined||v===null)return false;
+  if(Array.isArray(v))return v.some(x=>Array.isArray(x)?x.some(Boolean):Boolean(x));
+  return String(v).trim()!=='';
 }
 function mostrarResultadoCdr(ap){
   const b=ap.boxes||ap.respostas||{};
@@ -4120,7 +4501,7 @@ function mostrarResultadoCdr(ap){
       <div style="font-size:.95rem;font-weight:600;">Soma das caixas (CDR-SOB): ${numCdr(ap.soma)} de 18</div>
     </div>
     <div class="table-wrap" style="margin-bottom:20px;"><table>
-      <thead><tr><th>Domínio</th><th>Pontuação</th><th>Descrição registrada</th></tr></thead>
+      <thead><tr><th>Categoria</th><th>Pontuação</th><th>Descrição registrada</th></tr></thead>
       <tbody>${CDR_DOMINIOS.map(d=>`<tr>
         <td><strong>${d.nome}</strong>${d.k==='memoria'?' <span style="color:var(--text3);font-weight:400;">(primária)</span>':''}</td>
         <td style="text-align:center;font-weight:700;">${numCdr(b[d.k])}</td>
@@ -4128,15 +4509,17 @@ function mostrarResultadoCdr(ap){
       <tr><td colspan="2" style="text-align:right;font-weight:700;">Soma das caixas</td><td style="font-weight:700;">${numCdr(ap.soma)} / 18</td></tr>
       </tbody></table></div>
     <div style="background:rgba(109,91,168,.07);border:1px solid rgba(109,91,168,.25);border-radius:10px;padding:14px 16px;font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:20px;">
-      ℹ️ CDR — Hughes et al. (1982); regras de pontuação de Morris (1993). O <strong>CDR global</strong> é calculado pelo algoritmo de Washington University, em que a memória é a categoria primária e os outros cinco domínios são secundários. A <strong>soma das caixas</strong> é a soma simples dos seis domínios e é mais sensível para acompanhar mudanças ao longo do tempo. O julgamento clínico prevalece sobre o algoritmo: se o CDR global calculado não corresponder ao quadro, registre a divergência nas observações.
+      ℹ️ CDR — Hughes et al. (1982); regras de pontuação de Morris (1993), Neurology 43:2412-2414. Versão do HCPA, Serviço de Neurologia (2006). O <strong>CDR global</strong> sai do algoritmo de Washington University, com a memória como categoria primária. A <strong>soma das caixas</strong> é a soma simples das seis categorias e acompanha melhor a mudança entre reavaliações. O julgamento clínico prevalece sobre o algoritmo: se o CDR calculado não corresponder ao quadro, registre a divergência nas observações.
     </div>`;
   const faixaTxt=[[0,'Saudável'],[0.5,'Demência questionável'],[1,'Demência leve'],[2,'Demência moderada'],[3,'Demência grave']];
   document.getElementById('cdr-resultado-detalhe').innerHTML=`
     <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:14px;">Escala global</h3>
-    <div class="table-wrap"><table>
+    <div class="table-wrap" style="margin-bottom:24px;"><table>
       <thead><tr><th>CDR</th><th>Estágio</th><th></th></tr></thead>
       <tbody>${faixaTxt.map(([v,t])=>`<tr><td>${numCdr(v)}</td><td>${t}</td><td>${ap.global===v?'◀ resultado':''}</td></tr>`).join('')}</tbody>
-    </table></div>`;
+    </table></div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:4px;">Entrevista registrada</h3>
+    ${cdrHtmlEntrevista(ap)}`;
   showPage('resultado-cdr');
 }
 function renderCdrHistorico(){
@@ -4157,37 +4540,43 @@ function gerarPdfCdr(){
   if(!ap){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='cdr');ap=aps[aps.length-1];}
   if(!ap)return;
   const b=ap.boxes||ap.respostas||{};
+  const e=ap.entrevista||{};
   const f=faixaCdr(ap.global);
   const cc={baixo:'#2F7A63',medio:'#A9711A',alto:'#B3261E'};
+  const entrev=CDR_FOLHAS.map(fo=>{
+    const linhas=fo.campos.filter(c=>['sub','nota'].indexOf(c.t)<0 && cdrTemRespostaEm(e,c));
+    if(!linhas.length)return '';
+    return`<h3 style="font-size:12px;margin:14px 0 4px;">${fo.titulo}</h3>
+      <table><tbody>${linhas.map(c=>`<tr><td style="width:46%;">${c.q}</td><td>${cdrTextoResposta(c,e[c.id])}</td></tr>`).join('')}</tbody></table>`;
+  }).join('');
   const win=window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CDR — ${ap.pacienteNome}</title>
-  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:12px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
+  <style>body{font-family:Georgia,serif;margin:32px;color:#111;}h1{font-size:19px;text-align:center;}table{width:100%;border-collapse:collapse;margin-top:8px;}th{background:#f0f0f0;padding:7px 8px;font-size:11px;text-align:left;border:1px solid #ddd;}td{padding:6px 8px;font-size:11px;border:1px solid #eee;}@media print{button{display:none}}</style></head>
   <body><h1>Avaliação Clínica da Demência — CDR</h1>
-  <p style="text-align:center;color:#666;font-size:11px;">Clinical Dementia Rating · Hughes et al. (1982); regras de pontuação de Morris, J.C. (1993), Neurology 43(11)</p>
+  <p style="text-align:center;color:#666;font-size:11px;">Clinical Dementia Rating · Hughes et al. (1982); regras de pontuação de Morris, J.C. (1993), Neurology 43:2412-2414 · versão do HCPA, Serviço de Neurologia (2006)</p>
   <table style="margin-bottom:16px;"><tr><td><b>Paciente:</b> ${ap.pacienteNome}</td><td><b>Data:</b> ${formatDate(ap.data)}</td><td><b>Informante:</b> ${ap.informante}</td><td><b>Nasc.:</b> ${ap.nascimento?formatDate(ap.nascimento):'-'}</td></tr></table>
   <div style="background:${cc[f.cor]}20;border:2px solid ${cc[f.cor]};border-radius:8px;padding:14px;text-align:center;margin-bottom:16px;">
     <div style="font-size:22px;font-weight:bold;color:${cc[f.cor]};margin:4px 0;">CDR ${numCdr(ap.global)}</div>
     <div style="font-size:15px;margin:4px 0;"><b>${f.nivel}</b></div>
     <div style="font-size:12px;color:#555;margin-top:8px;">Soma das caixas (CDR-SOB): ${numCdr(ap.soma)} de 18</div>
   </div>
-  <table><thead><tr><th>Domínio</th><th>Pontuação</th><th>Descrição</th></tr></thead><tbody>
+  <h3 style="font-size:13px;margin-bottom:2px;">Pontuação por categoria</h3>
+  <table><thead><tr><th>Categoria</th><th>Pontuação</th><th>Descrição</th></tr></thead><tbody>
   ${CDR_DOMINIOS.map(d=>`<tr><td><b>${d.nome}</b></td><td style="text-align:center;font-weight:bold;">${numCdr(b[d.k])}</td><td>${d.opts[b[d.k]]||'-'}</td></tr>`).join('')}
   <tr><td colspan="2" style="text-align:right;font-weight:bold;">Soma das caixas</td><td style="font-weight:bold;">${numCdr(ap.soma)} / 18</td></tr>
   </tbody></table>
-  <table style="margin-top:14px;"><thead><tr><th>CDR</th><th>Estágio</th></tr></thead><tbody>
-    <tr><td>0</td><td>Saudável</td></tr>
-    <tr><td>0,5</td><td>Demência questionável</td></tr>
-    <tr><td>1</td><td>Demência leve</td></tr>
-    <tr><td>2</td><td>Demência moderada</td></tr>
+  <table style="margin-top:12px;"><thead><tr><th>CDR</th><th>Estágio</th></tr></thead><tbody>
+    <tr><td>0</td><td>Saudável</td></tr><tr><td>0,5</td><td>Demência questionável</td></tr>
+    <tr><td>1</td><td>Demência leve</td></tr><tr><td>2</td><td>Demência moderada</td></tr>
     <tr><td>3</td><td>Demência grave</td></tr>
   </tbody></table>
+  ${entrev?`<h2 style="font-size:14px;margin-top:22px;page-break-before:always;">Registro da entrevista semiestruturada</h2>${entrev}`:''}
   ${ap.obs?`<p style="margin-top:12px;font-size:11px;color:#666;"><b>Obs:</b> ${ap.obs}</p>`:''}
-  <p style="margin-top:14px;font-size:10px;color:#666;">O CDR global resulta do algoritmo de Washington University, com a memória como categoria primária. Instrumento de estadiamento, não de diagnóstico; o julgamento clínico prevalece.</p>
+  <p style="margin-top:14px;font-size:10px;color:#666;">Pontue o grau de perda em relação ao desempenho anterior e apenas a incapacidade devida à perda cognitiva. Instrumento de estadiamento, não de diagnóstico; o julgamento clínico prevalece.</p>
   <p style="margin-top:10px;font-size:10px;color:#999;text-align:center;">${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}</p>
   <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);win.document.close();
 }
-
 
 /* ==================================================================
    ÍNDICE DE KATZ — Atividades Básicas de Vida Diária (ABVD)
