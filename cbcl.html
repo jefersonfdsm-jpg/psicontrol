@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#080f0e">
+<meta name="theme-color" content="#EEF3F7">
 <title>CBCL 6-18 — PsiControl</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080f0e;--surface:#0d1a18;--surface2:#122420;--border:#1e3d38;--accent:#2ab89a;--accent2:#56d4c8;--accent3:#f0b429;--danger:#ef4444;--success:#3fd4a0;--text:#e2f0ee;--text2:#7ab5ae;--text3:#3d7a72;--radius:12px;--sidebar:260px;}
+:root{color-scheme:light;--bg:#EEF3F7;--surface:#FFFFFF;--surface2:#F2F7FA;--border:#D2DFE8;--accent:#2E6E97;--accent2:#17405C;--accent3:#A9711A;--danger:#B3261E;--success:#2F7A63;--text:#17405C;--text2:#4A6B82;--text3:#5F7D93;--radius:12px;--sidebar:260px;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden;}
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;}
@@ -23,7 +23,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .login-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:.2s;}
 .login-field input:focus{border-color:var(--accent);}
 .login-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s;margin-top:8px;}
-.login-btn:hover{background:#1fa085;}
+.login-btn:hover{background:#17405C;}
 .login-error{color:var(--danger);font-size:.82rem;margin-top:10px;min-height:18px;}
 .back-link{font-size:.78rem;color:var(--text3);margin-top:16px;cursor:pointer;text-decoration:underline;}
 #sidebar{width:var(--sidebar);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;z-index:100;}
@@ -34,12 +34,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .nav-section{padding:12px 12px 4px;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:2px 8px;border-radius:8px;cursor:pointer;font-size:.87rem;color:var(--text2);transition:.2s;border:1px solid transparent;}
 .nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:rgba(42,184,154,.18);color:var(--accent);border-color:rgba(42,184,154,.35);}
+.nav-item.active{background:rgba(46,110,151,.18);color:var(--accent);border-color:rgba(46,110,151,.35);}
 .nav-item .icon{width:20px;text-align:center;flex-shrink:0;}
 .sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;}
 .sb-btn{width:100%;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid;}
-.sb-btn-back{background:rgba(42,184,154,.15);border-color:rgba(42,184,154,.3);color:var(--accent);}
-.sb-btn-sair{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--danger);}
+.sb-btn-back{background:rgba(46,110,151,.15);border-color:rgba(46,110,151,.3);color:var(--accent);}
+.sb-btn-sair{background:rgba(179,38,30,.08);border-color:rgba(179,38,30,.2);color:var(--danger);}
 #main{margin-left:var(--sidebar);flex:1;height:100vh;overflow-y:auto;overflow-x:hidden;padding:28px 32px;}
 .page{display:none;animation:fadeUp .3s ease;}
 .page.active{display:block;}
@@ -49,7 +49,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .page-header p{color:var(--text2);font-size:.88rem;margin-top:2px;}
 .btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.85rem;font-weight:500;transition:.2s;display:inline-flex;align-items:center;gap:7px;}
 .btn-primary{background:var(--accent);color:#fff;}
-.btn-primary:hover{background:#1fa085;}
+.btn-primary:hover{background:#17405C;}
 .btn-danger{background:var(--danger);color:#fff;}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2);}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
@@ -68,18 +68,18 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .progress-bar-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text2);margin-bottom:6px;}
 .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:.4s;}
-.secao-titulo{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent2);margin:24px 0 14px;padding:10px 14px;background:rgba(86,212,200,.07);border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;}
+.secao-titulo{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--accent2);margin:24px 0 14px;padding:10px 14px;background:rgba(23,64,92,.07);border-left:3px solid var(--accent2);border-radius:0 8px 8px 0;}
 .cbcl-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:8px;transition:.2s;}
-.cbcl-item.respondido{border-color:rgba(42,184,154,.3);}
+.cbcl-item.respondido{border-color:rgba(46,110,151,.3);}
 .cbcl-item-header{display:flex;align-items:flex-start;gap:12px;}
 .cbcl-num{font-size:.72rem;color:var(--text3);font-weight:700;min-width:28px;padding-top:2px;}
 .cbcl-texto{font-size:.88rem;color:var(--text);line-height:1.5;flex:1;}
 .cbcl-opcoes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
 .cbcl-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:inherit;font-size:.85rem;transition:.2s;font-weight:500;min-width:44px;text-align:center;}
 .cbcl-btn:hover{border-color:var(--accent);color:var(--accent);}
-.cbcl-btn.sel-0{border-color:var(--success);background:rgba(63,212,160,.15);color:var(--success);font-weight:700;}
-.cbcl-btn.sel-1{border-color:var(--accent3);background:rgba(240,180,41,.13);color:var(--accent3);font-weight:700;}
-.cbcl-btn.sel-2{border-color:var(--danger);background:rgba(239,68,68,.13);color:var(--danger);font-weight:700;}
+.cbcl-btn.sel-0{border-color:var(--success);background:rgba(47,122,99,.15);color:var(--success);font-weight:700;}
+.cbcl-btn.sel-1{border-color:var(--accent3);background:rgba(169,113,26,.13);color:var(--accent3);font-weight:700;}
+.cbcl-btn.sel-2{border-color:var(--danger);background:rgba(179,38,30,.13);color:var(--danger);font-weight:700;}
 .cbcl-desc{display:none;margin-top:10px;}
 .cbcl-desc textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:.83rem;resize:vertical;outline:none;}
 .cbcl-desc textarea:focus{border-color:var(--accent);}
@@ -94,9 +94,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .modal h3{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px;}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 .resultado-box{border-radius:var(--radius);padding:24px;margin-bottom:20px;}
-.resultado-box.normal{background:rgba(63,212,160,.08);border:2px solid rgba(63,212,160,.4);}
-.resultado-box.limítrofe{background:rgba(240,180,41,.08);border:2px solid rgba(240,180,41,.4);}
-.resultado-box.clinico{background:rgba(239,68,68,.08);border:2px solid rgba(239,68,68,.4);}
+.resultado-box.normal{background:rgba(47,122,99,.08);border:2px solid rgba(47,122,99,.4);}
+.resultado-box.limítrofe{background:rgba(169,113,26,.08);border:2px solid rgba(169,113,26,.4);}
+.resultado-box.clinico{background:rgba(179,38,30,.08);border:2px solid rgba(179,38,30,.4);}
 .resultado-titulo{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px;}
 .resultado-pontuacao{font-family:'DM Serif Display',serif;font-size:2.8rem;margin:6px 0;}
 .subescala-bar{margin-bottom:12px;}
@@ -110,9 +110,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 .historico-data{margin-left:auto;text-align:right;flex-shrink:0;}
 .historico-data .data{font-size:.78rem;color:var(--text2);}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500;}
-.badge-normal{background:rgba(63,212,160,.15);color:var(--success);}
-.badge-limitrofe{background:rgba(240,180,41,.15);color:var(--accent3);}
-.badge-clinico{background:rgba(239,68,68,.15);color:var(--danger);}
+.badge-normal{background:rgba(47,122,99,.15);color:var(--success);}
+.badge-limitrofe{background:rgba(169,113,26,.15);color:var(--accent3);}
+.badge-clinico{background:rgba(179,38,30,.15);color:var(--danger);}
 .empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
 .breadcrumb{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text3);margin-bottom:14px;flex-wrap:wrap;}
 .breadcrumb .crumb{cursor:pointer;}
@@ -139,9 +139,46 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   .field-row.cols-2{grid-template-columns:1fr;}
   .aplicacao-header{flex-direction:column;align-items:flex-start;}
 }
+  /* ===== modo embutido: quando o modulo abre dentro do PsiControl ===== */
+  html.embed body{ height:auto !important; min-height:0 !important; overflow:auto !important; display:block !important; }
+  html.embed #sidebar{ display:none !important; }
+  html.embed #main{ margin-left:0 !important; height:auto !important; padding:22px 26px !important; }
+  html.embed #app{ padding:0 !important; }
+  html.embed #sidebar-overlay,
+  html.embed .menu-toggle,
+  html.embed #menu-toggle,
+  html.embed #watermark{ display:none !important; }
+
+  /* a tela de login nem chega a ser pintada quando ja existe sessao salva */
+  html.sessao-salva #login-screen{ display:none !important; }
+
+  /* iOS: 100vh inclui a barra do navegador e corta o rodape; dvh usa a altura visivel */
+  @supports (height: 100dvh) {
+    body { height: 100dvh; }
+    #main { height: 100dvh; }
+  }
 </style>
 </head>
 <body>
+<script>
+/* primeira coisa da pagina: se ha sessao salva, o login nao pinta */
+try{ if(localStorage.getItem('psi_sessao_cbcl')||localStorage.getItem('psi_sessao')) document.documentElement.classList.add('sessao-salva'); }catch(e){}
+</script>
+
+<script>
+(function(){
+  try{
+    if(new URLSearchParams(location.search).get('embed') !== '1') return;
+    document.documentElement.classList.add('embed');
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('[onclick]').forEach(function(el){
+        var a = el.getAttribute('onclick') || '';
+        if(a.indexOf('index.html') >= 0 || a.indexOf('escalas.html') >= 0) el.style.display = 'none';
+      });
+    });
+  }catch(e){}
+})();
+</script>
 
 <div id="login-screen">
   <div class="login-box">
@@ -338,7 +375,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <div class="progress-bar-label"><span id="p2-progress-txt">0 de 112 respondidos</span><span id="p2-pct">0%</span></div>
       <div class="progress-bar"><div class="progress-fill" id="p2-bar" style="width:0%"></div></div>
     </div>
-    <div style="background:rgba(42,184,154,.07);border:1px solid rgba(42,184,154,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent2);line-height:1.6;">
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--accent2);line-height:1.6;">
       ℹ️ Considere seu filho <strong>atualmente e nos últimos 6 meses</strong>. Marque <strong>0</strong> = Falso/ausente · <strong>1</strong> = Às vezes presente · <strong>2</strong> = Frequentemente presente
     </div>
     <div id="cbcl-itens"></div>
@@ -435,7 +472,8 @@ async function fazerLogin(){
 function setErro(m){document.getElementById('login-erro').textContent=m;document.getElementById('login-btn').textContent='Entrar';}
 function fazerLogout(){if(!confirm('Sair?'))return;usuarioLogado=null;localStorage.removeItem('psi_sessao_cbcl');document.getElementById('login-screen').classList.remove('hidden');}
 function verificarSessao(){
-  const s=localStorage.getItem('psi_sessao_cbcl');
+  // aproveita a sessao do PsiControl quando o CBCL ainda nao tem a sua
+  const s=localStorage.getItem('psi_sessao_cbcl')||localStorage.getItem('psi_sessao');
   if(s){try{usuarioLogado=JSON.parse(s);document.getElementById('login-screen').classList.add('hidden');document.getElementById('sidebar-username').textContent=usuarioLogado.nome;carregarDados().then(()=>{carregarPerfil();renderHome();});return;}catch(e){}}
   setTimeout(()=>document.getElementById('login-email').focus(),300);
 }
@@ -516,6 +554,11 @@ function iniciarAplicacao(){
     psiState.pacientes.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('')+
     '<option value="__novo__">➕ Cadastrar novo paciente</option>';
   document.getElementById('novo-pac-fields').style.display='none';
+  // paciente vindo da ficha do PsiControl
+  try{
+    const id=new URLSearchParams(location.search).get('paciente');
+    if(id && psiState.pacientes.find(p=>p.id===id)){ sel.value=id; onPacSelect(); }
+  }catch(e){}
   document.getElementById('modal-pac').classList.add('open');
 }
 function onPacSelect(){
@@ -918,7 +961,7 @@ function mostrarResultado(ap){
     <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:.87rem;color:var(--text2);line-height:1.7;">
       ${gerarInterpretacao(ap)}
     </div>
-    <div style="background:rgba(42,184,154,.07);border:1px solid rgba(42,184,154,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--text3);line-height:1.6;">
+    <div style="background:rgba(46,110,151,.07);border:1px solid rgba(46,110,151,.2);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--text3);line-height:1.6;">
       ⚠️ O CBCL é um instrumento de <strong>rastreio</strong>, não de diagnóstico. Resultados na faixa clínica ou limítrofe indicam necessidade de avaliação mais detalhada. Achenbach &amp; Rescorla (2001) · Versão brasileira: Bordin, Paula &amp; Duarte — UNIFESP.
     </div>`;
 
@@ -1019,9 +1062,9 @@ function deletarAp(id){
 // PDF
 function gerarPdfCbcl(){
   const ap=window._cbclApAtual;if(!ap)return;
-  const corMap={normal:'#2a7a5a',limítrofe:'#a06000',clínico:'#c00'};
-  const bgMap={normal:'#f0fff4',limítrofe:'#fffbe6',clínico:'#fff0f0'};
-  const bdMap={normal:'#b7ebc7',limítrofe:'#ffe58f',clínico:'#ffcccc'};
+  const corMap={normal:'#2F7A63',limítrofe:'#A9711A',clínico:'#c00'};
+  const bgMap={normal:'#F1F7F4',limítrofe:'#FAF5EA',clínico:'#FBF1F0'};
+  const bdMap={normal:'#BBD3C8',limítrofe:'#E8D3A8',clínico:'#E8C4C1'};
 
   // SVG barras subescalas
   const barW=300,barH=16,gap=30;
@@ -1030,7 +1073,7 @@ function gerarPdfCbcl(){
   Object.entries(ap.escores).forEach(([sub,e],i)=>{
     const y=i*(barH+gap)+10;
     const w=Math.round(barW*e.pct/100);
-    const cor=e.classif==='clínico'?'#ef4444':e.classif==='limítrofe'?'#f0b429':'#3fd4a0';
+    const cor=e.classif==='clínico'?'#B3261E':e.classif==='limítrofe'?'#A9711A':'#2F7A63';
     svgBars+=`<text x="0" y="${y+12}" font-size="10" font-family="Georgia" fill="#111">${sub}</text>
     <rect x="0" y="${y+16}" width="${barW}" height="${barH}" rx="3" fill="#eee"/>
     <rect x="0" y="${y+16}" width="${w}" height="${barH}" rx="3" fill="${cor}"/>
@@ -1042,7 +1085,7 @@ function gerarPdfCbcl(){
 
   const win=window.open('','_blank');
   win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CBCL — ${ap.pacienteNome}</title>
-  <style>body{font-family:Georgia,serif;margin:28px 32px;color:#111;font-size:11px;}h1{font-size:18px;text-align:center;}h2{font-size:13px;margin-top:16px;background:#f5f5f5;padding:6px 10px;border-left:4px solid #2ab89a;}table{width:100%;border-collapse:collapse;margin-top:6px;}th{background:#f0f0f0;padding:5px 7px;font-size:10px;text-align:left;border:1px solid #ddd;}td{padding:4px 7px;font-size:10px;border:1px solid #eee;}@media print{button{display:none!important;}@page{margin:12mm;}}</style></head>
+  <style>body{font-family:Georgia,serif;margin:28px 32px;color:#111;font-size:11px;}h1{font-size:18px;text-align:center;}h2{font-size:13px;margin-top:16px;background:#f5f5f5;padding:6px 10px;border-left:4px solid #2E6E97;}table{width:100%;border-collapse:collapse;margin-top:6px;}th{background:#f0f0f0;padding:5px 7px;font-size:10px;text-align:left;border:1px solid #ddd;}td{padding:4px 7px;font-size:10px;border:1px solid #eee;}@media print{button{display:none!important;}@page{margin:12mm;}}</style></head>
   <body>
   <h1>CBCL/6-18 — Child Behavior Checklist</h1>
   <p style="text-align:center;font-size:10px;color:#666;margin-bottom:12px;">Achenbach &amp; Rescorla (2001) · Versão brasileira: Bordin, Paula &amp; Duarte — UNIFESP/EPM</p>
@@ -1067,9 +1110,9 @@ function gerarPdfCbcl(){
   <h2>2. Perfil Gráfico por Subescala</h2>
   <svg width="550" height="${svgH}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;">${svgBars}</svg>
   <div style="display:flex;gap:16px;font-size:9px;margin-top:6px;justify-content:center;">
-    <span>■ <span style="color:#3fd4a0">Normal</span></span>
-    <span>■ <span style="color:#f0b429">Limítrofe</span></span>
-    <span>■ <span style="color:#ef4444">Clínico</span></span>
+    <span>■ <span style="color:#2F7A63">Normal</span></span>
+    <span>■ <span style="color:#A9711A">Limítrofe</span></span>
+    <span>■ <span style="color:#B3261E">Clínico</span></span>
   </div>
 
   <h2>3. Interpretação Clínica</h2>
@@ -1080,7 +1123,7 @@ function gerarPdfCbcl(){
   ${itensAlterados.map(item=>{
     const r=ap.respostas[item.n];
     const sub=Object.entries(CBCL_SUBESCALAS).find(([,itens])=>itens.includes(item.n));
-    return`<tr><td>${item.n}</td><td style="font-size:9px;">${sub?sub[0]:'-'}</td><td>${item.texto}${ap.descricoes[item.n]?` <i>(${ap.descricoes[item.n]})</i>`:''}</td><td style="text-align:center;font-weight:bold;color:${r===2?'#c00':'#a06000'}">${r}</td></tr>`;
+    return`<tr><td>${item.n}</td><td style="font-size:9px;">${sub?sub[0]:'-'}</td><td>${item.texto}${ap.descricoes[item.n]?` <i>(${ap.descricoes[item.n]})</i>`:''}</td><td style="text-align:center;font-weight:bold;color:${r===2?'#c00':'#A9711A'}">${r}</td></tr>`;
   }).join('')}</tbody></table>`:''}
 
   <h2>5. Informações Complementares (Parte I)</h2>
@@ -1095,7 +1138,7 @@ function gerarPdfCbcl(){
   <p style="margin-top:18px;font-size:9px;color:#999;text-align:center;border-top:1px solid #eee;padding-top:8px;">
     CBCL/6-18 · ${rodapeAssinatura()} · ${new Date().toLocaleDateString('pt-BR')}
   </p>
-  <br><button onclick="window.print()" style="padding:8px 20px;background:#2ab89a;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
+  <br><button onclick="window.print()" style="padding:8px 20px;background:#2E6E97;color:#fff;border:none;border-radius:6px;cursor:pointer;">🖨 Imprimir / Salvar PDF</button>
   </body></html>`);
   win.document.close();
 }

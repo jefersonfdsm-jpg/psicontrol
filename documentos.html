@@ -117,6 +117,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);hei
 
   /* a tela de login nem chega a ser pintada quando ja existe sessao salva */
   html.sessao-salva #login-screen{ display:none !important; }
+
+  /* iOS: 100vh inclui a barra do navegador e corta o rodape; dvh usa a altura visivel */
+  @supports (height: 100dvh) {
+    body { height: 100dvh; }
+    #main { height: 100dvh; }
+    #mod-frame { height: calc(100dvh - 140px); }
+  }
 </style>
 </head>
 <body>
@@ -504,7 +511,8 @@ async function fazerLogin(){
 function setErro(m){document.getElementById('login-erro').textContent=m;document.getElementById('login-btn').textContent='Entrar';}
 function fazerLogout(){if(!confirm('Sair?'))return;usuarioLogado=null;localStorage.removeItem('psi_sessao_docs');document.getElementById('login-screen').classList.remove('hidden');}
 function verificarSessao(){
-  const s=localStorage.getItem('psi_sessao_docs');
+  // aproveita a sessao do PsiControl quando o modulo ainda nao tem a sua
+  const s=localStorage.getItem('psi_sessao_docs')||localStorage.getItem('psi_sessao');
   if(s){try{usuarioLogado=JSON.parse(s);document.getElementById('login-screen').classList.add('hidden');document.getElementById('sidebar-username').textContent=usuarioLogado.nome;carregarDados().then(()=>{carregarPerfil();preencherSelects();showPage('home');});return;}catch(e){}}
   setTimeout(()=>document.getElementById('login-email').focus(),300);
 }

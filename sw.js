@@ -1,4 +1,4 @@
-const CACHE = 'psicontrol-v9';
+const CACHE = 'psicontrol-v11';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {

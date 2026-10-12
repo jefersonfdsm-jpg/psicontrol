@@ -2582,14 +2582,18 @@ function fxRenderProximo(p){
 
 // --- escalas (vem do mesmo pacote de dados) ---
 function fxRenderEscalas(p){
-  const todas = (state.escalas && Array.isArray(state.escalas.aplicacoes)) ? state.escalas.aplicacoes : [];
+  const doModulo = (state.escalas && Array.isArray(state.escalas.aplicacoes)) ? state.escalas.aplicacoes : [];
+  // o CBCL guarda as aplicacoes em outra area dos dados
+  const doCbcl = (state.cbcl && Array.isArray(state.cbcl.aplicacoes))
+    ? state.cbcl.aplicacoes.map(a => ({ ...a, tipo: 'cbcl' })) : [];
+  const todas = doModulo.concat(doCbcl);
   const minhas = todas
     .filter(a => a.pacienteId === p.id || (a.pacienteNome||'').trim().toLowerCase() === (p.nome||'').trim().toLowerCase())
     .sort((a,b)=> String(b.data||'').localeCompare(String(a.data||'')));
 
   document.getElementById('fx-n-escalas').textContent = minhas.length || '';
 
-  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18', gad7:'GAD-7', dass21:'DASS-21', lawton:'Lawton (AIVD)', cdr:'CDR', katz:'Katz (ABVD)' };
+  const nomes = { mchat:'M-CHAT-R/F', snap:'SNAP-IV', portage:'Portage', irdi:'IRDI', cbcl:'CBCL 6-18', gad7:'GAD-7', dass21:'DASS-21', lawton:'Lawton (AIVD)', cdr:'CDR', katz:'Katz (ABVD)', cbcl:'CBCL 6-18' };
   function linha(a){
     let detalhe = '';
     if(a.tipo === 'mchat' && a.nivel) detalhe = `risco ${fxEsc(a.nivel)}`;
@@ -2601,6 +2605,7 @@ function fxRenderEscalas(p){
     else if(a.tipo === 'lawton') detalhe = `${fxEsc(a.pontos)}/27${a.nivel ? ' — ' + fxEsc(a.nivel) : ''}`;
     else if(a.tipo === 'cdr') detalhe = `CDR ${fxEsc(String(a.global).replace('.',','))}${a.nivel ? ' — ' + fxEsc(a.nivel) : ''} · soma das caixas ${fxEsc(a.soma)}`;
     else if(a.tipo === 'katz') detalhe = `dependente em ${fxEsc(a.pontos)} de 6 funções`;
+    else if(a.tipo === 'cbcl' && a.total) detalhe = `escore bruto total ${fxEsc(a.total.score)} de ${fxEsc(a.total.max)}`;
     return `<div class="fx-item"><span class="fx-data">${fxData(a.data)}</span>
       <span class="fx-txt"><b>${fxEsc(nomes[a.tipo] || a.tipo)}</b>${detalhe ? ' — ' + detalhe : ''}</span></div>`;
   }
@@ -3628,19 +3633,30 @@ async function carregarDadosNuvem() {
   }
 }
 
+// Chaves que ESTE arquivo gerencia. Tudo o que nao estiver aqui (como
+// 'escalas', gravado pelo modulo de escalas) e preservado como esta no
+// servidor, para que um salvamento daqui nao apague o trabalho feito la.
+const CHAVES_DO_INDEX = ['clinicas','pacientes','sessoes','financeiro','relatorios','testes','rendasFixas'];
+
 async function saveAll() {
   if (!usuarioLogado) return;
   localStorage.setItem('psicontrol_data', JSON.stringify(state));
   try {
-    // Verifica se já existe registro para este usuário
-    const existing = await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=id`);
-    
+    // Le o que esta no servidor agora, para mesclar em vez de sobrescrever
+    const existing = await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}&select=id,dados`);
+
     if (existing && existing.length > 0) {
-      // UPDATE — já existe, atualiza
+      const remoto = (existing[0] && existing[0].dados) ? existing[0].dados : {};
+      const dados = { ...remoto };
+      CHAVES_DO_INDEX.forEach(k => { if (state[k] !== undefined) dados[k] = state[k]; });
+      // Traz de volta para a memoria o que outros modulos gravaram
+      Object.keys(remoto).forEach(k => {
+        if (CHAVES_DO_INDEX.indexOf(k) < 0) state[k] = remoto[k];
+      });
       await sbFetch(`dados_usuario?usuario_id=eq.${usuarioLogado.id}`, {
         method: 'PATCH',
         headers: { 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ dados: state })
+        body: JSON.stringify({ dados })
       });
     } else {
       // INSERT — primeira vez

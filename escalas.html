@@ -326,7 +326,7 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="nav-item" onclick="showPage('irdi')">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> IRDI
     </div>
-    <div class="nav-item" onclick="window.location.href='cbcl.html'">
+    <div class="nav-item" onclick="irParaCbcl()">
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> CBCL 6-18
     </div>
     <div class="nav-section">Adultos e Idosos</div>
@@ -432,7 +432,7 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
           <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showPage('irdi')">Histórico</button>
         </div>
       </div>
-      <div class="escala-card" onclick="window.location.href='cbcl.html'">
+      <div class="escala-card" onclick="irParaCbcl()">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
           <div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -443,8 +443,8 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
         <p>Inventário de Comportamentos para Crianças e Adolescentes. Avalia problemas de comportamento em 8 subescalas + internalização e externalização.</p>
         <div class="escala-info"><span>112 itens</span><span>Escala 0–2</span><span>~15 min</span></div>
         <div class="escala-actions">
-          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.location.href='cbcl.html'">▶ Aplicar</button>
-          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();window.location.href='cbcl.html'">Histórico</button>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();irParaCbcl()">▶ Aplicar</button>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();irParaCbcl()">Histórico</button>
         </div>
       </div>
       <div class="escala-card" onclick="showPage('gad7')">
@@ -1049,7 +1049,8 @@ async function fazerLogin(){
 function setLoginErro(m){document.getElementById('login-erro').textContent=m;document.getElementById('login-btn').textContent='Entrar';}
 function fazerLogout(){if(!confirm('Sair?'))return;usuarioLogado=null;localStorage.removeItem('psi_sessao_escalas');document.getElementById('login-screen').classList.remove('hidden');document.getElementById('login-email').value='';document.getElementById('login-senha').value='';}
 function verificarSessao(){
-  const s=localStorage.getItem('psi_sessao_escalas');
+  // aproveita a sessao do PsiControl quando o modulo ainda nao tem a sua
+  const s=localStorage.getItem('psi_sessao_escalas')||localStorage.getItem('psi_sessao');
   if(s){try{usuarioLogado=JSON.parse(s);document.getElementById('login-screen').classList.add('hidden');document.getElementById('sidebar-username').textContent=usuarioLogado.nome;
     carregarDados().then(()=>renderHome());
     carregarPerfil();
@@ -1145,6 +1146,18 @@ function pacienteDaURL(){
     if(!id) return null;
     return { id, nome: q.get('nome') || '', nasc: q.get('nasc') || '', acao: q.get('acao') || '' };
   }catch(e){ return null; }
+}
+
+/* Abre o CBCL mantendo o modo embutido e o paciente da ficha, se houver */
+function irParaCbcl(){
+  try{
+    const q=new URLSearchParams(location.search);
+    const p=new URLSearchParams();
+    if(q.get('embed')==='1') p.set('embed','1');
+    ['paciente','nome','nasc'].forEach(k=>{ if(q.get(k)) p.set(k,q.get(k)); });
+    const qs=p.toString();
+    window.location.href='cbcl.html'+(qs?'?'+qs:'');
+  }catch(e){ window.location.href='cbcl.html'; }
 }
 
 function toggleNovoPaciente(){
@@ -2144,6 +2157,7 @@ function finalizarSnap(){
   mostrarResultadoSnap(ap);
 }
 function mostrarResultadoSnap(ap){
+  window._snapApAtual=ap;
   const{d,h,t}=ap.scores;
   const dA=d>=6,hA=h>=6,tA=t>=4;
   let diag='';
@@ -2350,9 +2364,10 @@ function deletarAplicacao(id){
 
 // PDF
 function gerarPdfMchat(){
-  const id=document.querySelector('#page-resultado-mchat')?.dataset?.apId;
-  const aps=[...escalasState.aplicacoes].filter(a=>a.tipo==='mchat');
-  const ap=aps[aps.length-1];if(!ap)return;
+  // Exporta a aplicacao que esta aberta na tela, nao a mais recente do tipo
+  let ap=window._apAtual;
+  if(!ap||ap.tipo!=='mchat'){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='mchat');ap=aps[aps.length-1];}
+  if(!ap)return;
   const ic={baixo:'🟢',medio:'🟡',alto:'🔴'};
   const cc={baixo:'#4A8FB8',medio:'#f0b429',alto:'#ef4444'};
   const win=window.open('','_blank');
@@ -2377,8 +2392,10 @@ function gerarPdfMchat(){
   </body></html>`);win.document.close();
 }
 function gerarPdfSnap(){
-  const aps=[...escalasState.aplicacoes].filter(a=>a.tipo==='snap');
-  const ap=aps[aps.length-1];if(!ap)return;
+  // Exporta a aplicacao que esta aberta na tela, nao a mais recente do tipo
+  let ap=window._snapApAtual;
+  if(!ap||ap.tipo!=='snap'){const aps=escalasState.aplicacoes.filter(a=>a.tipo==='snap');ap=aps[aps.length-1];}
+  if(!ap)return;
   const{d,h,t}=ap.scores;
   const opts=['Nem um pouco','Só um pouco','Bastante','Demais'];
   const win=window.open('','_blank');
