@@ -611,6 +611,29 @@
   .ini-pend .ver{ margin-left:auto; color:var(--accent3); font-weight:500; cursor:pointer; }
   .ini-pend .ver:hover{ text-decoration:underline; }
 
+  /* aviso discreto de novidades */
+  .ini-nov{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--border);
+    border-left:3px solid var(--accent);
+    border-radius:11px; padding:10px 14px; margin-bottom:14px;
+    font-size:.83rem; color:var(--text2);
+  }
+  .ini-nov .pt{ width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; }
+  .ini-nov b{ color:var(--text); font-weight:600; }
+  .ini-nov .ver{ margin-left:auto; color:var(--accent); font-weight:500; cursor:pointer; white-space:nowrap; }
+  .ini-nov .ver:hover{ text-decoration:underline; }
+  .ini-nov .fechar{
+    color:var(--text3); cursor:pointer; font-size:1rem; line-height:1;
+    padding:2px 4px; border-radius:5px; flex:none;
+  }
+  .ini-nov .fechar:hover{ color:var(--text); background:var(--surface2); }
+  .ini-nov-lista{ flex-basis:100%; margin:4px 0 2px; }
+  .ini-nov-dia{ font-size:.72rem; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; margin:9px 0 5px; }
+  .ini-nov-lista ul{ list-style:none; padding:0; margin:0; }
+  .ini-nov-lista li{ position:relative; padding-left:15px; margin-bottom:5px; line-height:1.5; }
+  .ini-nov-lista li::before{ content:''; position:absolute; left:3px; top:.52em; width:4px; height:4px; border-radius:50%; background:var(--accent); }
+
   .ini-sec{ margin-bottom:20px; }
   .ini-sec h3{
     font-family:'DM Serif Display',serif; font-size:1.05rem;
@@ -991,6 +1014,8 @@ try{ if(localStorage.getItem('psi_sessao')) document.getElementById('login-scree
     <div class="page-header">
       <div><h2>Pacientes</h2><p>Busque, veja o que está em aberto e abra a ficha de quem você vai atender</p></div>
     </div>
+
+    <div id="ini-novidades"></div>
 
     <div class="ini-busca">
       <span class="ini-lupa">&#128269;</span>
@@ -1997,8 +2022,73 @@ function iniFiltrarClinica(id){
   renderInicio();
 }
 
+
+/* ===================== AVISO DE NOVIDADES =====================
+   Lista do mais novo para o mais antigo. Para anunciar uma mudanca,
+   basta acrescentar um bloco no topo com uma marca 'v' que ainda nao
+   tenha sido usada. O aviso some sozinho depois de visto.             */
+const NOVIDADES = [
+  { v:'2026-10-12', data:'12 de outubro', itens:[
+    'O CBCL passou a abrir dentro do painel de módulos, com as cores do resto do sistema, e não pede login outra vez.',
+    'As aplicações do CBCL agora aparecem na aba Escalas da ficha do paciente.',
+  ]},
+  { v:'2026-10-11b', data:'11 de outubro', itens:[
+    'Correção importante: aplicações de escalas não se perdem mais quando você salva alguma coisa no PsiControl.',
+    'Correção: ao reabrir uma aplicação antiga pelo histórico, o PDF do M-CHAT-R e do SNAP-IV saía com o paciente errado.',
+  ]},
+  { v:'2026-10-11a', data:'11 de outubro', itens:[
+    'Escalas novas para adultos e idosos: GAD-7, DASS-21, Lawton (AIVD) e Índice de Katz.',
+    'CDR completa: a entrevista semiestruturada em dez folhas, e o escore global calculado a partir das seis categorias.',
+  ]},
+];
+const NOV_CHAVE = 'psi_novidades_vista';
+let novAberto = false;          // a lista esta expandida?
+let novDispensado = false;      // o usuario fechou no X?
+let novQtd = null;              // quantas havia quando a tela abriu
+
+function novNaoVistas(){
+  if(!NOVIDADES.length) return [];
+  let vista = null;
+  try{ vista = localStorage.getItem(NOV_CHAVE); }catch(e){}
+  if(!vista) return NOVIDADES.slice();
+  const i = NOVIDADES.findIndex(n => n.v === vista);
+  return i < 0 ? NOVIDADES.slice() : NOVIDADES.slice(0, i);
+}
+function novMarcarVistas(){
+  try{ localStorage.setItem(NOV_CHAVE, NOVIDADES[0].v); }catch(e){}
+}
+function novAlternar(){
+  novAberto = !novAberto;
+  if(novAberto) novMarcarVistas();   // abriu e leu: nao avisa de novo
+  iniRenderNovidades();
+}
+function novFechar(){
+  novMarcarVistas();
+  novDispensado = true;
+  iniRenderNovidades();
+}
+function iniRenderNovidades(){
+  const alvo = document.getElementById('ini-novidades');
+  if(!alvo) return;
+  if(novQtd === null) novQtd = novNaoVistas().length;   // fixa antes de marcar como visto
+  if(novDispensado || novQtd === 0){ alvo.innerHTML = ''; return; }
+  const novas = NOVIDADES.slice(0, novQtd);
+  const n = novas.reduce((t,b) => t + b.itens.length, 0);
+  const lista = novAberto ? `<div class="ini-nov-lista">${novas.map(b => `
+      <div class="ini-nov-dia">${fxEsc(b.data)}</div>
+      <ul>${b.itens.map(i => `<li>${fxEsc(i)}</li>`).join('')}</ul>`).join('')}</div>` : '';
+  alvo.innerHTML = `<div class="ini-nov">
+      <span class="pt"></span>
+      <span><b>${n === 1 ? 'Uma novidade' : n + ' novidades'}</b> desde a sua última visita</span>
+      <span class="ver" onclick="novAlternar()">${novAberto ? 'ocultar' : 'ver o que mudou'}</span>
+      <span class="fechar" onclick="novFechar()" title="Dispensar">&times;</span>
+      ${lista}
+    </div>`;
+}
+
 function renderInicio(){
   renderSidebarClinics();
+  iniRenderNovidades();
   iniRenderClinicas();
   iniRenderPacientes();
   iniRenderPendencias();
